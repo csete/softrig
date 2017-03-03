@@ -13,6 +13,8 @@ before_install:
   - sudo apt-get install -y qt5-default libqt5svg5-dev
 
 script:
+  - export QMAKE_CC=$CC
+  - export QMAKE_CXX=$CXX
   - mkdir build
   - cd build
   - qmake ..
