@@ -14,12 +14,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp
+    app/main.cpp \
+    gui/mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h
+    gui/mainwindow.h
 
 FORMS += \
-    mainwindow.ui
+    gui/mainwindow.ui
 
