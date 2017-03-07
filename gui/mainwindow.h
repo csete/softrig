@@ -1,9 +1,13 @@
+/*
+ * Main application window interface
+ */
 #pragma once
 
 #include <QMainWindow>
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -17,4 +21,3 @@ public:
 private:
     Ui::MainWindow *ui;
 };
-
