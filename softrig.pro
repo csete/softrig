@@ -18,7 +18,8 @@ SOURCES += \
     gui/mainwindow.cpp
 
 HEADERS += \
-    gui/mainwindow.h
+    gui/mainwindow.h \
+    util/qthread_wrapper.h
 
 FORMS += \
     gui/mainwindow.ui
