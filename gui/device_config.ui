@@ -188,7 +188,7 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
-        <widget class="QLabel" name="ainDevLabel">
+        <widget class="QLabel" name="aoutDevLabel">
          <property name="toolTip">
           <string/>
          </property>
@@ -198,14 +198,14 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="ainDevCombo">
+        <widget class="QComboBox" name="aoutDevCombo">
          <property name="toolTip">
           <string>Sound card device used for audio output</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="ainRateLabel">
+        <widget class="QLabel" name="aoutRateLabel">
          <property name="toolTip">
           <string/>
          </property>
@@ -215,14 +215,14 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="ainRateCombo">
+        <widget class="QComboBox" name="aoutRateCombo">
          <property name="toolTip">
           <string>Sample rate for audio output</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="ainFormatLabel">
+        <widget class="QLabel" name="aoutFormatLabel">
          <property name="toolTip">
           <string/>
          </property>
@@ -232,7 +232,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="ainFormatCombo">
+        <widget class="QComboBox" name="aoutFormatCombo">
          <property name="toolTip">
           <string>Sample format fort audio output</string>
          </property>
@@ -246,42 +246,42 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="aoutDevLabel">
+        <widget class="QLabel" name="ainDevLabel">
          <property name="text">
           <string>Microphone in</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QComboBox" name="aoutDevCombo">
+        <widget class="QComboBox" name="ainDevCombo">
          <property name="toolTip">
           <string>Sound card device used for audio input</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="aoutRateLabel">
+        <widget class="QLabel" name="ainRateLabel">
          <property name="text">
           <string>Sample rate</string>
          </property>
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="aoutFormatLabel">
+        <widget class="QLabel" name="ainFormatLabel">
          <property name="text">
           <string>Sample format</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QComboBox" name="aoutRateCombo">
+        <widget class="QComboBox" name="ainRateCombo">
          <property name="toolTip">
           <string>Sample rate for audio input</string>
          </property>
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QComboBox" name="aoutFormatCombo">
+        <widget class="QComboBox" name="ainFormatCombo">
          <property name="toolTip">
           <string>Sample format fort audio input</string>
          </property>
