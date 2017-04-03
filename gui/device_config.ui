@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="radioTab">
       <attribute name="title">
@@ -138,6 +138,12 @@
        </item>
        <item row="3" column="1">
         <widget class="QComboBox" name="sdrDevCombo">
+         <property name="maximumSize">
+          <size>
+           <width>600</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>Sound card device used for SDR</string>
          </property>
@@ -202,6 +208,12 @@
        </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="aoutDevCombo">
+         <property name="maximumSize">
+          <size>
+           <width>600</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>Sound card device used for audio output</string>
          </property>
@@ -257,6 +269,12 @@
        </item>
        <item row="4" column="1">
         <widget class="QComboBox" name="ainDevCombo">
+         <property name="maximumSize">
+          <size>
+           <width>600</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>Sound card device used for audio input</string>
          </property>
