@@ -3,7 +3,9 @@
  */
 #pragma once
 
+#include <QAudioDeviceInfo>
 #include <QDialog>
+#include <QList>
 
 namespace Ui {
     class DeviceConfig;
@@ -19,4 +21,7 @@ public:
 
 private:
     Ui::DeviceConfig *ui;
+
+    QList<QAudioDeviceInfo> inputDevices;
+    QList<QAudioDeviceInfo> outputDevices;
 };

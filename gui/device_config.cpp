@@ -37,7 +37,24 @@ DeviceConfig::DeviceConfig(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DeviceConfig)
 {
+    QAudioDeviceInfo    deviceInfo;
+    int     i;
+
     ui->setupUi(this);
+    inputDevices = deviceInfo.availableDevices(QAudio::AudioInput);
+    for (i = 0; i < inputDevices.size(); i++)
+    {
+        ui->sdrDevCombo->addItem(inputDevices.at(i).deviceName());
+        ui->ainDevCombo->addItem(inputDevices.at(i).deviceName());
+    }
+    outputDevices = deviceInfo.availableDevices(QAudio::AudioOutput);
+    for (i = 0; i < outputDevices.size(); i++)
+        ui->aoutDevCombo->addItem(outputDevices.at(i).deviceName());
+
+    /* form layout has the audio tab selected by default, otherwise
+     * device selectors would force the dialog window to be very wide (bug?)
+     */
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 DeviceConfig::~DeviceConfig()
