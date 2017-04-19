@@ -24,6 +24,9 @@
        <string>Radio</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
+       <property name="labelAlignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="typeLabel">
          <property name="toolTip">
@@ -196,6 +199,9 @@
        <string>Sound card</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
+       <property name="labelAlignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="aoutDevLabel">
          <property name="toolTip">
