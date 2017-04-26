@@ -16,10 +16,12 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 SOURCES += \
     app/main.cpp \
     gui/device_config.cpp \
+    gui/freq_ctrl.cpp \
     gui/mainwindow.cpp
 
 HEADERS += \
     gui/device_config.h \
+    gui/freq_ctrl.h \
     gui/mainwindow.h \
     util/qthread_wrapper.h
 
