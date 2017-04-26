@@ -7,8 +7,7 @@
 #include <QImage>
 #include <QtGui>
 
-enum FUNITS
-{
+enum FUNITS {
     UNITS_HZ,
     UNITS_KHZ,
     UNITS_MHZ,
@@ -34,17 +33,20 @@ public:
     QSize sizeHint() const;
 
     // Use NumDigits=0 for auto
-    void setup(int NumDigits, qint64 Minf, qint64 Maxf, int MinStep, FUNITS UnitsType);
+    void setup(int NumDigits, qint64 Minf, qint64 Maxf, int MinStep,
+               FUNITS UnitsType);
     void setUnits(FUNITS units);
     void setDigitColor(QColor col);
     void setBgColor(QColor col);
     void setUnitsColor(QColor col);
     void setHighlightColor(QColor col);
-    qint64 getFrequency() const {
+    qint64 getFrequency() const
+    {
         return m_freq;
     }
 
-    void setResetLowerDigits(bool reset) {
+    void setResetLowerDigits(bool reset)
+    {
         m_ResetLowerDigits = reset;
     }
 
@@ -80,10 +82,10 @@ private:
 
     bool m_UpdateAll;
     bool m_ExternalKeyActive;
-    bool m_LRMouseFreqSel;    /* Use left/right mouse buttons. If FALSE click area determines up/down. */
+    bool m_LRMouseFreqSel;     /* Use left/right mouse buttons. If FALSE click area determines up/down. */
 
-    bool m_ResetLowerDigits;  /* If TRUE digits below the active one will be reset to 0
-                                 when the active digit is incremented or decremented. */
+    bool m_ResetLowerDigits;   /* If TRUE digits below the active one will be reset to 0
+                                *  when the active digit is incremented or decremented. */
 
     int m_FirstEditableDigit;
     int m_LastLeadZeroPos;
@@ -110,22 +112,21 @@ private:
     QSize m_Size;
     FUNITS m_Units;
 
-    QRect m_rectCtrl;               // main control rectangle
-    QRect m_UnitsRect;              // rectangle where Units text goes
-    QRect m_SepRect[MAX_DIGITS];    // separation rectangles for commas, decimal point, etc.
+    QRect m_rectCtrl;            // main control rectangle
+    QRect m_UnitsRect;           // rectangle where Units text goes
+    QRect m_SepRect[MAX_DIGITS]; // separation rectangles for commas, decimal point, etc.
 
     QString m_UnitString;
 
     QFont m_DigitFont;
     QFont m_UnitsFont;
 
-    struct DigStuct
-    {
-        qint64 weight;  // decimal weight of this digit
-        qint64 incval;  // value this digit increments or decrements
-        QRect dQRect;   // Digit bounding rectangle
-        int val;    // value of this digit(0-9)
-        bool modified;  // set if this digit has been modified
-        bool editmode;  // set if this digit is selected for editing
+    struct DigStuct {
+        qint64    weight;      // decimal weight of this digit
+        qint64    incval;      // value this digit increments or decrements
+        QRect     dQRect;      // Digit bounding rectangle
+        int       val;         // value of this digit(0-9)
+        bool      modified;    // set if this digit has been modified
+        bool      editmode;    // set if this digit is selected for editing
     } m_DigitInfo[MAX_DIGITS];
 };
