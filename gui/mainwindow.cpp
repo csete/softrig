@@ -30,6 +30,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <QDebug>
+
+#include "control_panel.h"
+#include "device_config.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -38,9 +42,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(ui->cpanel, SIGNAL(confButtonClicked()),
+            this, SLOT(runDeviceConfig()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::runDeviceConfig()
+{
+    DeviceConfig    *dc;
+    int         code;
+
+    dc = new DeviceConfig(this);
+    // dc->readSettings();
+    code = dc->exec();
+    if (code == QDialog::Accepted)
+    {
+        // dc->saveSettings
+    }
+    delete dc;
 }
