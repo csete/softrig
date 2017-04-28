@@ -19,4 +19,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    /*
+     * UI members:
+     *   ControlPanel   ui->cpanel
+     */
 };
