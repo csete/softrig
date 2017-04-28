@@ -49,5 +49,5 @@ ControlPanel::~ControlPanel()
 
 void ControlPanel::on_confButton_clicked(void)
 {
-    emit confButtonClicked();
+    emit    confButtonClicked();
 }

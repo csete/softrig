@@ -54,8 +54,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::runDeviceConfig()
 {
-    DeviceConfig    *dc;
-    int         code;
+    DeviceConfig   *dc;
+    int             code;
 
     dc = new DeviceConfig(this);
     // dc->readSettings();
