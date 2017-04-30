@@ -7,19 +7,20 @@
 #include <QImage>
 #include <QtGui>
 
-enum FUNITS {
-    UNITS_HZ,
-    UNITS_KHZ,
-    UNITS_MHZ,
-    UNITS_GHZ,
-    UNITS_SEC,
-    UNITS_MSEC,
-    UNITS_USEC,
-    UNITS_NSEC
+enum FctlUnit {
+    FCTL_UNIT_NONE,            // Freq displayed without unit: 14.236.000
+    FCTL_UNIT_HZ,
+    FCTL_UNIT_KHZ,
+    FCTL_UNIT_MHZ,
+    FCTL_UNIT_GHZ,
+    FCTL_UNIT_SEC,
+    FCTL_UNIT_MSEC,
+    FCTL_UNIT_USEC,
+    FCTL_UNIT_NSEC
 };
 
-#define MAX_DIGITS 12
-#define MIN_DIGITS 4
+#define FCTL_MAX_DIGITS 12
+#define FCTL_MIN_DIGITS 4
 
 class FreqCtrl : public QFrame
 {
@@ -34,8 +35,8 @@ public:
 
     // Use NumDigits=0 for auto
     void setup(int NumDigits, qint64 Minf, qint64 Maxf, int MinStep,
-               FUNITS UnitsType);
-    void setUnits(FUNITS units);
+               FctlUnit unit);
+    void setUnit(FctlUnit unit);
     void setDigitColor(QColor col);
     void setBgColor(QColor col);
     void setUnitsColor(QColor col);
@@ -110,11 +111,11 @@ private:
 
     QPixmap m_Pixmap;
     QSize m_Size;
-    FUNITS m_Units;
+    FctlUnit m_Unit;
 
-    QRect m_rectCtrl;            // main control rectangle
-    QRect m_UnitsRect;           // rectangle where Units text goes
-    QRect m_SepRect[MAX_DIGITS]; // separation rectangles for commas, decimal point, etc.
+    QRect m_rectCtrl;                 // main control rectangle
+    QRect m_UnitsRect;                // rectangle where Units text goes
+    QRect m_SepRect[FCTL_MAX_DIGITS]; // separation rectangles for commas, decimal point, etc.
 
     QString m_UnitString;
 
@@ -128,5 +129,5 @@ private:
         int       val;         // value of this digit(0-9)
         bool      modified;    // set if this digit has been modified
         bool      editmode;    // set if this digit is selected for editing
-    } m_DigitInfo[MAX_DIGITS];
+    } m_DigitInfo[FCTL_MAX_DIGITS];
 };

@@ -58,7 +58,7 @@ FreqCtrl::FreqCtrl(QWidget *parent) :
     m_HighlightColor = QColor(0x5A, 0x5A, 0x5A, 0xFF);
     m_UnitsColor = Qt::gray;
     m_freq = 146123456;
-    setup(0, 1, 4000000000U, 1, UNITS_MHZ);
+    setup(0, 1, 4000000000U, 1, FCTL_UNIT_NONE);
     m_Oldfreq = 0;
     m_LastLeadZeroPos = 0;
     m_LRMouseFreqSel = false;
@@ -110,7 +110,7 @@ static int fmax_to_numdigits(qint64 fmax)
 }
 
 void FreqCtrl::setup(int NumDigits, qint64 Minf, qint64 Maxf, int MinStep,
-                     FUNITS UnitsType)
+                     FctlUnit unit)
 {
     int       i;
     qint64    pwr = 1;
@@ -119,11 +119,11 @@ void FreqCtrl::setup(int NumDigits, qint64 Minf, qint64 Maxf, int MinStep,
 
     m_NumDigits = NumDigits ? NumDigits : fmax_to_numdigits(Maxf);
 
-    if (m_NumDigits > MAX_DIGITS)
-        m_NumDigits = MAX_DIGITS;
+    if (m_NumDigits > FCTL_MAX_DIGITS)
+        m_NumDigits = FCTL_MAX_DIGITS;
 
-    if (m_NumDigits < MIN_DIGITS)
-        m_NumDigits = MIN_DIGITS;
+    if (m_NumDigits < FCTL_MIN_DIGITS)
+        m_NumDigits = FCTL_MIN_DIGITS;
 
     m_UnitString = "";
     m_MinStep = MinStep;
@@ -161,41 +161,7 @@ void FreqCtrl::setup(int NumDigits, qint64 Minf, qint64 Maxf, int MinStep,
     m_MinFreq = m_MinFreq - m_MinFreq % m_MinStep;
     m_DigStart = 0;
 
-    switch (UnitsType)
-    {
-    case UNITS_HZ:
-        m_DecPos = 0;
-        m_UnitString = "Hz ";
-        break;
-    case UNITS_KHZ:
-        m_DecPos = 3;
-        m_UnitString = "kHz";
-        break;
-    case UNITS_MHZ:
-        m_DecPos = 6;
-        m_UnitString = "MHz";
-        break;
-    case UNITS_GHZ:
-        m_DecPos = 9;
-        m_UnitString = "GHz";
-        break;
-    case UNITS_SEC:
-        m_DecPos = 6;
-        m_UnitString = "Sec";
-        break;
-    case UNITS_MSEC:
-        m_DecPos = 3;
-        m_UnitString = "mS ";
-        break;
-    case UNITS_USEC:
-        m_DecPos = 0;
-        m_UnitString = "uS ";
-        break;
-    case UNITS_NSEC:
-        m_DecPos = 0;
-        m_UnitString = "nS ";
-        break;
-    }
+    setUnit(unit);
 
     for (i = m_NumDigits - 1; i >= 0; i--)
     {
@@ -294,43 +260,48 @@ void FreqCtrl::setDigitColor(QColor col)
     updateCtrl(true);
 }
 
-void FreqCtrl::setUnits(FUNITS units)
+void FreqCtrl::setUnit(FctlUnit unit)
 {
-    switch (units)
+    switch (unit)
     {
-    case UNITS_HZ:
+    case FCTL_UNIT_NONE:
+        m_DecPos = 0;
+        m_UnitString = QString();
+        break;
+    case FCTL_UNIT_HZ:
         m_DecPos = 0;
         m_UnitString = "Hz ";
         break;
-    case UNITS_KHZ:
+    case FCTL_UNIT_KHZ:
         m_DecPos = 3;
         m_UnitString = "kHz";
         break;
-    case UNITS_MHZ:
+    case FCTL_UNIT_MHZ:
         m_DecPos = 6;
         m_UnitString = "MHz";
         break;
-    case UNITS_GHZ:
+    case FCTL_UNIT_GHZ:
         m_DecPos = 9;
         m_UnitString = "GHz";
         break;
-    case UNITS_SEC:
+    case FCTL_UNIT_SEC:
         m_DecPos = 6;
         m_UnitString = "Sec";
         break;
-    case UNITS_MSEC:
+    case FCTL_UNIT_MSEC:
         m_DecPos = 3;
         m_UnitString = "mS ";
         break;
-    case UNITS_USEC:
+    case FCTL_UNIT_USEC:
         m_DecPos = 0;
         m_UnitString = "uS ";
         break;
-    case UNITS_NSEC:
+    case FCTL_UNIT_NSEC:
         m_DecPos = 0;
         m_UnitString = "nS ";
         break;
     }
+    m_Unit = unit;
     m_UpdateAll = true;
     updateCtrl(true);
 }
@@ -592,25 +563,27 @@ void FreqCtrl::drawBkGround(QPainter &Painter)
     int    sepwidth = (SEPRATIO_N * cellwidth) / (100 * SEPRATIO_D);
     // qDebug() <<cellwidth <<sepwidth;
 
-    m_UnitsRect.setRect(rect.right() - 2 * cellwidth,
-                        rect.top(),
-                        2 * cellwidth,
-                        rect.height());
-    Painter.fillRect(m_UnitsRect, m_BkColor);
+    // draw unit text
+    if (m_Unit != FCTL_UNIT_NONE)
+    {
+        m_UnitsRect.setRect(rect.right() - 2 * cellwidth, rect.top(),
+                            2 * cellwidth, rect.height());
+        Painter.fillRect(m_UnitsRect, m_BkColor);   // FIXME: not necessary?
+        m_UnitsFont.setPixelSize((UNITS_SIZE_PERCENT * rect.height()) / 100);
+        m_UnitsFont.setFamily("Arial");
+        Painter.setFont(m_UnitsFont);
+        Painter.setPen(m_UnitsColor);
+        Painter.drawText(m_UnitsRect, Qt::AlignHCenter | Qt::AlignVCenter,
+                         m_UnitString);
+    }
 
-    // draw units text
-    m_UnitsFont.setPixelSize((UNITS_SIZE_PERCENT * rect.height()) / 100);
-    m_UnitsFont.setFamily("Arial");
-    Painter.setFont(m_UnitsFont);
-    Painter.setPen(m_UnitsColor);
-    Painter.drawText(m_UnitsRect, Qt::AlignHCenter | Qt::AlignVCenter,
-                     m_UnitString);
-
+    // draw digits
     m_DigitFont.setPixelSize((DIGIT_SIZE_PERCENT * rect.height()) / 100);
     m_DigitFont.setFamily("Arial");
     Painter.setFont(m_DigitFont);
     Painter.setPen(m_DigitColor);
 
+    char   dgsep = ' ';     // digit group separator
     int    digpos = rect.right() - 2 * cellwidth - 1; // starting digit x position
     for (int i = m_DigStart; i < m_NumDigits; i++)
     {
@@ -622,24 +595,29 @@ void FreqCtrl::drawBkGround(QPainter &Painter)
                                    rect.bottom());
             Painter.fillRect(m_SepRect[i], m_BkColor);
             digpos -= sepwidth;
-            if (i == m_DecPos)
-                Painter.drawText(m_SepRect[i],
-                                 Qt::AlignHCenter | Qt::AlignVCenter, ".");
-// disable digit group separators
-//            else if (i > m_DecPos && i < m_LeadZeroPos)
-//                Painter.drawText(m_SepRect[i], Qt::AlignHCenter|Qt::AlignVCenter, ",");
-            else if (i < m_LeadZeroPos)
-                Painter.drawText(m_SepRect[i],
-                                 Qt::AlignHCenter | Qt::AlignVCenter, " ");
+            if (m_Unit == FCTL_UNIT_NONE)
+            {
+                if (m_LeadZeroPos > i)
+                    dgsep = '.';
+                else
+                    dgsep = ' ';
+            }
+            else
+            {
+                if (i == m_DecPos)
+                    dgsep = '.';
+                else if (i < m_LeadZeroPos)
+                    dgsep = ' ';
+            }
+            Painter.drawText(m_SepRect[i], Qt::AlignHCenter | Qt::AlignVCenter,
+                             QChar(dgsep));
         }
         else
         {
             m_SepRect[i].setCoords(0, 0, 0, 0);
         }
-        m_DigitInfo[i].dQRect.setCoords(digpos - cellwidth,
-                                        rect.top(),
-                                        digpos,
-                                        rect.bottom());
+        m_DigitInfo[i].dQRect.setCoords(digpos - cellwidth, rect.top(),
+                                        digpos, rect.bottom());
         digpos -= cellwidth;
     }
 }
