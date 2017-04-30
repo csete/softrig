@@ -20,8 +20,8 @@ public:
     ~DeviceConfig();
 
 private:
-    Ui::DeviceConfig *ui;
+    Ui::DeviceConfig          *ui;
 
-    QList<QAudioDeviceInfo> inputDevices;
-    QList<QAudioDeviceInfo> outputDevices;
+    QList<QAudioDeviceInfo>    inputDevices;
+    QList<QAudioDeviceInfo>    outputDevices;
 };

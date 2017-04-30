@@ -38,7 +38,7 @@ DeviceConfig::DeviceConfig(QWidget *parent) :
     ui(new Ui::DeviceConfig)
 {
     QAudioDeviceInfo    deviceInfo;
-    int     i;
+    int                 i;
 
     ui->setupUi(this);
     inputDevices = deviceInfo.availableDevices(QAudio::AudioInput);

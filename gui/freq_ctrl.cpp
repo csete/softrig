@@ -568,7 +568,7 @@ void FreqCtrl::drawBkGround(QPainter &Painter)
     {
         m_UnitsRect.setRect(rect.right() - 2 * cellwidth, rect.top(),
                             2 * cellwidth, rect.height());
-        Painter.fillRect(m_UnitsRect, m_BkColor);   // FIXME: not necessary?
+        Painter.fillRect(m_UnitsRect, m_BkColor); // FIXME: not necessary?
         m_UnitsFont.setPixelSize((UNITS_SIZE_PERCENT * rect.height()) / 100);
         m_UnitsFont.setFamily("Arial");
         Painter.setFont(m_UnitsFont);
@@ -583,8 +583,8 @@ void FreqCtrl::drawBkGround(QPainter &Painter)
     Painter.setFont(m_DigitFont);
     Painter.setPen(m_DigitColor);
 
-    char   dgsep = ' ';     // digit group separator
-    int    digpos = rect.right() - 2 * cellwidth - 1; // starting digit x position
+    char    dgsep = ' ';       // digit group separator
+    int     digpos = rect.right() - 2 * cellwidth - 1; // starting digit x position
     for (int i = m_DigStart; i < m_NumDigits; i++)
     {
         if ((i > m_DigStart) && ((i % 3) == 0))

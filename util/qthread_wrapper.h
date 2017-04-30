@@ -70,13 +70,13 @@ public:
     }
 
 signals:
-    void exitThreadSignal();
+    void            exitThreadSignal();
 
 public slots:
     // Derived classes must implement these
-    virtual void initThread() = 0; // Called by new thread when it is started
-    virtual void exitThread() = 0; // Called by cleanupThread()
+    virtual void    initThread() = 0; // Called by new thread when it is started
+    virtual void    exitThread() = 0; // Called by cleanupThread()
 
 protected:
-    QThread *this_thread;
+    QThread   *this_thread;
 };

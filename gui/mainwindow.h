@@ -18,10 +18,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void runDeviceConfig(void);
+    void    runDeviceConfig(void);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow   *ui;
 
     /*
      * UI members:

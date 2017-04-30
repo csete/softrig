@@ -18,11 +18,11 @@ public:
     ~ControlPanel();
 
 signals:
-    void confButtonClicked(void);
+    void    confButtonClicked(void);
 
 private slots:
-    void on_confButton_clicked(void);
+    void    on_confButton_clicked(void);
 
 private:
-    Ui::ControlPanel *ui;
+    Ui::ControlPanel   *ui;
 };
