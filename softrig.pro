@@ -18,14 +18,16 @@ SOURCES += \
     gui/control_panel.cpp \
     gui/device_config.cpp \
     gui/freq_ctrl.cpp \
-    gui/mainwindow.cpp
+    gui/mainwindow.cpp \
+    interfaces/audio_output.cpp
 
 HEADERS += \
     gui/control_panel.h \
     gui/device_config.h \
     gui/freq_ctrl.h \
     gui/mainwindow.h \
-    util/qthread_wrapper.h
+    util/qthread_wrapper.h \
+    interfaces/audio_output.h
 
 FORMS += \
     gui/control_panel.ui \
