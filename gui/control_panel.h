@@ -17,12 +17,6 @@ public:
     explicit ControlPanel(QWidget *parent = 0);
     ~ControlPanel();
 
-signals:
-    void    confButtonClicked(void);
-
-private slots:
-    void    on_confButton_clicked(void);
-
 private:
     Ui::ControlPanel   *ui;
 };

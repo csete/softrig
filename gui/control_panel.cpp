@@ -46,8 +46,3 @@ ControlPanel::~ControlPanel()
 {
     delete ui;
 }
-
-void ControlPanel::on_confButton_clicked(void)
-{
-    emit    confButtonClicked();
-}

@@ -35,57 +35,6 @@
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="QPushButton" name="runButton">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Start SDR</string>
-       </property>
-       <property name="text">
-        <string>&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="confButton">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Device configuration</string>
-       </property>
-       <property name="text">
-        <string>C</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="pttButton">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Push to talk</string>
-       </property>
-       <property name="text">
-        <string>PTT</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
       <widget class="QPushButton" name="rxButton">
        <property name="minimumSize">
         <size>
@@ -107,26 +56,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="txButton">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Transmitter controls</string>
-       </property>
-       <property name="text">
-        <string>TX</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
+     <item row="0" column="2">
       <widget class="QPushButton" name="fftButton">
        <property name="minimumSize">
         <size>
@@ -139,6 +69,25 @@
        </property>
        <property name="text">
         <string>FFT</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="txButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Transmitter controls</string>
+       </property>
+       <property name="text">
+        <string>TX</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
