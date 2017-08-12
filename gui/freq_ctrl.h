@@ -41,12 +41,12 @@ public:
     void     setBgColor(QColor col);
     void     setUnitsColor(QColor col);
     void     setHighlightColor(QColor col);
-    qint64 getFrequency() const
+    qint64   getFrequency() const
     {
         return m_freq;
     }
 
-    void setResetLowerDigits(bool reset)
+    void     setResetLowerDigits(bool reset)
     {
         m_ResetLowerDigits = reset;
     }
@@ -83,7 +83,7 @@ private:
 
     bool        m_UpdateAll;
     bool        m_ExternalKeyActive;
-    bool        m_LRMouseFreqSel;   /* Use left/right mouse buttons. If FALSE click area determines up/down. */
+    bool        m_LRMouseFreqSel; /* Use left/right mouse buttons. If FALSE click area determines up/down. */
 
     bool        m_ResetLowerDigits; /* If TRUE digits below the active one will be reset to 0
                                      *  when the active digit is incremented or decremented. */
@@ -113,8 +113,8 @@ private:
     QSize       m_Size;
     FctlUnit    m_Unit;
 
-    QRect       m_rectCtrl;                 // main control rectangle
-    QRect       m_UnitsRect;                // rectangle where Units text goes
+    QRect       m_rectCtrl;    // main control rectangle
+    QRect       m_UnitsRect;   // rectangle where Units text goes
     QRect       m_SepRect[FCTL_MAX_DIGITS]; // separation rectangles for commas, decimal point, etc.
 
     QString     m_UnitString;
