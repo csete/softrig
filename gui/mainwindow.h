@@ -5,6 +5,8 @@
 
 #include <QMainWindow>
 
+#include "gui/freq_ctrl.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -27,4 +29,6 @@ private:
      * UI members:
      *   ControlPanel   ui->cpanel
      */
+
+    FreqCtrl   *fctl;
 };

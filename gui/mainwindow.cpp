@@ -31,9 +31,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <QDebug>
+#include <QSpacerItem>
+#include <QWidget>
 
-#include "control_panel.h"
-#include "device_config.h"
+#include "gui/control_panel.h"
+#include "gui/device_config.h"
+#include "gui/freq_ctrl.h"
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -41,14 +45,32 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QWidget     *spacer1;
+    QWidget     *spacer2;
+
     ui->setupUi(this);
 
-    connect(ui->cpanel, SIGNAL(confButtonClicked()),
-            this, SLOT(runDeviceConfig()));
+    spacer1 = new QWidget();
+    spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    spacer2 = new QWidget();
+    spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    fctl = new FreqCtrl(this);
+    fctl->setup(8, 0, 60e6, 1, FCTL_UNIT_NONE);
+    fctl->setFrequency(14236000);
+
+    ui->toolBar->addWidget(spacer1);
+    ui->toolBar->addWidget(fctl);
+    ui->toolBar->addWidget(spacer2);
+
+//    connect(ui->cpanel, SIGNAL(confButtonClicked()),
+//            this, SLOT(runDeviceConfig()));
 }
 
 MainWindow::~MainWindow()
 {
+    delete fctl;
     delete ui;
 }
 
