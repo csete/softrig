@@ -76,12 +76,12 @@ FreqCtrl::~FreqCtrl()
 
 QSize FreqCtrl::minimumSizeHint() const
 {
-    return QSize(100, 20);
+    return QSize(100, 24);
 }
 
 QSize FreqCtrl::sizeHint() const
 {
-    return QSize(100, 20);
+    return QSize(100, 36);
 }
 
 bool FreqCtrl::inRect(QRect &rect, QPoint &point)
