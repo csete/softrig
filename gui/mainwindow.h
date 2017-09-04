@@ -3,7 +3,9 @@
  */
 #pragma once
 
+#include <QHBoxLayout>
 #include <QMainWindow>
+#include <QVBoxLayout>
 
 #include "gui/freq_ctrl.h"
 
@@ -25,10 +27,11 @@ private slots:
 private:
     Ui::MainWindow   *ui;
 
-    /*
-     * UI members:
-     *   ControlPanel   ui->cpanel
-     */
+    // controls
+    FreqCtrl         *fctl;
 
-    FreqCtrl   *fctl;
+    // layout containers
+    QVBoxLayout      *win_layout;
+    QHBoxLayout      *top_layout;
+    QHBoxLayout      *main_layout;
 };

@@ -29,7 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <QDebug>
-#include <QSpacerItem>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QWidget>
 
 #include "gui/control_panel.h"
@@ -43,24 +44,39 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    QWidget     *spacer1;
-    QWidget     *spacer2;
+    QWidget   *spacer1;
+    QWidget   *spacer2;
+    QWidget   *spacer3;
+
 
     ui->setupUi(this);
 
+    // 3 horizontal spacers
     spacer1 = new QWidget();
     spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     spacer2 = new QWidget();
     spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    spacer3 = new QWidget();
+    spacer3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     fctl = new FreqCtrl(this);
     fctl->setup(8, 0, 60e6, 1, FCTL_UNIT_NONE);
     fctl->setFrequency(14236000);
 
-    ui->toolBar->addWidget(spacer1);
-    ui->toolBar->addWidget(fctl);
-    ui->toolBar->addWidget(spacer2);
+    // top layout with frequency controller, meter and buttons
+    top_layout = new QHBoxLayout();
+    top_layout->addWidget(spacer1);
+    top_layout->addWidget(fctl);
+    top_layout->addWidget(spacer2);
+
+    // main layout with FFT and control panel
+    main_layout = new QHBoxLayout();
+
+    // top level window layout
+    win_layout = new QVBoxLayout();
+    win_layout->addLayout(top_layout, 0);
+    win_layout->addLayout(main_layout, 1);
+    ui->centralWidget->setLayout(win_layout);
 
 //    connect(ui->cpanel, SIGNAL(confButtonClicked()),
 //            this, SLOT(runDeviceConfig()));
@@ -69,6 +85,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete fctl;
+    delete top_layout;
+    delete main_layout;
+    delete win_layout;
     delete ui;
 }
 
