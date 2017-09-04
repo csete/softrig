@@ -7,8 +7,6 @@
  * Copyright 2012-2017 Alexandru Csete OZ9AEC
  * All rights reserved.
  *
- * This software is released under the "Simplified BSD License".
- *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
