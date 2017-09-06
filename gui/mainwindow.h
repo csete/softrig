@@ -5,6 +5,7 @@
 
 #include <QHBoxLayout>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QVBoxLayout>
 
 #include "gui/freq_ctrl.h"
@@ -25,10 +26,19 @@ private slots:
     void    runDeviceConfig(void);
 
 private:
+    void    createButtons(void);
+
+private:
     Ui::MainWindow   *ui;
 
     // controls
     FreqCtrl         *fctl;
+
+    // Buttons
+    QPushButton      *ptt_button;
+    QPushButton      *run_button;
+    QPushButton      *cfg_button;
+    QPushButton      *ctl_button;
 
     // layout containers
     QVBoxLayout      *win_layout;

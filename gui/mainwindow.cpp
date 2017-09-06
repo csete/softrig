@@ -59,15 +59,21 @@ MainWindow::MainWindow(QWidget *parent) :
     spacer3 = new QWidget();
     spacer3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    createButtons();
+
     fctl = new FreqCtrl(this);
     fctl->setup(8, 0, 60e6, 1, FCTL_UNIT_NONE);
     fctl->setFrequency(14236000);
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
+    top_layout->addWidget(ptt_button);
     top_layout->addWidget(spacer1);
     top_layout->addWidget(fctl);
     top_layout->addWidget(spacer2);
+    top_layout->addWidget(run_button);
+    top_layout->addWidget(cfg_button);
+    top_layout->addWidget(ctl_button);
 
     // main layout with FFT and control panel
     main_layout = new QHBoxLayout();
@@ -84,11 +90,36 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete ptt_button;
+    delete run_button;
+    delete cfg_button;
+    delete ctl_button;
     delete fctl;
     delete top_layout;
     delete main_layout;
     delete win_layout;
     delete ui;
+}
+
+void MainWindow::createButtons(void)
+{
+    ptt_button = new QPushButton(tr("PTT"), this);
+    ptt_button->setCheckable(true);
+    ptt_button->setSizePolicy(QSizePolicy::Preferred,
+                              QSizePolicy::MinimumExpanding);
+
+    run_button = new QPushButton(tr("Run"), this);
+    run_button->setCheckable(true);
+    run_button->setSizePolicy(QSizePolicy::Preferred,
+                              QSizePolicy::MinimumExpanding);
+
+    cfg_button = new QPushButton(tr("CFG"), this);
+    cfg_button->setSizePolicy(QSizePolicy::Preferred,
+                              QSizePolicy::MinimumExpanding);
+
+    ctl_button = new QPushButton(tr("CTL"), this);
+    ctl_button->setSizePolicy(QSizePolicy::Preferred,
+                              QSizePolicy::MinimumExpanding);
 }
 
 void MainWindow::runDeviceConfig()
