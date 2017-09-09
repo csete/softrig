@@ -249,15 +249,6 @@ void FreqCtrl::setFrequency(qint64 freq)
     m_LastLeadZeroPos = m_LeadZeroPos;
 }
 
-void FreqCtrl::setDigitColor(QColor col)
-{
-    m_UpdateAll = true;
-    m_DigitColor = col;
-    for (int i = m_DigStart; i < m_NumDigits; i++)
-        m_DigitInfo[i].modified = true;
-    updateCtrl(true);
-}
-
 void FreqCtrl::setUnit(FctlUnit unit)
 {
     switch (unit)
@@ -300,31 +291,29 @@ void FreqCtrl::setUnit(FctlUnit unit)
         break;
     }
     m_Unit = unit;
-    m_UpdateAll = true;
+    updateCtrl(true);
+}
+
+void FreqCtrl::setDigitColor(QColor col)
+{
+    m_DigitColor = col;
     updateCtrl(true);
 }
 
 void FreqCtrl::setBgColor(QColor col)
 {
-    m_UpdateAll = true;
     m_BkColor = col;
-
-    for (int i = m_DigStart; i < m_NumDigits; i++)
-        m_DigitInfo[i].modified = true;
-
     updateCtrl(true);
 }
 
 void FreqCtrl::setUnitsColor(QColor col)
 {
-    m_UpdateAll = true;
     m_UnitsColor = col;
     updateCtrl(true);
 }
 
 void FreqCtrl::setHighlightColor(QColor col)
 {
-    m_UpdateAll = true;
     m_HighlightColor = col;
     updateCtrl(true);
 }
@@ -345,7 +334,6 @@ void FreqCtrl::resizeEvent(QResizeEvent *)
 // qDebug() <<rect.width() << rect.height();
     m_Pixmap = QPixmap(size()); // resize pixmap to current control size
     m_Pixmap.fill(m_BkColor);
-    m_UpdateAll = true;
     updateCtrl(true);
 }
 
