@@ -29,6 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <QDebug>
+#include <QMenu>
+#include <QToolButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -73,7 +75,6 @@ MainWindow::MainWindow(QWidget *parent) :
     top_layout->addWidget(spacer2);
     top_layout->addWidget(run_button);
     top_layout->addWidget(cfg_button);
-    top_layout->addWidget(ctl_button);
 
     // main layout with FFT and control panel
     main_layout = new QHBoxLayout();
@@ -90,10 +91,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete cfg_menu;
+    delete cfg_button;
+
     delete ptt_button;
     delete run_button;
-    delete cfg_button;
-    delete ctl_button;
+
     delete fctl;
     delete top_layout;
     delete main_layout;
@@ -103,22 +106,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::createButtons(void)
 {
-    ptt_button = new QPushButton(tr("PTT"), this);
+    ptt_button = new QToolButton(this);
+    ptt_button->setText(tr("PTT"));
     ptt_button->setCheckable(true);
     ptt_button->setSizePolicy(QSizePolicy::Preferred,
                               QSizePolicy::MinimumExpanding);
 
-    run_button = new QPushButton(tr("Run"), this);
+    run_button = new QToolButton(this);
+    run_button->setText(tr("Run"));
     run_button->setCheckable(true);
     run_button->setSizePolicy(QSizePolicy::Preferred,
                               QSizePolicy::MinimumExpanding);
 
-    cfg_button = new QPushButton(tr("CFG"), this);
-    cfg_button->setSizePolicy(QSizePolicy::Preferred,
-                              QSizePolicy::MinimumExpanding);
+    cfg_menu = new QMenu();
+    cfg_menu->setTitle(tr("Configure..."));
+    cfg_menu->addAction(tr("SDR device"));
+    cfg_menu->addAction(tr("Soundcard"));
+    cfg_menu->addAction(tr("User interface"));
 
-    ctl_button = new QPushButton(tr("CTL"), this);
-    ctl_button->setSizePolicy(QSizePolicy::Preferred,
+    cfg_button = new QToolButton(this);
+    cfg_button->setMenu(cfg_menu);
+    cfg_button->setArrowType(Qt::NoArrow);
+    cfg_button->setText(tr("CTL"));
+    cfg_button->setSizePolicy(QSizePolicy::Preferred,
                               QSizePolicy::MinimumExpanding);
 }
 

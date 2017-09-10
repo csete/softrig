@@ -5,7 +5,8 @@
 
 #include <QHBoxLayout>
 #include <QMainWindow>
-#include <QPushButton>
+#include <QMenu>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include "gui/freq_ctrl.h"
@@ -35,10 +36,10 @@ private:
     FreqCtrl         *fctl;
 
     // Buttons
-    QPushButton      *ptt_button;
-    QPushButton      *run_button;
-    QPushButton      *cfg_button;
-    QPushButton      *ctl_button;
+    QToolButton      *ptt_button;
+    QToolButton      *run_button;
+    QToolButton      *cfg_button;
+    QMenu            *cfg_menu;
 
     // layout containers
     QVBoxLayout      *win_layout;
