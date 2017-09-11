@@ -35,6 +35,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/device_config.h"
 #include "gui/freq_ctrl.h"
@@ -52,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     ui->setupUi(this);
+
+    sdr = new SdrThread();
 
     // 3 horizontal spacers
     spacer1 = new QWidget();
@@ -91,6 +94,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete sdr;
+
     delete cfg_menu;
     delete cfg_button;
 
@@ -117,6 +122,8 @@ void MainWindow::createButtons(void)
     run_button->setCheckable(true);
     run_button->setSizePolicy(QSizePolicy::Preferred,
                               QSizePolicy::MinimumExpanding);
+    connect(run_button, SIGNAL(clicked(bool)),
+            this, SLOT(runButtonClicked(bool)));
 
     cfg_menu = new QMenu();
     cfg_menu->setTitle(tr("Configure..."));
@@ -130,6 +137,8 @@ void MainWindow::createButtons(void)
     cfg_button->setText(tr("CTL"));
     cfg_button->setSizePolicy(QSizePolicy::Preferred,
                               QSizePolicy::MinimumExpanding);
+    connect(cfg_button, SIGNAL(triggered(QAction*)),
+            this, SLOT(menuActivated(QAction*)));
 }
 
 void MainWindow::runDeviceConfig()
@@ -146,3 +155,19 @@ void MainWindow::runDeviceConfig()
     }
     delete dc;
 }
+
+void MainWindow::runButtonClicked(bool checked)
+{
+    qInfo("%s(%d)", __func__, checked);
+
+    if (checked)
+        sdr->start();
+    else
+        sdr->stop();
+}
+
+void MainWindow::menuActivated(QAction *action)
+{
+    qInfo("'%s' activated", qUtf8Printable(action->text()));
+}
+

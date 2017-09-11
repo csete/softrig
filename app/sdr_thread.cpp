@@ -28,12 +28,71 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <QThread>
+
 #include "sdr_thread.h"
 
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
+    is_running = false;
+
+    thread = new QThread();
+    moveToThread(thread);
+    connect(thread, SIGNAL(started()), this, SLOT(process()));
+    connect(thread, SIGNAL(finished()), this, SLOT(thread_finished()));
+    thread->setObjectName("SoftrigSdrThread");
+    thread->start();
 }
 
 SdrThread::~SdrThread()
 {
+    if (is_running)
+        stop();
+
+    thread->requestInterruption();
+    thread->quit();
+    thread->wait(10000);
+    delete thread;
+}
+
+int SdrThread::start(void)
+{
+    if (is_running)
+        return SDR_THREAD_OK;
+
+    qInfo("Starting SDR thread...");
+    is_running = true;
+
+    return SDR_THREAD_OK;
+}
+
+void SdrThread::stop(void)
+{
+    if (!is_running)
+        return;
+
+    qInfo("Stopping SDR thread...");
+    is_running = false;
+}
+
+void SdrThread::process(void)
+{
+    qInfo("SDR process entered");
+
+    while (!thread->isInterruptionRequested())
+    {
+        if (!is_running)
+        {
+            QThread::msleep(100);
+            continue;
+        }
+
+        qInfo("thread func ...");
+        QThread::sleep(1);
+    }
+}
+
+void SdrThread::thread_finished(void)
+{
+    qInfo("SDR thread finished");
 }

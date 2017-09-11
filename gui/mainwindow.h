@@ -9,6 +9,7 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+#include "app/sdr_thread.h"
 #include "gui/freq_ctrl.h"
 
 namespace Ui {
@@ -26,11 +27,16 @@ public:
 private slots:
     void    runDeviceConfig(void);
 
+    void    runButtonClicked(bool);
+    void    menuActivated(QAction *);
+
 private:
     void    createButtons(void);
 
 private:
     Ui::MainWindow   *ui;
+
+    SdrThread        *sdr;
 
     // controls
     FreqCtrl         *fctl;
