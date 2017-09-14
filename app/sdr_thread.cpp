@@ -32,6 +32,13 @@
 
 #include "sdr_thread.h"
 
+#if 1
+#include <stdio.h>
+#define SDR_THREAD_DEBUG(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define SDR_THREAD_DEBUG(...)
+#endif
+
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
     is_running = false;
@@ -40,7 +47,7 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     moveToThread(thread);
     connect(thread, SIGNAL(started()), this, SLOT(process()));
     connect(thread, SIGNAL(finished()), this, SLOT(thread_finished()));
-    thread->setObjectName("SoftrigSdrThread");
+    thread->setObjectName("SoftrigSdrThread\n");
     thread->start();
 }
 
@@ -60,7 +67,7 @@ int SdrThread::start(void)
     if (is_running)
         return SDR_THREAD_OK;
 
-    qInfo("Starting SDR thread...");
+    SDR_THREAD_DEBUG("Starting SDR thread...\n");
     is_running = true;
 
     return SDR_THREAD_OK;
@@ -71,13 +78,13 @@ void SdrThread::stop(void)
     if (!is_running)
         return;
 
-    qInfo("Stopping SDR thread...");
+    SDR_THREAD_DEBUG("Stopping SDR thread...\n");
     is_running = false;
 }
 
 void SdrThread::process(void)
 {
-    qInfo("SDR process entered");
+    SDR_THREAD_DEBUG("SDR process entered\n");
 
     while (!thread->isInterruptionRequested())
     {
@@ -87,12 +94,12 @@ void SdrThread::process(void)
             continue;
         }
 
-        qInfo("thread func ...");
+        SDR_THREAD_DEBUG("  thread func\n");
         QThread::sleep(1);
     }
 }
 
 void SdrThread::thread_finished(void)
 {
-    qInfo("SDR thread finished");
+    SDR_THREAD_DEBUG("SDR thread finished\n");
 }
