@@ -158,8 +158,6 @@ void MainWindow::runDeviceConfig()
 
 void MainWindow::runButtonClicked(bool checked)
 {
-    qInfo("%s(%d)", __func__, checked);
-
     if (checked)
         sdr->start();
     else
@@ -168,5 +166,4 @@ void MainWindow::runButtonClicked(bool checked)
 
 void MainWindow::menuActivated(QAction *action)
 {
-    qInfo("'%s' activated", qUtf8Printable(action->text()));
 }
