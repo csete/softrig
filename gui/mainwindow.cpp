@@ -137,8 +137,8 @@ void MainWindow::createButtons(void)
     cfg_button->setText(tr("CTL"));
     cfg_button->setSizePolicy(QSizePolicy::Preferred,
                               QSizePolicy::MinimumExpanding);
-    connect(cfg_button, SIGNAL(triggered(QAction*)),
-            this, SLOT(menuActivated(QAction*)));
+    connect(cfg_button, SIGNAL(triggered(QAction *)),
+            this, SLOT(menuActivated(QAction *)));
 }
 
 void MainWindow::runDeviceConfig()
@@ -170,4 +170,3 @@ void MainWindow::menuActivated(QAction *action)
 {
     qInfo("'%s' activated", qUtf8Printable(action->text()));
 }
-

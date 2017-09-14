@@ -20,13 +20,14 @@ public:
 
     int     start(void);
     void    stop(void);
-    bool    isRunning(void) const {
+    bool    isRunning(void) const
+    {
         return is_running;
     }
 
 private slots:
-    void process(void);
-    void thread_finished(void);
+    void    process(void);
+    void    thread_finished(void);
 
 private:
     QThread   *thread;
