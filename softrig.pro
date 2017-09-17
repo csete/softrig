@@ -17,7 +17,6 @@ SOURCES += \
     app/main.cpp \
     app/sdr_thread.cpp \
     gui/control_panel.cpp \
-    gui/device_config.cpp \
     gui/freq_ctrl.cpp \
     gui/mainwindow.cpp \
     interfaces/audio_output.cpp
@@ -25,7 +24,6 @@ SOURCES += \
 HEADERS += \
     app/sdr_thread.h \
     gui/control_panel.h \
-    gui/device_config.h \
     gui/freq_ctrl.h \
     gui/mainwindow.h \
     util/qthread_wrapper.h \
@@ -33,6 +31,4 @@ HEADERS += \
 
 FORMS += \
     gui/control_panel.ui \
-    gui/device_config.ui \
     gui/mainwindow.ui
-

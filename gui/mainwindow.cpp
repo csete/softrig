@@ -37,7 +37,6 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
-#include "gui/device_config.h"
 #include "gui/freq_ctrl.h"
 
 #include "mainwindow.h"
@@ -139,21 +138,6 @@ void MainWindow::createButtons(void)
                               QSizePolicy::MinimumExpanding);
     connect(cfg_button, SIGNAL(triggered(QAction *)),
             this, SLOT(menuActivated(QAction *)));
-}
-
-void MainWindow::runDeviceConfig()
-{
-    DeviceConfig   *dc;
-    int             code;
-
-    dc = new DeviceConfig(this);
-    // dc->readSettings();
-    code = dc->exec();
-    if (code == QDialog::Accepted)
-    {
-        // dc->saveSettings
-    }
-    delete dc;
 }
 
 void MainWindow::runButtonClicked(bool checked)

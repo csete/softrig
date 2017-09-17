@@ -25,8 +25,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void    runDeviceConfig(void);
-
     void    runButtonClicked(bool);
     void    menuActivated(QAction *);
 
