@@ -42,6 +42,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#if 1
+#include <stdio.h>
+#define MW_DEBUG(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define MW_DEBUG(...)
+#endif
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -150,4 +157,5 @@ void MainWindow::runButtonClicked(bool checked)
 
 void MainWindow::menuActivated(QAction *action)
 {
+    MW_DEBUG("%s: %s\n", __func__, action->text().toLatin1().data());
 }
