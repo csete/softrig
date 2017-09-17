@@ -7,8 +7,6 @@
  * Copyright 2017 Alexandru Csete OZ9AEC.
  * All rights reserved.
  *
- * This software is released under the "Simplified BSD License".
- *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
@@ -36,11 +34,13 @@
 #include <QObject>
 #include <QThread>
 
-/* Convenience wrapper for QThread.
+/*
+ * Convenience wrapper for QThread.
+ *
  * This base class is used to derive thread based objects that will have their
  * own event loop running in this worker thread. The initThread() function is
  * called by the worker thread when started to setup all signal-slot connections
- * The exitThread() function is called by the thread after cleanupThread() is
+ * The exitThread() function is called by the thread after stopThread() is
  * called. This can be used in cases where the worker thread must delete its own
  * resources as is the case for network objects.
  */
@@ -66,7 +66,7 @@ public:
     void stopThread()
     {
         emit    exitThreadSignal();
-        this_thread->wait(10);
+        this_thread->wait(1000);
     }
 
 signals:
@@ -75,7 +75,7 @@ signals:
 public slots:
     // Derived classes must implement these
     virtual void    initThread() = 0; // Called by new thread when it is started
-    virtual void    exitThread() = 0; // Called by cleanupThread()
+    virtual void    exitThread() = 0; // Called by stopThread()
 
 protected:
     QThread   *this_thread;
