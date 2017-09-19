@@ -5,7 +5,9 @@
 
 #include <QAudioOutput>
 #include <QObject>
-#include <QThread>
+
+#define AUDIO_OUT_OK        0
+#define AUDIO_OUT_ERROR     1
 
 class AudioOutput : public QObject
 {
@@ -13,8 +15,11 @@ class AudioOutput : public QObject
 
 public:
     explicit AudioOutput(QObject *parent = 0);
+    virtual ~AudioOutput();
+
+    int    init(void);
 
 private:
-    QAudioOutput   *audio;
-    QThread        *this_thread;
+    bool            initialized;
+    QAudioOutput   *audio_out;
 };
