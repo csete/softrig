@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QThread>
 
+#include "interfaces/audio_output.h"
+
 // error codes
 #define SDR_THREAD_OK       0
 #define SDR_THREAD_ERROR    1
@@ -30,7 +32,9 @@ private slots:
     void    thread_finished(void);
 
 private:
-    QThread   *thread;
+    QThread       *thread;
 
-    bool       is_running;
+    AudioOutput    audio_out;
+
+    bool           is_running;
 };

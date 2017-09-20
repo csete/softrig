@@ -30,6 +30,7 @@
  */
 #include <QThread>
 
+#include "interfaces/audio_output.h"
 #include "sdr_thread.h"
 
 #if 1
@@ -42,6 +43,8 @@
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
     is_running = false;
+
+    audio_out.init();
 
     thread = new QThread();
     moveToThread(thread);
@@ -70,6 +73,8 @@ int SdrThread::start(void)
     SDR_THREAD_DEBUG("Starting SDR thread...\n");
     is_running = true;
 
+    audio_out.start();
+
     return SDR_THREAD_OK;
 }
 
@@ -77,6 +82,8 @@ void SdrThread::stop(void)
 {
     if (!is_running)
         return;
+
+    audio_out.stop();
 
     SDR_THREAD_DEBUG("Stopping SDR thread...\n");
     is_running = false;

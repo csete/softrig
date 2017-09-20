@@ -31,6 +31,7 @@
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
 #include <QAudioOutput>
+#include <QBuffer>
 #include <QObject>
 
 #include "audio_output.h"
@@ -62,19 +63,88 @@ int AudioOutput::init(void)
     if (initialized)
         return AUDIO_OUT_OK;
 
-    QAudioFormat    audio_out_format;
-    audio_out_format.setCodec("audio/pcm");
-    audio_out_format.setSampleRate(48000);
-    audio_out_format.setChannelCount(1);
-    audio_out_format.setSampleSize(16);
-    audio_out_format.setSampleType(QAudioFormat::SignedInt);
-    audio_out_format.setByteOrder(QAudioFormat::LittleEndian);
-    if (!audio_out_format.isValid())
-        AOUT_DEBUG("audio_out_format is invalid");
+    QAudioFormat    aout_format;
+    aout_format.setCodec("audio/pcm");
+    aout_format.setSampleRate(48000);
+    aout_format.setChannelCount(1);
+    aout_format.setSampleSize(16);
+    aout_format.setSampleType(QAudioFormat::SignedInt);
+    aout_format.setByteOrder(QAudioFormat::LittleEndian);
+    if (!aout_format.isValid())
+    {
+        AOUT_DEBUG("audio_out_format is invalid\n");
+        return AUDIO_OUT_EFORMAT;
+    }
 
-    audio_out = new QAudioOutput(audio_out_format, this);
+    QAudioDeviceInfo    aout_info(QAudioDeviceInfo::defaultOutputDevice());
+    if (!aout_info.isFormatSupported(aout_format))
+    {
+        AOUT_DEBUG("audio_out_format not supported\n");
+        return AUDIO_OUT_EFORMAT;
+    }
+
+    audio_out = new QAudioOutput(aout_format, this);
     audio_out->setCategory("Softrig");
+    connect(audio_out, SIGNAL(stateChanged(QAudio::State)),
+            this, SLOT(aoutStateChanged(QAudio::State)));
 
     initialized = true;
+
     return AUDIO_OUT_OK;
+}
+
+int AudioOutput::start(void)
+{
+    if (!initialized)
+        return AUDIO_OUT_EINIT;
+
+    audio_buffer.open(QIODevice::ReadWrite);
+    audio_out->start(&audio_buffer);
+
+    return AUDIO_OUT_OK;
+}
+
+int AudioOutput::stop(void)
+{
+    if (!initialized)
+        return AUDIO_OUT_EINIT;
+
+    audio_out->stop();
+    audio_buffer.close();
+
+    return AUDIO_OUT_OK;
+}
+
+void AudioOutput::aoutStateChanged(QAudio::State new_state)
+{
+    switch (new_state)
+    {
+    case QAudio::ActiveState:
+        AOUT_DEBUG("Audio output entered ACTIVE state\n");
+        break;
+
+    case QAudio::SuspendedState:
+        AOUT_DEBUG("Audio output entered SUSPENDED state\n");
+        break;
+
+    case QAudio::StoppedState:
+        AOUT_DEBUG("Audio output entered STOPPED state\n");
+        // Stopped for other reasons
+        if (audio_out->error() != QAudio::NoError)
+        {
+            AOUT_DEBUG("Audio output error %d\n", audio_out->error());
+        }
+        break;
+
+    case QAudio::IdleState:
+        AOUT_DEBUG("Audio output entered IDLE state\n");
+        // Finished playing (no more data)
+        audio_out->stop();
+        audio_buffer.close();
+        break;
+
+    default:
+        AOUT_DEBUG("Unknown audio output state: %d", new_state);
+        break;
+    }
 }
