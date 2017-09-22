@@ -18,6 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # disables all the APIs deprecated before Qt 6.0.0
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
+include(nanosdr/nanosdr.pro)
+
 SOURCES += \
     app/main.cpp \
     app/sdr_thread.cpp \
@@ -38,14 +40,13 @@ FORMS += \
     gui/control_panel.ui \
     gui/mainwindow.ui
 
-
 # make clean target
 QMAKE_CLEAN += softrig
 
 # make install target
 isEmpty(PREFIX) {
-    message("Using /usr/local as default install prefix")
     PREFIX=/usr/local
 }
+message("Using /usr/local as install prefix")
 target.path  = $$PREFIX/bin
 INSTALLS    += target

@@ -1,0 +1,2 @@
+# Udev rule to allow accessing SDR-IQ as a regular user using libusb / ftdilib
+SUBSYSTEMS=="usb",ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6001",GROUP:="users",MODE:="0660"
