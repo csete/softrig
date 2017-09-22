@@ -1,3 +1,11 @@
+#
+# Qmake project file for sofrig
+#
+# Common options you may want to passs to qmake:
+#
+#   CONFIG+=debug          Enable debug mode
+#   PREFIX=/some/prefix    Install binary in /PREFIX/bin/
+#
 
 QT       += core gui multimedia widgets
 
@@ -29,3 +37,15 @@ HEADERS += \
 FORMS += \
     gui/control_panel.ui \
     gui/mainwindow.ui
+
+
+# make clean target
+QMAKE_CLEAN += softrig
+
+# make install target
+isEmpty(PREFIX) {
+    message("Using /usr/local as default install prefix")
+    PREFIX=/usr/local
+}
+target.path  = $$PREFIX/bin
+INSTALLS    += target
