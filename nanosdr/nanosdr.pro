@@ -12,38 +12,42 @@ unix:LIBS += -ldl
 DEFINES += NANOSDR_OS_LITTLE_ENDIAN
 DEFINES += LINUX
 
+## FIXME: speexdsp
+CONFIG += link_pkgconfig
+PKGCONFIG += speexdsp
+
 NANODSP_HEADERS += \
-#    nanosdr/nanodsp/agc.h \
-#    nanosdr/nanodsp/am_demod.h \
+    nanosdr/nanodsp/agc.h \
+    nanosdr/nanodsp/amdemod.h \
 #    nanosdr/nanodsp/apt_demod.h \
-#    nanosdr/nanodsp/cute_fft.h \
-#    nanosdr/nanodsp/fastfir.h \
+    nanosdr/nanodsp/cute_fft.h \
+    nanosdr/nanodsp/fastfir.h \
 #    nanosdr/nanodsp/fft.h \
-#    nanosdr/nanodsp/filter/decimator.h \
-#    nanosdr/nanodsp/filter/filtercoef_hbf_70.h \
-#    nanosdr/nanodsp/filter/filtercoef_hbf_100.h \
-#    nanosdr/nanodsp/filter/filtercoef_hbf_140.h \
+    nanosdr/nanodsp/filter/decimator.h \
+    nanosdr/nanodsp/filter/filtercoef_hbf_70.h \
+    nanosdr/nanodsp/filter/filtercoef_hbf_100.h \
+    nanosdr/nanodsp/filter/filtercoef_hbf_140.h \
 #    nanosdr/nanodsp/filtercoef.h \
-#    nanosdr/nanodsp/fir.h \
+    nanosdr/nanodsp/fir.h \
 #    nanosdr/nanodsp/kiss_fft.h \
 #    nanosdr/nanodsp/_kiss_fft_guts.h \
-#    nanosdr/nanodsp/nfm_demod.h \
-#    nanosdr/nanodsp/smeter.h \
-#    nanosdr/nanodsp/ssbdemod.h \
+    nanosdr/nanodsp/nfm_demod.h \
+    nanosdr/nanodsp/smeter.h \
+    nanosdr/nanodsp/ssbdemod.h \
     nanosdr/nanodsp/translate.h
 
 NANODSP_SOURCES += \
-#    nanosdr/nanodsp/agc.cpp \
-#    nanosdr/nanodsp/amdemod.cpp \
+    nanosdr/nanodsp/agc.cpp \
+    nanosdr/nanodsp/amdemod.cpp \
 #    nanosdr/nanodsp/apt_demod.cpp \
-#    nanosdr/nanodsp/cute_fft.cpp \
-#    nanosdr/nanodsp/fastfir.cpp \
+    nanosdr/nanodsp/cute_fft.cpp \
+    nanosdr/nanodsp/fastfir.cpp \
 #    nanosdr/nanodsp/fft.cpp \
-#    nanosdr/nanodsp/filter/decimator.cpp \
-#    nanosdr/nanodsp/fir.cpp \
+    nanosdr/nanodsp/filter/decimator.cpp \
+    nanosdr/nanodsp/fir.cpp \
 #    nanosdr/nanodsp/kiss_fft.cpp \
-#    nanosdr/nanodsp/nfm_demod.cpp \
-#    nanosdr/nanodsp/smeter.cpp \
+    nanosdr/nanodsp/nfm_demod.cpp \
+    nanosdr/nanodsp/smeter.cpp \
     nanosdr/nanodsp/translate.cpp
 
 HEADERS += \
@@ -62,6 +66,7 @@ HEADERS += \
 #    nanosdr/interfaces/sdr_ctl_queue.h \
     nanosdr/interfaces/sdr_device.h \
     nanosdr/interfaces/sdr_device_rtlsdr_reader.h \
+    nanosdr/receiver.h \
     nanosdr/sdriq/sdriq.h \
     nanosdr/sdriq/sdriq_parser.h
 
@@ -75,4 +80,5 @@ SOURCES += \
     nanosdr/interfaces/sdr_device_rtlsdr_reader.c \
     nanosdr/interfaces/sdr_device_sdriq.cpp \
     nanosdr/interfaces/sdr_device_stdin.cpp \
+    nanosdr/receiver.cpp \
     nanosdr/sdriq/sdriq.c
