@@ -27,6 +27,7 @@ public:
 private slots:
     void    runButtonClicked(bool);
     void    menuActivated(QAction *);
+    void    newFrequency(qint64 freq);
 
 private:
     void    createButtons(void);

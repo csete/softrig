@@ -80,7 +80,6 @@ int SdrThread::start(void)
         // FIXME: Emit error string
         return SDR_THREAD_EDEV;
     }
-    sdr_dev->set_freq(3760000);
     sdr_dev->set_gain(SDR_DEVICE_RX_IF_GAIN, 100);
     sdr_dev->set_gain(SDR_DEVICE_RX_LNA_GAIN, 100);
 
@@ -150,8 +149,6 @@ void SdrThread::process(void)
         samples_out = rx->process(samples_read, input_samples, output_samples);
         // TODO: SSI
 
-//        SDR_THREAD_DEBUG("AUDIO samples: %u -> %u\n", samples_read, samples_out);
-
         if (samples_out > 0)
         {
             quint32     i;
@@ -171,4 +168,13 @@ void SdrThread::process(void)
 void SdrThread::thread_finished(void)
 {
     SDR_THREAD_DEBUG("SDR thread finished\n");
+}
+
+void SdrThread::setRxFrequency(qint64 freq)
+{
+    if (!is_running)
+        return;
+
+    if (sdr_dev->set_freq(freq))
+        SDR_THREAD_DEBUG("Error setting frequency\n");
 }

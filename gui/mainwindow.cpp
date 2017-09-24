@@ -72,9 +72,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createButtons();
 
+    // Frequency controller
     fctl = new FreqCtrl(this);
     fctl->setup(8, 0, 60e6, 1, FCTL_UNIT_NONE);
     fctl->setFrequency(14236000);
+    connect(fctl, SIGNAL(newFrequency(qint64)), this, SLOT(newFrequency(qint64)));
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
@@ -150,12 +152,22 @@ void MainWindow::createButtons(void)
 void MainWindow::runButtonClicked(bool checked)
 {
     if (checked)
-        sdr->start();
+    {
+        if (sdr->start() == SDR_THREAD_OK)
+            sdr->setRxFrequency(fctl->getFrequency());
+    }
     else
+    {
         sdr->stop();
+    }
 }
 
 void MainWindow::menuActivated(QAction *action)
 {
     MW_DEBUG("%s: %s\n", __func__, action->text().toLatin1().data());
+}
+
+void MainWindow::newFrequency(qint64 freq)
+{
+    sdr->setRxFrequency(freq);
 }

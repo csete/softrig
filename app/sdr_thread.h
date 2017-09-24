@@ -31,6 +31,9 @@ public:
         return is_running;
     }
 
+public slots:
+    void    setRxFrequency(qint64 freq);
+
 private slots:
     void    process(void);
     void    thread_finished(void);
