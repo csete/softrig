@@ -31,7 +31,7 @@
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
 #include <QAudioOutput>
-#include <QBuffer>
+#include <QIODevice>
 #include <QObject>
 
 #include "audio_output.h"
@@ -47,6 +47,7 @@ AudioOutput::AudioOutput(QObject *parent) : QObject(parent)
 {
     initialized = false;
     audio_out = 0;
+    audio_buffer = 0;
 }
 
 AudioOutput::~AudioOutput()
@@ -85,6 +86,7 @@ int AudioOutput::init(void)
 
     audio_out = new QAudioOutput(aout_format, this);
     audio_out->setCategory("Softrig");
+    audio_out->setVolume(1.0);
     connect(audio_out, SIGNAL(stateChanged(QAudio::State)),
             this, SLOT(aoutStateChanged(QAudio::State)));
 
@@ -98,8 +100,8 @@ int AudioOutput::start(void)
     if (!initialized)
         return AUDIO_OUT_EINIT;
 
-    audio_buffer.open(QIODevice::ReadWrite);
-    audio_out->start(&audio_buffer);
+    // FIXME: Try pull mode for lower latency
+    audio_buffer = audio_out->start();
 
     return AUDIO_OUT_OK;
 }
@@ -110,7 +112,17 @@ int AudioOutput::stop(void)
         return AUDIO_OUT_EINIT;
 
     audio_out->stop();
-    audio_buffer.close();
+
+    return AUDIO_OUT_OK;
+}
+
+int AudioOutput::write(const char * data, qint64 len)
+{
+    Q_ASSERT(initialized);
+    Q_ASSERT(len > 0);
+
+    if (len != audio_buffer->write(data, len))
+        return AUDIO_OUT_EBUFWR;
 
     return AUDIO_OUT_OK;
 }
@@ -137,10 +149,8 @@ void AudioOutput::aoutStateChanged(QAudio::State new_state)
         break;
 
     case QAudio::IdleState:
+        // no data in buffer
         AOUT_DEBUG("Audio output entered IDLE state\n");
-        // Finished playing (no more data)
-        audio_out->stop();
-        audio_buffer.close();
         break;
 
     default:

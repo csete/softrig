@@ -4,13 +4,14 @@
 #pragma once
 
 #include <QAudioOutput>
-#include <QBuffer>
+#include <QIODevice>
 #include <QObject>
 
 #define AUDIO_OUT_OK        0
-#define AUDIO_OUT_ERROR     1
-#define AUDIO_OUT_EFORMAT   2
-#define AUDIO_OUT_EINIT     3
+#define AUDIO_OUT_ERROR    -1
+#define AUDIO_OUT_EFORMAT  -2
+#define AUDIO_OUT_EINIT    -3
+#define AUDIO_OUT_EBUFWR   -4   // Error writing to buffer
 
 class AudioOutput : public QObject
 {
@@ -23,6 +24,7 @@ public:
     int     init(void);
     int     start(void);
     int     stop(void);
+    int     write(const char * data, qint64 len);
 
 private slots:
     void    aoutStateChanged(QAudio::State);
@@ -30,5 +32,5 @@ private slots:
 private:
     bool            initialized;
     QAudioOutput   *audio_out;
-    QBuffer         audio_buffer;
+    QIODevice      *audio_buffer;
 };
