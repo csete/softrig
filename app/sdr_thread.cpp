@@ -31,6 +31,7 @@
 #include <QThread>
 
 #include "interfaces/audio_output.h"
+#include "nanosdr/interfaces/sdr_device.h"
 #include "sdr_thread.h"
 
 #if 1
@@ -43,6 +44,7 @@
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
     is_running = false;
+    buflen = 3920; // FIXME
 
     audio_out.init();
 
@@ -71,8 +73,23 @@ int SdrThread::start(void)
         return SDR_THREAD_OK;
 
     SDR_THREAD_DEBUG("Starting SDR thread...\n");
+
+    sdr_dev = sdr_device_create_sdriq();
+    if (sdr_dev->init(196078, "") != SDR_DEVICE_OK)
+    {
+        // FIXME: Emit error string
+        return SDR_THREAD_EDEV;
+    }
+    sdr_dev->set_freq(3760000);
+    sdr_dev->set_gain(SDR_DEVICE_RX_IF_GAIN, 100);
+    sdr_dev->set_gain(SDR_DEVICE_RX_LNA_GAIN, 100);
+
+    rx = new Receiver();
+    rx->init(196078, 48000, 100, buflen);
+
     is_running = true;
 
+    sdr_dev->start();
     audio_out.start();
 
     return SDR_THREAD_OK;
@@ -83,15 +100,29 @@ void SdrThread::stop(void)
     if (!is_running)
         return;
 
+    SDR_THREAD_DEBUG("Stopping SDR thread...\n");
+
     audio_out.stop();
 
-    SDR_THREAD_DEBUG("Stopping SDR thread...\n");
+    sdr_dev->stop();
+    delete sdr_dev;
+
+    delete rx;
+
     is_running = false;
 }
 
 void SdrThread::process(void)
 {
+    quint32     samples_in = buflen;
+    quint32     samples_read;
+    quint32     samples_out;
+
     SDR_THREAD_DEBUG("SDR process entered\n");
+
+    input_samples = new complex_t[buflen];
+    output_samples = new real_t[buflen];
+    aout_buffer = new qint16[buflen];
 
     while (!thread->isInterruptionRequested())
     {
@@ -101,9 +132,40 @@ void SdrThread::process(void)
             continue;
         }
 
-        SDR_THREAD_DEBUG("  thread func\n");
-        QThread::sleep(1);
+        if (sdr_dev->get_num_samples() < samples_in)
+        {
+            QThread::usleep(2000);
+            continue;
+        }
+
+        samples_read = sdr_dev->read_samples(input_samples, samples_in);
+        if (samples_read == 0)
+        {
+            QThread::usleep(2000);
+            continue;
+        }
+
+        // TODO: Decimate
+        // TODO: FFT
+        samples_out = rx->process(samples_read, input_samples, output_samples);
+        // TODO: SSI
+
+//        SDR_THREAD_DEBUG("AUDIO samples: %u -> %u\n", samples_read, samples_out);
+
+        if (samples_out > 0)
+        {
+            quint32     i;
+
+            for (i = 0; i < samples_out; i++)
+                aout_buffer[i] = (qint16)(32767.0f * output_samples[i]);
+
+            audio_out.write((const char *) aout_buffer, samples_out * 2);
+        }
     }
+
+    delete[] aout_buffer;
+    delete[] output_samples;
+    delete[] input_samples;
 }
 
 void SdrThread::thread_finished(void)
