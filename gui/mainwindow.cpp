@@ -76,7 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     fctl = new FreqCtrl(this);
     fctl->setup(8, 0, 60e6, 1, FCTL_UNIT_NONE);
     fctl->setFrequency(14236000);
-    connect(fctl, SIGNAL(newFrequency(qint64)), this, SLOT(newFrequency(qint64)));
+    connect(fctl, SIGNAL(newFrequency(qint64)), this,
+            SLOT(newFrequency(qint64)));
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();

@@ -113,9 +113,9 @@ void SdrThread::stop(void)
 
 void SdrThread::process(void)
 {
-    quint32     samples_in = buflen;
-    quint32     samples_read;
-    quint32     samples_out;
+    quint32    samples_in = buflen;
+    quint32    samples_read;
+    quint32    samples_out;
 
     SDR_THREAD_DEBUG("SDR process entered\n");
 
@@ -151,7 +151,7 @@ void SdrThread::process(void)
 
         if (samples_out > 0)
         {
-            quint32     i;
+            quint32    i;
 
             for (i = 0; i < samples_out; i++)
                 aout_buffer[i] = (qint16)(32767.0f * output_samples[i]);

@@ -13,8 +13,8 @@
 
 // error codes
 #define SDR_THREAD_OK       0
-#define SDR_THREAD_ERROR   -1   // unspecified error
-#define SDR_THREAD_EDEV    -2   // device error
+#define SDR_THREAD_ERROR   -1  // unspecified error
+#define SDR_THREAD_EDEV    -2  // device error
 
 class SdrThread : public QObject
 {
@@ -47,7 +47,7 @@ private:
     bool           is_running;
     quint32        buflen;
 
-    complex_t     *input_samples;       // sample buffer for IQ input
-    real_t        *output_samples;      // sample buffer for audio output
-    qint16        *aout_buffer;         // audio output buffer
+    complex_t     *input_samples;  // sample buffer for IQ input
+    real_t        *output_samples; // sample buffer for audio output
+    qint16        *aout_buffer;    // audio output buffer
 };
