@@ -74,8 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Frequency controller
     fctl = new FreqCtrl(this);
-    fctl->setup(8, 0, 60e6, 1, FCTL_UNIT_NONE);
-    fctl->setFrequency(14236000);
+    fctl->setup(9, 0, 900e6, 1, FCTL_UNIT_NONE);
+    fctl->setFrequency(127100000);
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
 
@@ -96,9 +96,6 @@ MainWindow::MainWindow(QWidget *parent) :
     win_layout->addLayout(top_layout, 0);
     win_layout->addLayout(main_layout, 1);
     ui->centralWidget->setLayout(win_layout);
-
-//    connect(ui->cpanel, SIGNAL(confButtonClicked()),
-//            this, SLOT(runDeviceConfig()));
 }
 
 MainWindow::~MainWindow()
