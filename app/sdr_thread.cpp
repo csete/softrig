@@ -31,10 +31,13 @@
 #include <QThread>
 
 #include "interfaces/audio_output.h"
+#include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
 #include "sdr_thread.h"
 
 #if 1
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 #include <stdio.h>
 #define SDR_THREAD_DEBUG(...) fprintf(stderr, __VA_ARGS__)
 #else
@@ -91,6 +94,10 @@ int SdrThread::start(void)
     sdr_dev->start();
     audio_out.start();
 
+    stats.tstart = time_ms();
+    stats.samples_in = 0;
+    stats.samples_out = 0;
+
     return SDR_THREAD_OK;
 }
 
@@ -101,6 +108,17 @@ void SdrThread::stop(void)
 
     SDR_THREAD_DEBUG("Stopping SDR thread...\n");
 
+    stats.tstop = time_ms();
+    SDR_THREAD_DEBUG("Receiver statistics:\n"
+                     "  Time: %" PRIu64 " ms\n"
+                     "  Samples in:  %" PRIu64 " samples = %" PRIu64 " sps\n"
+                     "  Samples out: %" PRIu64 " samples = %" PRIu64 " sps\n",
+                     stats.tstop - stats.tstart,
+                     stats.samples_in,
+                     (1000 * stats.samples_in) / (stats.tstop - stats.tstart),
+                     stats.samples_out,
+                     (1000 * stats.samples_out) / (stats.tstop - stats.tstart));
+
     audio_out.stop();
 
     sdr_dev->stop();
@@ -109,6 +127,7 @@ void SdrThread::stop(void)
     delete rx;
 
     is_running = false;
+
 }
 
 void SdrThread::process(void)
@@ -143,6 +162,7 @@ void SdrThread::process(void)
             QThread::usleep(2000);
             continue;
         }
+        stats.samples_in += samples_read;
 
         // TODO: Decimate
         // TODO: FFT
@@ -157,6 +177,7 @@ void SdrThread::process(void)
                 aout_buffer[i] = (qint16)(32767.0f * output_samples[i]);
 
             audio_out.write((const char *) aout_buffer, samples_out * 2);
+            stats.samples_out += samples_out;
         }
     }
 

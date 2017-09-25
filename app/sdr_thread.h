@@ -8,6 +8,7 @@
 
 #include "interfaces/audio_output.h"
 #include "nanosdr/common/datatypes.h"
+#include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
 #include "nanosdr/receiver.h"
 
@@ -50,4 +51,12 @@ private:
     complex_t     *input_samples;  // sample buffer for IQ input
     real_t        *output_samples; // sample buffer for audio output
     qint16        *aout_buffer;    // audio output buffer
+
+    struct {
+        uint64_t    tstart;
+        uint64_t    tstop;
+        uint64_t    samples_in;
+        uint64_t    samples_out;
+    } stats;
+
 };
