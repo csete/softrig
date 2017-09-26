@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     ui->setupUi(this);
+    ui->menuBar->hide();
+    ui->toolBar->hide();
 
     sdr = new SdrThread();
 
