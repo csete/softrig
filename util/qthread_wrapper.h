@@ -3,9 +3,8 @@
  *
  * This file is part of softrig, a simple software defined radio transceiver.
  *
- * Copyright 2013 Moe Wheatley.
+ * Copyright 2013 Moe Wheatley AE4JY.
  * Copyright 2017 Alexandru Csete OZ9AEC.
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

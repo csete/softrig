@@ -1,8 +1,7 @@
 /*
  * SDR-IQ driver for nanosdr.
  *
- * Copyright (c) 2014-2017  Alexandru Csete OZ9AEC
- * All rights reserved.
+ * Copyright 2014-2017  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
