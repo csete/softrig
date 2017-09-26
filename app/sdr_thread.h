@@ -40,6 +40,9 @@ private slots:
     void    thread_finished(void);
 
 private:
+    void    resetStats(void);
+
+private:
     QThread       *thread;
     SdrDevice     *sdr_dev;
     Receiver      *rx;

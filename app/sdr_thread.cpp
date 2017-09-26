@@ -48,6 +48,13 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     is_running = false;
     buflen = 30720;     // 20 msec @ 1.536 Msps
 
+    sdr_dev = 0;
+    rx = 0;
+    input_samples = 0;
+    output_samples = 0;
+    aout_buffer = 0;
+    resetStats();
+
     audio_out.init();
 
     thread = new QThread();
@@ -89,12 +96,9 @@ int SdrThread::start(void)
 
     is_running = true;
 
+    resetStats();
     sdr_dev->start();
     audio_out.start();
-
-    stats.tstart = time_ms();
-    stats.samples_in = 0;
-    stats.samples_out = 0;
 
     return SDR_THREAD_OK;
 }
@@ -196,4 +200,12 @@ void SdrThread::setRxFrequency(qint64 freq)
 
     if (sdr_dev->set_freq(freq))
         SDR_THREAD_DEBUG("Error setting frequency\n");
+}
+
+void SdrThread::resetStats(void)
+{
+    stats.tstart = time_ms();
+    stats.tstop = 0;
+    stats.samples_in = 0;
+    stats.samples_out = 0;
 }
