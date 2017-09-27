@@ -136,7 +136,7 @@ void SdrThread::process(void)
 {
     quint32    samples_in = buflen;
     quint32    samples_read;
-    quint32    samples_out;
+    int        samples_out;
 
     SDR_THREAD_DEBUG("SDR process entered\n");
 
@@ -170,10 +170,11 @@ void SdrThread::process(void)
         // TODO: FFT
         samples_out = rx->process(samples_read, input_samples, output_samples);
         // TODO: SSI
+        // NOTE: samples_out = -1 means SSI below squelch level
 
         if (samples_out > 0)
         {
-            quint32    i;
+            int     i;
 
             for (i = 0; i < samples_out; i++)
                 aout_buffer[i] = (qint16)(32767.0f * output_samples[i]);
