@@ -47,6 +47,6 @@ QMAKE_CLEAN += softrig
 isEmpty(PREFIX) {
     PREFIX=/usr/local
 }
-message("Using /usr/local as install prefix")
+message("Using $${PREFIX} as install prefix")
 target.path  = $$PREFIX/bin
 INSTALLS    += target
