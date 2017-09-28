@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 
 #include "app/sdr_thread.h"
+#include "gui/control_panel.h"
 #include "gui/freq_ctrl.h"
 
 namespace Ui {
@@ -26,6 +27,7 @@ public:
 
 private slots:
     void    runButtonClicked(bool);
+    void    cfgButtonClicked(bool);
     void    menuActivated(QAction *);
     void    newFrequency(qint64 freq);
 
@@ -39,6 +41,7 @@ private:
 
     // controls
     FreqCtrl         *fctl;
+    ControlPanel     *cpanel;
 
     // Buttons
     QToolButton      *ptt_button;

@@ -80,6 +80,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
 
+    // Control panel
+    cpanel = new ControlPanel(this);
+
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
     top_layout->addWidget(ptt_button);
@@ -91,12 +94,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // main layout with FFT and control panel
     main_layout = new QHBoxLayout();
+    // FFT placeholder
+    QWidget   *fft_place_holder = new QWidget();
+    fft_place_holder->setSizePolicy(QSizePolicy::Expanding,
+                                    QSizePolicy::Expanding);
+    main_layout->addWidget(fft_place_holder, 1);
+    main_layout->addWidget(cpanel, 0);
 
     // top level window layout
     win_layout = new QVBoxLayout();
     win_layout->addLayout(top_layout, 0);
     win_layout->addLayout(main_layout, 1);
     ui->centralWidget->setLayout(win_layout);
+
+    // FIXME: Adjust default size as a function of desktop size
 }
 
 MainWindow::~MainWindow()
@@ -110,6 +121,7 @@ MainWindow::~MainWindow()
     delete run_button;
 
     delete fctl;
+    delete cpanel;
     delete top_layout;
     delete main_layout;
     delete win_layout;
@@ -146,6 +158,8 @@ void MainWindow::createButtons(void)
                               QSizePolicy::MinimumExpanding);
     connect(cfg_button, SIGNAL(triggered(QAction *)),
             this, SLOT(menuActivated(QAction *)));
+    connect(cfg_button, SIGNAL(clicked(bool)),
+            this, SLOT(cfgButtonClicked(bool)));
 }
 
 void MainWindow::runButtonClicked(bool checked)
@@ -159,6 +173,12 @@ void MainWindow::runButtonClicked(bool checked)
     {
         sdr->stop();
     }
+}
+
+void MainWindow::cfgButtonClicked(bool checked)
+{
+    Q_UNUSED(checked);
+    cpanel->setVisible(!cpanel->isVisible());
 }
 
 void MainWindow::menuActivated(QAction *action)
