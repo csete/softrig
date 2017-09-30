@@ -32,6 +32,7 @@
 
 #include "common/bithacks.h"
 #include "common/datatypes.h"
+#include "common/sdr_data.h"
 #include "common/time.h"
 #include "nanodsp/agc.h"
 #include "nanodsp/amdemod.h"
@@ -50,7 +51,7 @@ Receiver::Receiver()
     quad_decim = 2;
     quad_rate = input_rate / quad_decim;
     output_rate = 48000.0f;
-    demod = RX_DEMOD_SSB;
+    demod = SDR_DEMOD_SSB;
     resampler = 0;
     cplx_buf0 = 0;
     cplx_buf1 = 0;
@@ -145,22 +146,25 @@ void Receiver::set_agc(int threshold, int slope, int decay)
     agc.setup(true, false, threshold, 50, slope, decay, quad_rate);
 }
 
-// FIXME: Offset should no longer be a parameter for filter
-void Receiver::set_filter(real_t low_cut, real_t high_cut, real_t offset)
+void Receiver::set_filter(real_t low_cut, real_t high_cut)
 {
-    fprintf(stderr, "   FILT   LO:%.0f   HI:%.0f   OFS:%.0f\n", low_cut, high_cut, offset);
-    filter.setup(low_cut, high_cut, offset, quad_rate);
+    fprintf(stderr, "   FILT   LO:%.0f   HI:%.0f\n", low_cut, high_cut);
+    filter.setup(low_cut, high_cut, 0.f, quad_rate); // NB: fffset is ignored
+}
+
+void Receiver::set_cw_offset(real_t offset)
+{
     bfo.set_cw_offset(offset);
 }
 
-void Receiver::set_demod(uint8_t new_demod)
+void Receiver::set_demod(sdr_demod_t new_demod)
 {
     switch (new_demod)
     {
-    case RX_DEMOD_NONE:
-    case RX_DEMOD_SSB:
-    case RX_DEMOD_AM:
-    case RX_DEMOD_NFM:
+    case SDR_DEMOD_NONE:
+    case SDR_DEMOD_SSB:
+    case SDR_DEMOD_AM:
+    case SDR_DEMOD_FM:
         demod = new_demod;
         break;
     default:
@@ -186,8 +190,6 @@ int Receiver::process(int input_length, complex_t * input, real_t * output)
     if (quad_samples == 0)
         return 0;
 
-    // FIXME: only if offset != 0
-    bfo.process(quad_samples, input);
     filt_samples = filter.process(quad_samples, input, cplx_buf1);
     if (filt_samples == 0)
         return 0;
@@ -198,18 +200,20 @@ int Receiver::process(int input_length, complex_t * input, real_t * output)
 
     switch (demod)
     {
-    case RX_DEMOD_SSB:
+    case SDR_DEMOD_SSB:
     default:
         agc.process(filt_samples, cplx_buf1, cplx_buf2);
+        // FIXME: only if offset != 0
+        bfo.process(quad_samples, cplx_buf2);
         ssb.process(filt_samples, cplx_buf2, real_buf1);
         break;
 
-    case RX_DEMOD_AM:
+    case SDR_DEMOD_AM:
         agc.process(filt_samples, cplx_buf1, cplx_buf2);
         am.process(filt_samples, cplx_buf2, real_buf1);
         break;
 
-    case RX_DEMOD_NFM:
+    case SDR_DEMOD_FM:
         nfm.process(filt_samples, cplx_buf1, real_buf1);
         break;
     }

@@ -4,6 +4,7 @@
 #include <speex/speex_resampler.h> // must come after stdint.h
 
 #include "common/datatypes.h"
+#include "common/sdr_data.h"
 #include "nanodsp/agc.h"
 #include "nanodsp/amdemod.h"
 #include "nanodsp/fastfir.h"
@@ -13,11 +14,6 @@
 #include "nanodsp/ssbdemod.h"
 #include "nanodsp/translate.h"
 
-// FIXME: should be defined as CTL params
-#define RX_DEMOD_NONE   0
-#define RX_DEMOD_SSB    1
-#define RX_DEMOD_AM     2
-#define RX_DEMOD_NFM    3
 
 class Receiver
 {
@@ -28,9 +24,10 @@ public:
     void init(real_t in_rate, real_t out_rate, real_t dyn_range,
               uint32_t frame_length);
     void set_tuning_offset(real_t offset);
-    void set_filter(real_t low_cut, real_t high_cut, real_t offset);
+    void set_filter(real_t low_cut, real_t high_cut);
+    void set_cw_offset(real_t offset);
     void set_agc(int threshold, int slope, int decay);
-    void set_demod(uint8_t new_demod);
+    void set_demod(sdr_demod_t new_demod);
     void set_sql(real_t level)
     {
         sql_level = level;

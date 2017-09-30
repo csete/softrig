@@ -180,10 +180,14 @@ int SdrDeviceAirspy::airspy_rx_callback(airspy_transfer_t * transfer)
 
 SdrDeviceAirspy::SdrDeviceAirspy(void)
 {
-    initialized = false;
+    lib = 0;
     dev = 0;
-    sample_buffer = 0;
     total_samples = 0;
+    start_time = 0;
+    sample_rate = 0;
+    current_freq = 0;
+    sample_buffer = 0;
+    initialized = false;
 }
 
 SdrDeviceAirspy::~SdrDeviceAirspy()

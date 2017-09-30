@@ -5,7 +5,6 @@
 
 #include "common/datatypes.h"
 
-
 // FIXME: Move to audio_codec or datatypes?
 typedef enum _audio_codec {
     AUDIO_CODEC_NONE    = 0,    /* No codec, audio muted. */
@@ -37,6 +36,14 @@ typedef struct _range {
     uint64_t        max;
     uint8_t         step;
 } freq_range_t;
+
+/* demodulator */
+typedef enum _sdr_demod {
+    SDR_DEMOD_NONE      = 0,
+    SDR_DEMOD_SSB       = 1,
+    SDR_DEMOD_AM        = 2,
+    SDR_DEMOD_FM        = 3
+} sdr_demod_t;
 
 /* Server type (NB: Same values as in server/client ICD) */
 typedef enum _srv_type {
