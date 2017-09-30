@@ -32,6 +32,7 @@
 #include "control_panel.h"
 #include "ui_control_panel.h"
 
+
 ControlPanel::ControlPanel(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ControlPanel)
@@ -42,4 +43,24 @@ ControlPanel::ControlPanel(QWidget *parent) :
 ControlPanel::~ControlPanel()
 {
     delete ui;
+}
+
+void ControlPanel::on_amButton_clicked(bool)
+{
+    qDebug() << __func__;
+}
+
+void ControlPanel::on_ssbButton_clicked(bool)
+{
+    qDebug() << __func__;
+}
+
+void ControlPanel::on_cwButton_clicked(bool)
+{
+    qDebug() << __func__;
+}
+
+void ControlPanel::on_fmButton_clicked(bool)
+{
+    qDebug() << __func__;
 }
