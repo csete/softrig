@@ -22,15 +22,15 @@ NANODSP_HEADERS += \
 #    nanosdr/nanodsp/apt_demod.h \
     nanosdr/nanodsp/cute_fft.h \
     nanosdr/nanodsp/fastfir.h \
-#    nanosdr/nanodsp/fft.h \
+    nanosdr/nanodsp/fft.h \
     nanosdr/nanodsp/filter/decimator.h \
     nanosdr/nanodsp/filter/filtercoef_hbf_70.h \
     nanosdr/nanodsp/filter/filtercoef_hbf_100.h \
     nanosdr/nanodsp/filter/filtercoef_hbf_140.h \
 #    nanosdr/nanodsp/filtercoef.h \
     nanosdr/nanodsp/fir.h \
-#    nanosdr/nanodsp/kiss_fft.h \
-#    nanosdr/nanodsp/_kiss_fft_guts.h \
+    nanosdr/nanodsp/kiss_fft.h \
+    nanosdr/nanodsp/_kiss_fft_guts.h \
     nanosdr/nanodsp/nfm_demod.h \
     nanosdr/nanodsp/smeter.h \
     nanosdr/nanodsp/ssbdemod.h \
@@ -42,10 +42,10 @@ NANODSP_SOURCES += \
 #    nanosdr/nanodsp/apt_demod.cpp \
     nanosdr/nanodsp/cute_fft.cpp \
     nanosdr/nanodsp/fastfir.cpp \
-#    nanosdr/nanodsp/fft.cpp \
+    nanosdr/nanodsp/fft.cpp \
     nanosdr/nanodsp/filter/decimator.cpp \
     nanosdr/nanodsp/fir.cpp \
-#    nanosdr/nanodsp/kiss_fft.cpp \
+    nanosdr/nanodsp/kiss_fft.c \
     nanosdr/nanodsp/nfm_demod.cpp \
     nanosdr/nanodsp/smeter.cpp \
     nanosdr/nanodsp/translate.cpp
@@ -66,6 +66,7 @@ HEADERS += \
 #    nanosdr/interfaces/sdr_ctl_queue.h \
     nanosdr/interfaces/sdr_device.h \
     nanosdr/interfaces/sdr_device_rtlsdr_reader.h \
+    nanosdr/fft_thread.h \
     nanosdr/receiver.h \
     nanosdr/sdriq/sdriq.h \
     nanosdr/sdriq/sdriq_parser.h
@@ -80,5 +81,6 @@ SOURCES += \
     nanosdr/interfaces/sdr_device_rtlsdr_reader.c \
     nanosdr/interfaces/sdr_device_sdriq.cpp \
     nanosdr/interfaces/sdr_device_stdin.cpp \
+    nanosdr/fft_thread.cpp \
     nanosdr/receiver.cpp \
     nanosdr/sdriq/sdriq.c
