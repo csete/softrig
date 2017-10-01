@@ -30,6 +30,8 @@
 #include <QThread>
 
 #include "interfaces/audio_output.h"
+#include "nanosdr/common/datatypes.h"
+#include "nanosdr/common/sdr_data.h"
 #include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
 #include "sdr_thread.h"
@@ -46,7 +48,7 @@
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
     is_running = false;
-    buflen = 30720;     // 20 msec @ 1.536 Msps
+    buflen = 30720;            // 20 msec @ 1.536 Msps
 
     sdr_dev = 0;
     rx = 0;
@@ -111,6 +113,7 @@ void SdrThread::stop(void)
     SDR_THREAD_DEBUG("Stopping SDR thread...\n");
 
     stats.tstop = time_ms();
+    /* *INDENT-OFF* */
     SDR_THREAD_DEBUG("Receiver statistics:\n"
                      "  Time: %" PRIu64 " ms\n"
                      "  Samples in:  %" PRIu64 " samples = %" PRIu64 " sps\n"
@@ -120,7 +123,7 @@ void SdrThread::stop(void)
                      (1000 * stats.samples_in) / (stats.tstop - stats.tstart),
                      stats.samples_out,
                      (1000 * stats.samples_out) / (stats.tstop - stats.tstart));
-
+    /* *INDENT-ON* */
     audio_out.stop();
 
     sdr_dev->stop();
@@ -129,7 +132,6 @@ void SdrThread::stop(void)
     delete rx;
 
     is_running = false;
-
 }
 
 void SdrThread::process(void)
@@ -174,7 +176,7 @@ void SdrThread::process(void)
 
         if (samples_out > 0)
         {
-            int     i;
+            int    i;
 
             for (i = 0; i < samples_out; i++)
                 aout_buffer[i] = (qint16)(32767.0f * output_samples[i]);
@@ -184,9 +186,11 @@ void SdrThread::process(void)
         }
     }
 
+    /* *INDENT-OFF* */
     delete[] aout_buffer;
     delete[] output_samples;
     delete[] input_samples;
+    /* *INDENT-ON* */
 }
 
 void SdrThread::thread_finished(void)
@@ -201,6 +205,30 @@ void SdrThread::setRxFrequency(qint64 freq)
 
     if (sdr_dev->set_freq(freq))
         SDR_THREAD_DEBUG("Error setting frequency\n");
+}
+
+void SdrThread::setDemod(sdr_demod_t demod)
+{
+    if (!is_running)           // FIXME
+        return;
+
+    rx->set_demod(demod);
+}
+
+void SdrThread::setRxFilter(real_t low_cut, real_t high_cut)
+{
+    if (!is_running)           // FIXME
+        return;
+
+    rx->set_filter(low_cut, high_cut);
+}
+
+void SdrThread::setRxCwOffset(real_t offset)
+{
+    if (!is_running)           // FIXME
+        return;
+
+    rx->set_cw_offset(offset);
 }
 
 void SdrThread::resetStats(void)

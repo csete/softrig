@@ -8,6 +8,7 @@
 
 #include "interfaces/audio_output.h"
 #include "nanosdr/common/datatypes.h"
+#include "nanosdr/common/sdr_data.h"
 #include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
 #include "nanosdr/receiver.h"
@@ -34,6 +35,9 @@ public:
 
 public slots:
     void    setRxFrequency(qint64 freq);
+    void    setDemod(sdr_demod_t);
+    void    setRxFilter(real_t, real_t);
+    void    setRxCwOffset(real_t);
 
 private slots:
     void    process(void);
@@ -53,7 +57,7 @@ private:
 
     complex_t     *input_samples;  // sample buffer for IQ input
     real_t        *output_samples; // sample buffer for audio output
-    qint16        *aout_buffer;    // audio output buffer
+    qint16        *aout_buffer; // audio output buffer
 
     struct {
         uint64_t    tstart;
@@ -61,5 +65,4 @@ private:
         uint64_t    samples_in;
         uint64_t    samples_out;
     } stats;
-
 };
