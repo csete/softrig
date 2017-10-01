@@ -226,7 +226,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>LSB</string>
+                <string>SSB</string>
                </property>
               </widget>
              </item>
