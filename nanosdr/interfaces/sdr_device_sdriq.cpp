@@ -89,8 +89,12 @@ SdrDevice * sdr_device_create_sdriq()
 
 SdrDeviceSdriq::SdrDeviceSdriq(void)
 {
-    initialized = false;
+    sdr = 0;
     buf = 0;
+    buflen = 0;
+    sample_rate = 0;
+    current_freq = 0;
+    initialized = false;
 }
 
 SdrDeviceSdriq::~SdrDeviceSdriq()
@@ -212,12 +216,12 @@ int SdrDeviceSdriq::set_freq(uint64_t freq)
     int ret = sdriq_set_freq(sdr, current_freq);
     if (ret)
     {
-        fprintf(stderr, "sdriq_set_freq(%"PRIu32") failed:%d\n",
+        fprintf(stderr, "sdriq_set_freq(%" PRIu32 ") failed:%d\n",
                 current_freq, ret);
         return SDR_DEVICE_ERANGE;
     }
 
-    sdr_device_debug("SdrDeviceSdriq::set_freq(%"PRIu32")\n", current_freq);
+    sdr_device_debug("SdrDeviceSdriq::set_freq(%" PRIu32 ")\n", current_freq);
     return SDR_DEVICE_OK;
 }
 

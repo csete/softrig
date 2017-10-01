@@ -42,6 +42,7 @@
 
 NfmDemod::NfmDemod()
 {
+    sample_rate = 0.0;
     freq_err_dc = 0.0;
     nco_phase = 0.0;
     nco_freq = 0.0;

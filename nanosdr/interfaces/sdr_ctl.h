@@ -74,7 +74,8 @@ typedef struct _ctl_agc {
 /**
  * Channel filter settings
  *
- * @todo    We probably want to use 32 bit here
+ * @fixme   We probably want to use 32 bit here
+ * @fixme   CW offset should be separate!
  * @todo    Add transition width
  */
 typedef struct _ctl_filter {
@@ -98,7 +99,7 @@ typedef struct _sdr_ctl {
         uint8_t         srv_state;
         gain_t          gain;
         uint64_t        freq;
-        uint8_t         mode;       // AM, FM, SSB, ...
+        sdr_demod_t     mode;       // AM, FM, SSB, ...
         ctl_agc_t       agc;        // AGC settings
         ctl_filter_t    filter;     // Channel filter settings
         int16_t         sql;        // Squelch threshold in dB

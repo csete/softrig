@@ -1,7 +1,7 @@
 /*
  * SDR-IQ driver for nanosdr.
  *
- * Copyright 2014-2017  Alexandru Csete OZ9AEC
+ * Copyright  2014-2017  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -265,7 +265,10 @@ static void print_info(sdriq_t *sdr)
     {
         size = 16;
         ret = ftdi_read_data(sdr->ftdi, read_buf, size);
-        fprintf(stderr, "  Device serial : %s\n", &read_buf[4]);
+        if (ret != size)
+            fprintf(stderr, "SDR-IQ error: Read %d bytes. Expected %d\n", ret, size);
+        else
+            fprintf(stderr, "  Device serial : %s\n", &read_buf[4]);
     }
 
     /* 5.1.3  Interface version */
@@ -403,41 +406,41 @@ sdriq_t *sdriq_new(void)
 
     ftdi_free = (void (*) (void *)) get_symbol(libhandle, "ftdi_free");
     if (ftdi_free == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_usb_open_desc = (int (*) (void *, int, int, const char *, const char *))
                             get_symbol(libhandle, "ftdi_usb_open_desc");
     if (ftdi_usb_open_desc == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_usb_purge_rx_buffer = (int (*) (void *))
                             get_symbol(libhandle, "ftdi_usb_purge_rx_buffer");
     if (ftdi_usb_purge_rx_buffer == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_usb_close = (int (*) (void *)) get_symbol(libhandle, "ftdi_usb_close");
     if (ftdi_usb_close == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_read_data_set_chunksize = (int (*) (void *, unsigned int))
                             get_symbol(libhandle, "ftdi_read_data_set_chunksize");
     if (ftdi_read_data_set_chunksize == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_read_data = (int (*) (void *, unsigned char *, int))
                             get_symbol(libhandle, "ftdi_read_data");
     if (ftdi_read_data == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_write_data = (int (*) (void *, const unsigned char *, int))
                             get_symbol(libhandle, "ftdi_write_data");
     if (ftdi_write_data == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
     ftdi_get_error_string = (char * (*) (void *))
                             get_symbol(libhandle, "ftdi_get_error_string");
     if (ftdi_get_error_string == NULL)
-        goto dl_error;
+        goto dl_sym_error;
 
 
     sdriq_t *sdr = (sdriq_t *) malloc(sizeof(sdriq_t));
@@ -468,6 +471,8 @@ sdriq_t *sdriq_new(void)
 
     return sdr;
 
+dl_sym_error:
+    close_library(libhandle);
 dl_error:
     fputs("Failed to load FTDI library\n", stderr);
     return NULL;
