@@ -65,8 +65,7 @@ void ControlPanel::initModeSettings(void)
 {
     mode_settings = new(std::nothrow) mode_setting[CP_MODE_NUM];
     if (!mode_settings)
-        qFatal("%s: Failed to allocate memory for mode array. Aborting.\n",
-               __func__);
+        qFatal("ControlPanel::initModeSettings: Failed to allocate memory for mode array. Aborting.\n");
 
     mode_settings[CP_MODE_NONE].demod = SDR_DEMOD_NONE;
     mode_settings[CP_MODE_NONE].filter_lo = 0.0;
@@ -105,7 +104,7 @@ void ControlPanel::initModeSettings(void)
 void ControlPanel::updateMode(quint8 mode)
 {
     Q_ASSERT(mode < CP_MODE_NUM);
-    qDebug("%s: %u -> %u", __func__, current_mode, mode);
+    qDebug("ControlPanel::updateMode: %u -> %u", current_mode, mode);
 
     current_mode = mode;
     emit    demodChanged(mode_settings[mode].demod);
