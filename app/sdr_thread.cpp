@@ -273,8 +273,7 @@ quint32 SdrThread::getFftData(real_t *fft_data_out)
     {
         pwr = FFT_PWR_SCALE * (fft_swap_buf[i].im * fft_swap_buf[i].im +
                                fft_swap_buf[i].re * fft_swap_buf[i].re);
-        pwr = 10.0 * log10f(pwr + 1.0e-20);
-        fft_data_out[i] = pwr;
+        fft_data_out[i] = 10.0 * log10f(pwr + 1.0e-20);
     }
 
     return fft_samples;
