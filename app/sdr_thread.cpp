@@ -100,7 +100,7 @@ int SdrThread::start(void)
         // FIXME: Emit error string
         return SDR_THREAD_EDEV;
     }
-    sdr_dev->set_gain(SDR_DEVICE_RX_LNA_GAIN, 70);
+    sdr_dev->set_gain(SDR_DEVICE_RX_LNA_GAIN, 60);
 
     rx = new Receiver();
     rx->init(1536000, 48000, 100, buflen);
