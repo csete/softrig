@@ -34,6 +34,8 @@
 #include "nanosdr/common/sdr_data.h"
 #include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
+#include "nanosdr/fft_thread.h"
+#include "nanosdr/receiver.h"
 #include "sdr_thread.h"
 
 #if 1
@@ -52,12 +54,17 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
 
     sdr_dev = 0;
     rx = 0;
+    fft_data_buf = 0;
+    fft_swap_buf = 0;
     input_samples = 0;
     output_samples = 0;
     aout_buffer = 0;
     resetStats();
 
     audio_out.init();
+
+    fft = new FftThread();
+    fft->init(FFT_SIZE, 20);
 
     thread = new QThread();
     moveToThread(thread);
@@ -76,6 +83,8 @@ SdrThread::~SdrThread()
     thread->quit();
     thread->wait(10000);
     delete thread;
+
+    delete fft;
 }
 
 int SdrThread::start(void)
@@ -100,6 +109,7 @@ int SdrThread::start(void)
 
     resetStats();
     sdr_dev->start();
+    fft->start();
     audio_out.start();
 
     return SDR_THREAD_OK;
@@ -125,7 +135,7 @@ void SdrThread::stop(void)
                      (1000 * stats.samples_out) / (stats.tstop - stats.tstart));
     /* *INDENT-ON* */
     audio_out.stop();
-
+    fft->stop();
     sdr_dev->stop();
     delete sdr_dev;
 
@@ -142,6 +152,8 @@ void SdrThread::process(void)
 
     SDR_THREAD_DEBUG("SDR process entered\n");
 
+    fft_data_buf = new complex_t[FFT_SIZE];
+    fft_swap_buf = new complex_t[FFT_SIZE];
     input_samples = new complex_t[buflen];
     output_samples = new real_t[buflen];
     aout_buffer = new qint16[buflen];
@@ -169,7 +181,8 @@ void SdrThread::process(void)
         stats.samples_in += samples_read;
 
         // TODO: Decimate
-        // TODO: FFT
+
+        fft->add_fft_input(samples_read, input_samples);
         samples_out = rx->process(samples_read, input_samples, output_samples);
         // TODO: SSI
         // NOTE: samples_out = -1 means SSI below squelch level
@@ -187,6 +200,8 @@ void SdrThread::process(void)
     }
 
     /* *INDENT-OFF* */
+    delete[] fft_data_buf;
+    delete[] fft_swap_buf;
     delete[] aout_buffer;
     delete[] output_samples;
     delete[] input_samples;
@@ -237,4 +252,30 @@ void SdrThread::resetStats(void)
     stats.tstop = 0;
     stats.samples_in = 0;
     stats.samples_out = 0;
+}
+
+quint32 SdrThread::getFftData(real_t *fft_data_out)
+{
+    quint32    fft_samples;
+    quint32    i;
+    real_t     pwr;
+
+    if ((fft_samples = fft->get_fft_output(fft_data_buf)) == 0)
+        return 0;
+
+    // shift buffer
+    int    cidx = fft_samples / 2;
+    memcpy(fft_swap_buf, &fft_data_buf[cidx], sizeof(complex_t) * cidx);
+    memcpy(&fft_swap_buf[cidx], fft_data_buf, sizeof(complex_t) * cidx);
+
+#define FFT_PWR_SCALE   (1.0f / ((float)FFT_SIZE * (float)FFT_SIZE))
+    for (i = 0; i < fft_samples; i++)
+    {
+        pwr = FFT_PWR_SCALE * (fft_swap_buf[i].im * fft_swap_buf[i].im +
+                               fft_swap_buf[i].re * fft_swap_buf[i].re);
+        pwr = 10.0 * log10f(pwr + 1.0e-20);
+        fft_data_out[i] = pwr;
+    }
+
+    return fft_samples;
 }

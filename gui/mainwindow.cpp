@@ -63,6 +63,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     sdr = new SdrThread();
 
+    fft_timer = new QTimer(this);
+    connect(fft_timer, SIGNAL(timeout()), this, SLOT(fftTimeout()));
+    fft_data = new real_t[FFT_SIZE]; // FIXME
+
     // 3 horizontal spacers
     spacer1 = new QWidget();
     spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -118,7 +122,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    // stop SDR
+    runButtonClicked(false);
+
     delete sdr;
+    delete fft_data;
 
     delete cfg_menu;
     delete cfg_button;
@@ -173,10 +181,15 @@ void MainWindow::runButtonClicked(bool checked)
     if (checked)
     {
         if (sdr->start() == SDR_THREAD_OK)
+        {
             sdr->setRxFrequency(fctl->getFrequency());
+            fft_timer->start(50);
+        }
+        // else FIXME
     }
     else
     {
+        fft_timer->stop();
         sdr->stop();
     }
 }
@@ -210,4 +223,15 @@ void MainWindow::setFilter(real_t low_cut, real_t high_cut)
 void MainWindow::setCwOffset(real_t offset)
 {
     sdr->setRxCwOffset(offset);
+}
+
+void MainWindow::fftTimeout(void)
+{
+    quint32    fft_samples;
+
+    fft_samples = sdr->getFftData(fft_data);
+    if (fft_samples == FFT_SIZE)
+    {
+        // plot FFT data
+    }
 }

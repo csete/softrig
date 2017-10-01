@@ -11,12 +11,15 @@
 #include "nanosdr/common/sdr_data.h"
 #include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
+#include "nanosdr/fft_thread.h"
 #include "nanosdr/receiver.h"
 
 // error codes
 #define SDR_THREAD_OK       0
 #define SDR_THREAD_ERROR   -1  // unspecified error
 #define SDR_THREAD_EDEV    -2  // device error
+
+#define FFT_SIZE 8192 // FIXME
 
 class SdrThread : public QObject
 {
@@ -32,6 +35,8 @@ public:
     {
         return is_running;
     }
+
+    quint32 getFftData(real_t *);
 
 public slots:
     void    setRxFrequency(qint64 freq);
@@ -49,12 +54,15 @@ private:
 private:
     QThread       *thread;
     SdrDevice     *sdr_dev;
+    FftThread     *fft;
     Receiver      *rx;
     AudioOutput    audio_out;
 
     bool           is_running;
     quint32        buflen;
 
+    complex_t     *fft_data_buf; // FFT samples from FFT thread
+    complex_t     *fft_swap_buf; // Buffer for swapping FFT
     complex_t     *input_samples;  // sample buffer for IQ input
     real_t        *output_samples; // sample buffer for audio output
     qint16        *aout_buffer; // audio output buffer

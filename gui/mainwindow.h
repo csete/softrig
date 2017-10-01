@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QMenu>
+#include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -35,6 +36,7 @@ private slots:
     void    setDemod(sdr_demod_t);
     void    setFilter(real_t, real_t);
     void    setCwOffset(real_t);
+    void    fftTimeout(void);
 
 private:
     void    createButtons(void);
@@ -43,6 +45,8 @@ private:
     Ui::MainWindow   *ui;
 
     SdrThread        *sdr;
+    QTimer           *fft_timer;
+    real_t           *fft_data;
 
     // controls
     FreqCtrl         *fctl;
