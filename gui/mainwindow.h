@@ -7,11 +7,12 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
-#include "gui/fft_widget.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
+
+#include "gui/tmp_plotter.h"
 
 namespace Ui {
     class MainWindow;
@@ -30,6 +31,7 @@ private slots:
     void    cfgButtonClicked(bool);
     void    menuActivated(QAction *);
     void    newFrequency(qint64 freq);
+    void    newPlotterCenterFreq(qint64);
     void    setDemod(sdr_demod_t);
     void    setFilter(real_t, real_t);
     void    setCwOffset(real_t);
@@ -44,17 +46,20 @@ private:
     SdrThread        *sdr;
     QTimer           *fft_timer;
     real_t           *fft_data;
+    real_t           *fft_avg;
 
     // controls
     FreqCtrl         *fctl;
     SsiWidget        *smeter;
     ControlPanel     *cpanel;
-    FftWidget        *fftplot;
 
     // Buttons
     QToolButton      *ptt_button;
     QToolButton      *cfg_button;
     QMenu            *cfg_menu;
+
+    // FFT plot
+    CPlotter         *fft_plot;
 
     // layout containers
     QHBoxLayout      *win_layout;

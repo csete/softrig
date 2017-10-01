@@ -32,12 +32,13 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
-#include "gui/fft_widget.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+#include "gui/tmp_plotter.h"
 
 #if 1
 #include <stdio.h>
@@ -64,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fft_timer = new QTimer(this);
     connect(fft_timer, SIGNAL(timeout()), this, SLOT(fftTimeout()));
     fft_data = new real_t[FFT_SIZE]; // FIXME
+    fft_avg = new real_t[FFT_SIZE];
 
     // 3 horizontal spacers
     spacer1 = new QWidget();
@@ -87,10 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
     smeter = new SsiWidget(this);
     smeter->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-    // FFT plot
-    fftplot = new FftWidget(this);
-    fftplot->setFrameStyle(QFrame::Box | QFrame::Plain);
-
     // Control panel
     cpanel = new ControlPanel(this);
     connect(cpanel, SIGNAL(runButtonClicked(bool)),
@@ -101,6 +99,15 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(setFilter(float,float)));
     connect(cpanel, SIGNAL(cwOffsetChanged(float)),
             this, SLOT(setCwOffset(float)));
+
+    // Temporary FFT plot
+    fft_plot = new CPlotter(this);
+    fft_plot->setSampleRate(3000000.0);
+    fft_plot->setSpanFreq(3000000);
+    fft_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    fft_plot->setFftRange(-100.0, 0.0);
+    connect(fft_plot, SIGNAL(newCenterFreq(qint64)),
+            this, SLOT(newPlotterCenterFreq(qint64)));
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
@@ -115,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // main layout with FFT and control panel
     main_layout = new QVBoxLayout();
     main_layout->addLayout(top_layout, 0);
-    main_layout->addWidget(fftplot, 1);
+    main_layout->addWidget(fft_plot, 1);
 
     // top level window layout
     win_layout = new QHBoxLayout();
@@ -134,6 +141,7 @@ MainWindow::~MainWindow()
 
     delete sdr;
     delete fft_data;
+    delete fft_avg;
 
     delete cfg_menu;
     delete cfg_button;
@@ -141,7 +149,7 @@ MainWindow::~MainWindow()
 
     delete fctl;
     delete smeter;
-    delete fftplot;
+    delete fft_plot;
     delete cpanel;
     delete top_layout;
     delete main_layout;
@@ -182,8 +190,14 @@ void MainWindow::runButtonClicked(bool checked)
     {
         if (sdr->start() == SDR_THREAD_OK)
         {
-            sdr->setRxFrequency(fctl->getFrequency());
+            newFrequency(fctl->getFrequency());
             fft_timer->start(50);
+
+            {
+                int i;
+                for (i = 0; i < FFT_SIZE; i++)
+                    fft_avg[i] = -100.0;
+            }
         }
         // else FIXME
     }
@@ -208,6 +222,12 @@ void MainWindow::menuActivated(QAction *action)
 void MainWindow::newFrequency(qint64 freq)
 {
     sdr->setRxFrequency(freq);
+    fft_plot->setCenterFreq(freq);
+}
+
+void MainWindow::newPlotterCenterFreq(qint64 freq)
+{
+    fctl->setFrequency(freq);
 }
 
 void MainWindow::setDemod(sdr_demod_t demod)
@@ -218,6 +238,7 @@ void MainWindow::setDemod(sdr_demod_t demod)
 void MainWindow::setFilter(real_t low_cut, real_t high_cut)
 {
     sdr->setRxFilter(low_cut, high_cut);
+    fft_plot->setHiLowCutFrequencies(low_cut, high_cut);
 }
 
 void MainWindow::setCwOffset(real_t offset)
@@ -232,7 +253,11 @@ void MainWindow::fftTimeout(void)
     fft_samples = sdr->getFftData(fft_data);
     if (fft_samples == FFT_SIZE)
     {
-        // plot FFT data
+        int i;
+        for (i = 0; i < FFT_SIZE; i++)
+            fft_avg[i] += 0.5f * (fft_data[i] - fft_avg[i]);
+
+        fft_plot->setNewFttData(fft_avg, fft_data, fft_samples);
     }
 
     // FIXME

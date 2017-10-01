@@ -28,6 +28,8 @@ SOURCES += \
     gui/freq_ctrl.cpp \
     gui/mainwindow.cpp \
     gui/ssi_widget.cpp \
+    gui/tmp_bookmarks.cpp \
+    gui/tmp_plotter.cpp \
     interfaces/audio_output.cpp
 
 HEADERS += \
@@ -37,6 +39,8 @@ HEADERS += \
     gui/freq_ctrl.h \
     gui/mainwindow.h \
     gui/ssi_widget.h \
+    gui/tmp_bookmarks.h \
+    gui/tmp_plotter.h \
     util/qthread_wrapper.h \
     interfaces/audio_output.h
 
