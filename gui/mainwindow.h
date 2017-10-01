@@ -12,6 +12,8 @@
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/freq_ctrl.h"
+#include "nanosdr/common/datatypes.h"
+#include "nanosdr/common/sdr_data.h"
 
 namespace Ui {
     class MainWindow;
@@ -30,6 +32,9 @@ private slots:
     void    cfgButtonClicked(bool);
     void    menuActivated(QAction *);
     void    newFrequency(qint64 freq);
+    void    setDemod(sdr_demod_t);
+    void    setFilter(real_t, real_t);
+    void    setCwOffset(real_t);
 
 private:
     void    createButtons(void);

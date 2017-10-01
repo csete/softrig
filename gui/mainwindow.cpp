@@ -82,6 +82,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Control panel
     cpanel = new ControlPanel(this);
+    connect(cpanel, SIGNAL(demodChanged(sdr_demod_t)),
+            this, SLOT(setDemod(sdr_demod_t)));
+    connect(cpanel, SIGNAL(filterChanged(float,float)),
+            this, SLOT(setFilter(float,float)));
+    connect(cpanel, SIGNAL(cwOffsetChanged(float)),
+            this, SLOT(setCwOffset(float)));
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
@@ -189,4 +195,19 @@ void MainWindow::menuActivated(QAction *action)
 void MainWindow::newFrequency(qint64 freq)
 {
     sdr->setRxFrequency(freq);
+}
+
+void MainWindow::setDemod(sdr_demod_t demod)
+{
+    sdr->setDemod(demod);
+}
+
+void MainWindow::setFilter(real_t low_cut, real_t high_cut)
+{
+    sdr->setRxFilter(low_cut, high_cut);
+}
+
+void MainWindow::setCwOffset(real_t offset)
+{
+    sdr->setRxCwOffset(offset);
 }
