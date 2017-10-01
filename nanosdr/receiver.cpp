@@ -204,7 +204,7 @@ int Receiver::process(int input_length, complex_t * input, real_t * output)
     default:
         agc.process(filt_samples, cplx_buf1, cplx_buf2);
         // FIXME: only if offset != 0
-        bfo.process(quad_samples, cplx_buf2);
+        bfo.process(filt_samples, cplx_buf2);
         ssb.process(filt_samples, cplx_buf2, real_buf1);
         break;
 
