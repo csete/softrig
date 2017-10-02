@@ -25,6 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,9 +89,17 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
     input_rate = in_rate;
     output_rate = out_rate;
 
-    // find a decimation rate based on preferred quad rate = 48 ksps
-    quad_decim = next_power_of_two(input_rate / 48000);
-    if (quad_decim == 1 && input_rate > 48000)
+    // FIXME: we need quad_rate > out_rate (because of audio resampler?)
+    if (in_rate < out_rate)
+        fprintf(stderr, "*** WARNING: Input rate is less than output rate, which is currently not supported\n");
+
+    quad_rate = 2.0 * out_rate;
+    if (input_rate < quad_rate)
+        quad_rate = input_rate;
+
+    // find a decimation rate based on quad_rate (FIXME: do we still need this?)
+    quad_decim = next_power_of_two(input_rate / quad_rate);
+    if (quad_decim == 1 && input_rate > quad_rate)
         quad_decim = 2;
 
     quad_decim = decim.init(quad_decim, dyn_range);
@@ -127,7 +136,10 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
     bfo.set_sample_rate(quad_rate);
 
     // re-initialize resampler
-    fputs("*** FIXME: Check resampler rates (should be INT)\n", stderr);
+    if (rintf(quad_rate) != quad_rate)
+        fputs("*** WARNING: quad_rate is not an integer\n", stderr);
+    if (rintf(output_rate) != output_rate)
+        fputs("*** WARNING: output_rate is not an integer\n", stderr);
     fputs("*** FIXME: Check resampler quality setting\n", stderr);
     resampler = speex_resampler_init(1, quad_rate, output_rate, 3, &error);
     if (error || !resampler)
