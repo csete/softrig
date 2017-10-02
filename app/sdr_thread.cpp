@@ -50,7 +50,8 @@
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
     is_running = false;
-    buflen = 30720;            // 20 msec @ 1.536 Msps
+//    buflen = 30720;            // 20 msec @ 1.536 Msps
+    buflen = 60000;            // 20 msec @ 3 Mps
 
     sdr_dev = 0;
     rx = 0;
@@ -94,6 +95,7 @@ int SdrThread::start(void)
 
     SDR_THREAD_DEBUG("Starting SDR thread...\n");
 
+#if 0
     sdr_dev = sdr_device_create_rtlsdr();
     if (sdr_dev->init(1536000, "") != SDR_DEVICE_OK)
     {
@@ -104,6 +106,20 @@ int SdrThread::start(void)
 
     rx = new Receiver();
     rx->init(1536000, 48000, 100, buflen);
+#endif
+
+#if 1
+    sdr_dev = sdr_device_create_airspy();
+    if (sdr_dev->init(3000000, "") != SDR_DEVICE_OK)
+    {
+        // FIXME: Emit error string
+        return SDR_THREAD_EDEV;
+    }
+    sdr_dev->set_gain(SDR_DEVICE_RX_LIN_GAIN, 70);
+
+    rx = new Receiver();
+    rx->init(3000000, 48000, 100, buflen);
+#endif
 
     is_running = true;
 
