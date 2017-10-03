@@ -26,6 +26,7 @@ SOURCES += \
     gui/control_panel.cpp \
     gui/freq_ctrl.cpp \
     gui/mainwindow.cpp \
+    gui/ssi_widget.cpp \
     interfaces/audio_output.cpp
 
 HEADERS += \
@@ -33,6 +34,7 @@ HEADERS += \
     gui/control_panel.h \
     gui/freq_ctrl.h \
     gui/mainwindow.h \
+    gui/ssi_widget.h \
     util/qthread_wrapper.h \
     interfaces/audio_output.h
 
