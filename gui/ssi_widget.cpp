@@ -65,12 +65,12 @@ SsiWidget::SsiWidget(QWidget *parent) : QFrame(parent)
 
 QSize SsiWidget::minimumSizeHint() const
 {
-    return QSize(20, 10);
+    return QSize(120, 36);
 }
 
 QSize SsiWidget::sizeHint() const
 {
-    return QSize(100, 30);
+    return QSize(120, 36);
 }
 
 void SsiWidget::resizeEvent(QResizeEvent *)
