@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+   <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -33,19 +33,44 @@
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>0</number>
      </property>
+     <item>
+      <widget class="QPushButton" name="runButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Start / stop SDR</string>
+       </property>
+       <property name="text">
+        <string>&gt;</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="rxButton">
        <property name="sizePolicy">
@@ -56,29 +81,20 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>50</width>
-         <height>30</height>
+         <width>36</width>
+         <height>36</height>
         </size>
        </property>
        <property name="toolTip">
-        <string>Receiver controls</string>
+        <string>Receiver settings</string>
        </property>
        <property name="text">
         <string>RX</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="txButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -87,26 +103,20 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>50</width>
-         <height>30</height>
+         <width>36</width>
+         <height>36</height>
         </size>
        </property>
        <property name="toolTip">
-        <string>Transmitter controls</string>
+        <string>Transmitter settings</string>
        </property>
        <property name="text">
         <string>TX</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="fftButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -115,15 +125,37 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>50</width>
-         <height>30</height>
+         <width>36</width>
+         <height>36</height>
         </size>
        </property>
        <property name="toolTip">
-        <string>FFT settings</string>
+        <string>Panadapter and waterfall settings</string>
        </property>
        <property name="text">
         <string>FFT</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="recButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Record</string>
+       </property>
+       <property name="text">
+        <string>REC</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -168,7 +200,7 @@
             <x>0</x>
             <y>0</y>
             <width>248</width>
-            <height>251</height>
+            <height>255</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -289,8 +321,36 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="txPage"/>
-     <widget class="QWidget" name="fftPage"/>
+     <widget class="QWidget" name="txPage">
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>111</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TX settings</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="fftPage">
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>20</y>
+         <width>111</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>FFT settings</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>

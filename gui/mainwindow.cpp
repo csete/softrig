@@ -28,11 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <QDebug>
-#include <QMenu>
-#include <QToolButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <QtWidgets>
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
@@ -86,6 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Control panel
     cpanel = new ControlPanel(this);
+    connect(cpanel, SIGNAL(runButtonClicked(bool)),
+            this, SLOT(runButtonClicked(bool)));
     connect(cpanel, SIGNAL(demodChanged(sdr_demod_t)),
             this, SLOT(setDemod(sdr_demod_t)));
     connect(cpanel, SIGNAL(filterChanged(float,float)),
@@ -95,26 +93,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
-    top_layout->addWidget(ptt_button);
-    top_layout->addWidget(spacer1);
-    top_layout->addWidget(fctl);
-    top_layout->addWidget(spacer2);
-    top_layout->addWidget(run_button);
-    top_layout->addWidget(cfg_button);
+    top_layout->addWidget(ptt_button, 0);
+    top_layout->addWidget(spacer1, 1);
+    top_layout->addWidget(fctl, 1);
+    top_layout->addWidget(spacer2, 1);
+    top_layout->addWidget(cfg_button, 0);
 
     // main layout with FFT and control panel
-    main_layout = new QHBoxLayout();
+    main_layout = new QVBoxLayout();
     // FFT placeholder
     QWidget   *fft_place_holder = new QWidget();
     fft_place_holder->setSizePolicy(QSizePolicy::Expanding,
                                     QSizePolicy::Expanding);
+    main_layout->addLayout(top_layout, 0);
     main_layout->addWidget(fft_place_holder, 1);
-    main_layout->addWidget(cpanel, 0);
 
     // top level window layout
-    win_layout = new QVBoxLayout();
-    win_layout->addLayout(top_layout, 0);
-    win_layout->addLayout(main_layout, 1);
+    win_layout = new QHBoxLayout();
+    win_layout->setMargin(4);
+    win_layout->addLayout(main_layout, 12);
+    win_layout->addWidget(cpanel, 2);
     ui->centralWidget->setLayout(win_layout);
 
     // FIXME: Adjust default size as a function of desktop size
@@ -130,9 +128,7 @@ MainWindow::~MainWindow()
 
     delete cfg_menu;
     delete cfg_button;
-
     delete ptt_button;
-    delete run_button;
 
     delete fctl;
     delete cpanel;
@@ -147,16 +143,9 @@ void MainWindow::createButtons(void)
     ptt_button = new QToolButton(this);
     ptt_button->setText(tr("PTT"));
     ptt_button->setCheckable(true);
-    ptt_button->setSizePolicy(QSizePolicy::Preferred,
+    ptt_button->setMinimumSize(36, 36);
+    ptt_button->setSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::MinimumExpanding);
-
-    run_button = new QToolButton(this);
-    run_button->setText(tr("Run"));
-    run_button->setCheckable(true);
-    run_button->setSizePolicy(QSizePolicy::Preferred,
-                              QSizePolicy::MinimumExpanding);
-    connect(run_button, SIGNAL(clicked(bool)),
-            this, SLOT(runButtonClicked(bool)));
 
     cfg_menu = new QMenu();
     cfg_menu->setTitle(tr("Configure..."));
@@ -165,10 +154,10 @@ void MainWindow::createButtons(void)
     cfg_menu->addAction(tr("User interface"));
 
     cfg_button = new QToolButton(this);
+    cfg_button->setText("C");
+    cfg_button->setMinimumSize(36, 36);
     cfg_button->setMenu(cfg_menu);
-    cfg_button->setArrowType(Qt::NoArrow);
-    cfg_button->setText(tr("CTL"));
-    cfg_button->setSizePolicy(QSizePolicy::Preferred,
+    cfg_button->setSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::MinimumExpanding);
     connect(cfg_button, SIGNAL(triggered(QAction *)),
             this, SLOT(menuActivated(QAction *)));

@@ -3,12 +3,7 @@
  */
 #pragma once
 
-#include <QHBoxLayout>
-#include <QMainWindow>
-#include <QMenu>
-#include <QTimer>
-#include <QToolButton>
-#include <QVBoxLayout>
+#include <QtWidgets>
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
@@ -54,12 +49,11 @@ private:
 
     // Buttons
     QToolButton      *ptt_button;
-    QToolButton      *run_button;
     QToolButton      *cfg_button;
     QMenu            *cfg_menu;
 
     // layout containers
-    QVBoxLayout      *win_layout;
+    QHBoxLayout      *win_layout;
     QHBoxLayout      *top_layout;
-    QHBoxLayout      *main_layout;
+    QVBoxLayout      *main_layout;
 };

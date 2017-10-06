@@ -44,6 +44,12 @@
 #define CP_MODE_FMN     7      // Voice FM, 2.5 kHz
 #define CP_MODE_NUM     8
 
+// page indices in stacked widget
+#define PAGE_IDX_RX_OPT     0
+#define PAGE_IDX_TX_OPT     1
+#define PAGE_IDX_FFT_OPT    2
+
+
 ControlPanel::ControlPanel(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ControlPanel)
@@ -113,13 +119,44 @@ void ControlPanel::updateMode(quint8 mode)
     emit    cwOffsetChanged(mode_settings[mode].cw_offset);
 }
 
-void ControlPanel::on_amButton_clicked(bool)
+void ControlPanel::on_runButton_clicked(bool checked)
 {
+    emit runButtonClicked(checked);
+}
+
+void ControlPanel::on_rxButton_clicked(bool checked)
+{
+    Q_UNUSED(checked);
+    ui->stackedWidget->setCurrentIndex(PAGE_IDX_RX_OPT);
+}
+
+void ControlPanel::on_txButton_clicked(bool checked)
+{
+    Q_UNUSED(checked);
+    ui->stackedWidget->setCurrentIndex(PAGE_IDX_TX_OPT);
+}
+
+void ControlPanel::on_fftButton_clicked(bool checked)
+{
+    Q_UNUSED(checked);
+    ui->stackedWidget->setCurrentIndex(PAGE_IDX_FFT_OPT);
+}
+
+void ControlPanel::on_recButton_clicked(bool checked)
+{
+    qDebug() << __func__ << checked;
+}
+
+void ControlPanel::on_amButton_clicked(bool checked)
+{
+    Q_UNUSED(checked);
     updateMode(CP_MODE_AM);
 }
 
-void ControlPanel::on_ssbButton_clicked(bool)
+void ControlPanel::on_ssbButton_clicked(bool checked)
 {
+    Q_UNUSED(checked);
+
     quint8    new_mode;
 
     if (current_mode == CP_MODE_LSB)
@@ -132,12 +169,14 @@ void ControlPanel::on_ssbButton_clicked(bool)
     updateMode(new_mode);
 }
 
-void ControlPanel::on_cwButton_clicked(bool)
+void ControlPanel::on_cwButton_clicked(bool checked)
 {
+    Q_UNUSED(checked);
     updateMode(CP_MODE_CW);
 }
 
-void ControlPanel::on_fmButton_clicked(bool)
+void ControlPanel::on_fmButton_clicked(bool checked)
 {
+    Q_UNUSED(checked);
     updateMode(CP_MODE_FM);
 }
