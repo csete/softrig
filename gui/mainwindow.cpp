@@ -232,4 +232,7 @@ void MainWindow::fftTimeout(void)
     {
         // plot FFT data
     }
+
+    // FIXME
+    smeter->setLevel(sdr->getSignalStrength());
 }

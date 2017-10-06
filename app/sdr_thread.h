@@ -37,6 +37,7 @@ public:
     }
 
     quint32 getFftData(real_t *);
+    float   getSignalStrength(void);
 
 public slots:
     void    setRxFrequency(qint64 freq);

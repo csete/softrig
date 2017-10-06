@@ -294,3 +294,8 @@ quint32 SdrThread::getFftData(real_t *fft_data_out)
 
     return fft_samples;
 }
+
+float SdrThread::getSignalStrength(void)
+{
+    return rx->get_signal_strength();
+}
