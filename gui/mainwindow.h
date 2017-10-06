@@ -8,6 +8,7 @@
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/freq_ctrl.h"
+#include "gui/ssi_widget.h"
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
 
@@ -45,6 +46,7 @@ private:
 
     // controls
     FreqCtrl         *fctl;
+    SsiWidget        *smeter;
     ControlPanel     *cpanel;
 
     // Buttons

@@ -33,6 +33,7 @@
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/freq_ctrl.h"
+#include "gui/ssi_widget.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -75,10 +76,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Frequency controller
     fctl = new FreqCtrl(this);
+    fctl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     fctl->setup(9, 0, 900e6, 1, FCTL_UNIT_NONE);
     fctl->setFrequency(127100000);
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
+
+    // SSI
+    smeter = new SsiWidget(this);
+    smeter->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     // Control panel
     cpanel = new ControlPanel(this);
@@ -95,8 +101,10 @@ MainWindow::MainWindow(QWidget *parent) :
     top_layout = new QHBoxLayout();
     top_layout->addWidget(ptt_button, 0);
     top_layout->addWidget(spacer1, 1);
-    top_layout->addWidget(fctl, 1);
+    top_layout->addWidget(fctl, 2);
     top_layout->addWidget(spacer2, 1);
+    top_layout->addWidget(smeter, 2);
+    top_layout->addWidget(spacer3, 1);
     top_layout->addWidget(cfg_button, 0);
 
     // main layout with FFT and control panel
@@ -131,6 +139,7 @@ MainWindow::~MainWindow()
     delete ptt_button;
 
     delete fctl;
+    delete smeter;
     delete cpanel;
     delete top_layout;
     delete main_layout;
