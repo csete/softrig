@@ -24,6 +24,7 @@ SOURCES += \
     app/main.cpp \
     app/sdr_thread.cpp \
     gui/control_panel.cpp \
+    gui/fft_widget.cpp \
     gui/freq_ctrl.cpp \
     gui/mainwindow.cpp \
     gui/ssi_widget.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 HEADERS += \
     app/sdr_thread.h \
     gui/control_panel.h \
+    gui/fft_widget.h \
     gui/freq_ctrl.h \
     gui/mainwindow.h \
     gui/ssi_widget.h \

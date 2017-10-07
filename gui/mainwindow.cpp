@@ -32,6 +32,7 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
+#include "gui/fft_widget.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
 
@@ -86,6 +87,10 @@ MainWindow::MainWindow(QWidget *parent) :
     smeter = new SsiWidget(this);
     smeter->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
+    // FFT plot
+    fftplot = new FftWidget(this);
+    fftplot->setFrameStyle(QFrame::Box | QFrame::Plain);
+
     // Control panel
     cpanel = new ControlPanel(this);
     connect(cpanel, SIGNAL(runButtonClicked(bool)),
@@ -109,12 +114,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // main layout with FFT and control panel
     main_layout = new QVBoxLayout();
-    // FFT placeholder
-    QWidget   *fft_place_holder = new QWidget();
-    fft_place_holder->setSizePolicy(QSizePolicy::Expanding,
-                                    QSizePolicy::Expanding);
     main_layout->addLayout(top_layout, 0);
-    main_layout->addWidget(fft_place_holder, 1);
+    main_layout->addWidget(fftplot, 1);
 
     // top level window layout
     win_layout = new QHBoxLayout();
@@ -140,6 +141,7 @@ MainWindow::~MainWindow()
 
     delete fctl;
     delete smeter;
+    delete fftplot;
     delete cpanel;
     delete top_layout;
     delete main_layout;

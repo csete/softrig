@@ -7,6 +7,7 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
+#include "gui/fft_widget.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
 #include "nanosdr/common/datatypes.h"
@@ -48,6 +49,7 @@ private:
     FreqCtrl         *fctl;
     SsiWidget        *smeter;
     ControlPanel     *cpanel;
+    FftWidget        *fftplot;
 
     // Buttons
     QToolButton      *ptt_button;
