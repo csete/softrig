@@ -71,7 +71,7 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     moveToThread(thread);
     connect(thread, SIGNAL(started()), this, SLOT(process()));
     connect(thread, SIGNAL(finished()), this, SLOT(thread_finished()));
-    thread->setObjectName("SoftrigSdrThread\n");
+    thread->setObjectName("SdrThread\n");
     thread->start();
 }
 
@@ -124,9 +124,9 @@ int SdrThread::start(void)
     is_running = true;
 
     resetStats();
-    sdr_dev->start();
-    fft->start();
     audio_out.start();
+    fft->start();
+    sdr_dev->start();
 
     return SDR_THREAD_OK;
 }
@@ -150,14 +150,13 @@ void SdrThread::stop(void)
                      stats.samples_out,
                      (1000 * stats.samples_out) / (stats.tstop - stats.tstart));
     /* *INDENT-ON* */
-    audio_out.stop();
-    fft->stop();
-    sdr_dev->stop();
-    delete sdr_dev;
-
-    delete rx;
-
     is_running = false;
+    sdr_dev->stop();
+    fft->stop();
+    audio_out.stop();
+
+    delete sdr_dev;
+    delete rx;
 }
 
 void SdrThread::process(void)
