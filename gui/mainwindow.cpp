@@ -32,6 +32,7 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
+#include "gui/device_config.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
 
@@ -40,12 +41,10 @@
 
 #include "gui/tmp_plotter.h"
 
-#if 1
-#include <stdio.h>
-#define MW_DEBUG(...) fprintf(stderr, __VA_ARGS__)
-#else
-#define MW_DEBUG(...)
-#endif
+// IDs used to identify menu items
+#define MENU_ID_SDR         0
+#define MENU_ID_AUDIO       1
+#define MENU_ID_GUI         2
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -166,11 +165,19 @@ void MainWindow::createButtons(void)
     ptt_button->setMinimumSize(36, 36);
     ptt_button->setSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::MinimumExpanding);
-    cfg_menu = new QMenu();
-    cfg_menu->setTitle(tr("Configure..."));
-    cfg_menu->addAction(tr("SDR device"));
-    cfg_menu->addAction(tr("Soundcard"));
-    cfg_menu->addAction(tr("User interface"));
+
+    {
+        QAction     *action;
+
+        cfg_menu = new QMenu();
+        cfg_menu->setTitle(tr("Configure..."));
+        action = cfg_menu->addAction(tr("SDR device"));
+        action->setData(QVariant((int)MENU_ID_SDR));
+        action = cfg_menu->addAction(tr("Soundcard"));
+        action->setData(QVariant((int)MENU_ID_AUDIO));
+        action = cfg_menu->addAction(tr("User interface"));
+        action->setData(QVariant((int)MENU_ID_GUI));
+    }
 
     cfg_button = new QToolButton(this);
     cfg_button->setText("C");
@@ -214,9 +221,39 @@ void MainWindow::cfgButtonClicked(bool checked)
     cpanel->setVisible(!cpanel->isVisible());
 }
 
+void MainWindow::runDeviceConfig(void)
+{
+    DeviceConfig    conf(this);
+    conf.exec();
+}
+
 void MainWindow::menuActivated(QAction *action)
 {
-    MW_DEBUG("%s: %s\n", __func__, action->text().toLatin1().data());
+    bool    conv_ok;
+    int     menu_id;
+
+    menu_id = action->data().toInt(&conv_ok);
+    if (!conv_ok)
+    {
+        qCritical("%s: Menu item '%s' has no valid ID", __func__,
+                  action->text().toLatin1().data());
+        return;
+    }
+
+    switch (menu_id)
+    {
+    case MENU_ID_SDR:
+        runDeviceConfig();
+        break;
+    case MENU_ID_AUDIO:
+        break;
+    case MENU_ID_GUI:
+        break;
+    default:
+        qCritical("%s: Unknown menu item '%s' ID=%d", __func__,
+                  action->text().toLatin1().data(), menu_id);
+        break;
+    }
 }
 
 void MainWindow::newFrequency(qint64 freq)

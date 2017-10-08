@@ -39,6 +39,7 @@ private slots:
 
 private:
     void    createButtons(void);
+    void    runDeviceConfig(void);
 
 private:
     Ui::MainWindow   *ui;
