@@ -79,15 +79,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Frequency controller
     fctl = new FreqCtrl(this);
-    fctl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    fctl->setup(9, 0, 900e6, 1, FCTL_UNIT_NONE);
+    fctl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    fctl->setup(10, 0, 2e9, 1, FCTL_UNIT_NONE);
     fctl->setFrequency(127100000);
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
 
     // SSI
     smeter = new SsiWidget(this);
-    smeter->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    smeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // Control panel
     cpanel = new ControlPanel(this);
@@ -126,7 +126,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // top level window layout
     win_layout = new QHBoxLayout();
-    win_layout->setMargin(4);
+    win_layout->setContentsMargins(0, 4, 0, 0);
+    win_layout->setSpacing(2);
     win_layout->addLayout(main_layout, 12);
     win_layout->addWidget(cpanel, 2);
     ui->centralWidget->setLayout(win_layout);
@@ -165,7 +166,6 @@ void MainWindow::createButtons(void)
     ptt_button->setMinimumSize(36, 36);
     ptt_button->setSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::MinimumExpanding);
-
     cfg_menu = new QMenu();
     cfg_menu->setTitle(tr("Configure..."));
     cfg_menu->addAction(tr("SDR device"));
