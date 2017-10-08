@@ -64,7 +64,7 @@
         <string>Start / stop SDR</string>
        </property>
        <property name="text">
-        <string>&gt;</string>
+        <string>RUN</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
