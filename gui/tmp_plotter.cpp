@@ -621,7 +621,7 @@ quint64 CPlotter::getWfTimeRes(void)
     if (msec_per_wfline)
         return msec_per_wfline;
     else
-        return 1000 * fft_rate / m_WaterfallPixmap.height(); // Auto mode
+        return 1000 * (quint64) fft_rate / m_WaterfallPixmap.height(); // Auto mode
 }
 
 void CPlotter::setFftRate(int rate_hz)
