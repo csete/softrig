@@ -107,6 +107,8 @@ MainWindow::MainWindow(QWidget *parent) :
     fft_plot->setFftRange(-100.0, 0.0);
     connect(fft_plot, SIGNAL(newCenterFreq(qint64)),
             this, SLOT(newPlotterCenterFreq(qint64)));
+    connect(fft_plot, SIGNAL(pandapterRangeChanged(float,float)),
+            fft_plot, SLOT(setWaterfallRange(float,float)));
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
