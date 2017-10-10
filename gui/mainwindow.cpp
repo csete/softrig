@@ -46,6 +46,8 @@
 #define MENU_ID_AUDIO       1
 #define MENU_ID_GUI         2
 
+#define DEFAULT_FREQ        127100000
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -80,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fctl = new FreqCtrl(this);
     fctl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     fctl->setup(10, 0, 2e9, 1, FCTL_UNIT_NONE);
-    fctl->setFrequency(127100000);
+    fctl->setFrequency(DEFAULT_FREQ);
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
 
@@ -103,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fft_plot = new CPlotter(this);
     fft_plot->setSampleRate(3000000.0);
     fft_plot->setSpanFreq(3000000);
+    fft_plot->setCenterFreq(DEFAULT_FREQ);
     fft_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     fft_plot->setFftRange(-100.0, 0.0);
     connect(fft_plot, SIGNAL(newCenterFreq(qint64)),
