@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->menuBar->hide();
     ui->toolBar->hide();
+    ui->statusBar->hide();
 
     sdr = new SdrThread();
 
