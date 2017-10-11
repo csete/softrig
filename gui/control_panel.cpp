@@ -59,6 +59,8 @@ ControlPanel::ControlPanel(QWidget *parent) :
 
     ui->setupUi(this);
     initModeSettings();
+
+    ui->rxFilterBox->setEnabled(false);
 }
 
 ControlPanel::~ControlPanel()
