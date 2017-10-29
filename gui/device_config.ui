@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>278</width>
-    <height>249</height>
+    <width>258</width>
+    <height>229</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,11 +19,14 @@
      <property name="labelAlignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
+     <property name="formAlignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
      <property name="horizontalSpacing">
       <number>10</number>
      </property>
      <property name="verticalSpacing">
-      <number>6</number>
+      <number>5</number>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="sdrTypeLabel">
@@ -34,7 +37,16 @@
      </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="sdrTypeCombo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
+        <string>SDR device type</string>
+       </property>
+       <property name="accessibleName">
         <string>SDR device type</string>
        </property>
       </widget>
@@ -50,6 +62,9 @@
       <widget class="QComboBox" name="inputRateCombo">
        <property name="toolTip">
         <string>SDR sample rate</string>
+       </property>
+       <property name="accessibleName">
+        <string>Input sample rate</string>
        </property>
        <property name="editable">
         <bool>true</bool>
@@ -67,6 +82,9 @@
       <widget class="QComboBox" name="decimCombo">
        <property name="toolTip">
         <string>Decimation factor</string>
+       </property>
+       <property name="accessibleName">
+        <string>Decimation</string>
        </property>
        <item>
         <property name="text">
@@ -102,10 +120,13 @@
      <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="bwSpinBox">
        <property name="toolTip">
-        <string>Analog bandwidth (0 means usedefault)</string>
+        <string>Analog bandwidth (0 means default)</string>
        </property>
        <property name="statusTip">
         <string/>
+       </property>
+       <property name="accessibleName">
+        <string>Analog bandwidth</string>
        </property>
        <property name="suffix">
         <string> kHz</string>
@@ -121,7 +142,7 @@
      <item row="5" column="0">
       <widget class="QLabel" name="convLabel">
        <property name="text">
-        <string>Up/down converter</string>
+        <string>Transverter</string>
        </property>
       </widget>
      </item>
@@ -129,6 +150,9 @@
       <widget class="QDoubleSpinBox" name="convSpinBox">
        <property name="toolTip">
         <string>Up- or downconverter frequency. Negative value means upconverter.</string>
+       </property>
+       <property name="accessibleName">
+        <string>Up or downconverter frequency</string>
        </property>
        <property name="suffix">
         <string> MHz</string>
@@ -147,7 +171,7 @@
      <item row="6" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Frequency error</string>
+        <string>Freq. correction</string>
        </property>
       </widget>
      </item>
@@ -155,6 +179,9 @@
       <widget class="QSpinBox" name="spinBox">
        <property name="toolTip">
         <string>Frequency correction in parts per billion</string>
+       </property>
+       <property name="accessibleName">
+        <string>Frequency correction</string>
        </property>
        <property name="suffix">
         <string> ppb</string>
