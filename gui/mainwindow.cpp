@@ -32,7 +32,7 @@
 
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
-#include "gui/device_config.h"
+#include "gui/device_config_dialog.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
 
@@ -229,8 +229,8 @@ void MainWindow::cfgButtonClicked(bool checked)
 
 void MainWindow::runDeviceConfig(void)
 {
-    DeviceConfig    conf(this);
-    conf.exec();
+    DeviceConfigDialog    conf_dialog(this);
+    conf_dialog.exec();
 }
 
 void MainWindow::menuActivated(QAction *action)

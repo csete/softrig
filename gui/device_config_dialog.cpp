@@ -29,12 +29,12 @@
  */
 #include <QDebug>
 
-#include "device_config.h"
-#include "ui_device_config.h"
+#include "device_config_dialog.h"
+#include "ui_device_config_dialog.h"
 
-DeviceConfig::DeviceConfig(QWidget *parent) :
+DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DeviceConfig)
+    ui(new Ui::DeviceConfigDialog)
 {
     ui->setupUi(this);
 
@@ -52,12 +52,12 @@ DeviceConfig::DeviceConfig(QWidget *parent) :
     ui->sdrTypeCombo->addItem(tr("RFSpace SDR-IQ"), "sdriq");
 }
 
-DeviceConfig::~DeviceConfig()
+DeviceConfigDialog::~DeviceConfigDialog()
 {
     delete ui;
 }
 
-void DeviceConfig::sdrTypeChanged(int index)
+void DeviceConfigDialog::sdrTypeChanged(int index)
 {
     Q_UNUSED(index);
 
@@ -100,7 +100,7 @@ void DeviceConfig::sdrTypeChanged(int index)
 }
 
 
-void DeviceConfig::inputRateChanged(const QString &rate_str)
+void DeviceConfigDialog::inputRateChanged(const QString &rate_str)
 {
     bool    conv_ok;
     int     rate;
@@ -138,7 +138,7 @@ void DeviceConfig::inputRateChanged(const QString &rate_str)
  * Calculate the quadrature rate and update the sample rate
  * label
  */
-void DeviceConfig::decimationChanged(int index)
+void DeviceConfigDialog::decimationChanged(int index)
 {
     Q_UNUSED(index);
 

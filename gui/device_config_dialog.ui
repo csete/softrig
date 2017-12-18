@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DeviceConfig</class>
- <widget class="QDialog" name="DeviceConfig">
+ <class>DeviceConfigDialog</class>
+ <widget class="QDialog" name="DeviceConfigDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>258</width>
-    <height>229</height>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -213,7 +213,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DeviceConfig</receiver>
+   <receiver>DeviceConfigDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -229,7 +229,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DeviceConfig</receiver>
+   <receiver>DeviceConfigDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

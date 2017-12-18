@@ -24,7 +24,7 @@ SOURCES += \
     app/main.cpp \
     app/sdr_thread.cpp \
     gui/control_panel.cpp \
-    gui/device_config.cpp \
+    gui/device_config_dialog.cpp \
     gui/fft_widget.cpp \
     gui/freq_ctrl.cpp \
     gui/mainwindow.cpp \
@@ -35,8 +35,8 @@ SOURCES += \
 
 HEADERS += \
     app/sdr_thread.h \
-    gui/device_config.h \
     gui/control_panel.h \
+    gui/device_config_dialog.h \
     gui/fft_widget.h \
     gui/freq_ctrl.h \
     gui/mainwindow.h \
@@ -48,8 +48,8 @@ HEADERS += \
 
 FORMS += \
     gui/control_panel.ui \
-    gui/mainwindow.ui \
-    gui/device_config.ui
+    gui/device_config_dialog.ui \
+    gui/mainwindow.ui
 
 # make clean target
 QMAKE_CLEAN += softrig

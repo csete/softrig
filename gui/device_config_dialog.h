@@ -6,16 +6,16 @@
 #include <QDialog>
 
 namespace Ui {
-class DeviceConfig;
+class DeviceConfigDialog;
 }
 
-class DeviceConfig : public QDialog
+class DeviceConfigDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DeviceConfig(QWidget *parent = 0);
-    ~DeviceConfig();
+    explicit DeviceConfigDialog(QWidget *parent = 0);
+    ~DeviceConfigDialog();
 
 private slots:
     void    sdrTypeChanged(int);
@@ -23,5 +23,5 @@ private slots:
     void    decimationChanged(int);
 
 private:
-    Ui::DeviceConfig *ui;
+    Ui::DeviceConfigDialog *ui;
 };
