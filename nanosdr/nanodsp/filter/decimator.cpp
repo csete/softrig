@@ -60,10 +60,10 @@ Decimator::~Decimator()
 unsigned int Decimator::init(unsigned int _decim, unsigned int _att)
 {
     if (_decim == decim && _att == atten)
-        return decim;
+        return _decim;
 
     if (_decim < 2 || _decim > MAX_DECIMATION || !is_power_of_two(_decim))
-        return 0;
+        return 1;
 
     delete_filters();
 
