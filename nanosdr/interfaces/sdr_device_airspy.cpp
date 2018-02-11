@@ -360,26 +360,23 @@ int SdrDeviceAirspy::init(float samprate, const char * options)
 
 int SdrDeviceAirspy::set_sample_rate(float new_rate)
 {
-    uint32_t    idx;
+    uint32_t    rate;
+    int         result;
 
-    // FIXME: get table from libairspy
-    if (new_rate == 10.e6 || new_rate == 6.0e6)
-        idx = 0;
-    else if (new_rate == 2.5e6 || new_rate == 3.0e6)
-        idx = 1;
-    else
+    rate = new_rate;
+    if (rate != 2.5e6 && rate !=3.0e6 && rate != 6.0e6 && rate != 10.0e6)
         return SDR_DEVICE_EINVAL;
 
-    int     result = airspy_set_samplerate(dev, idx);
+    result = airspy_set_samplerate(dev, rate);
     if (result != AIRSPY_SUCCESS)
     {
         fprintf(stderr, "airspy_set_samplerate(%"PRIu32") failed (%d): %s\n",
-                sample_rate, result, airspy_error_name((enum airspy_error)result));
+                rate, result, airspy_error_name((enum airspy_error)result));
         return SDR_DEVICE_ERROR;
     }
 
-    sample_rate = (uint32_t) new_rate;
-    ring_buffer_cplx_resize(sample_buffer, 0.1f * new_rate);
+    sample_rate = rate;
+    ring_buffer_cplx_resize(sample_buffer, rate / 10);
 
     return SDR_DEVICE_OK;
 }

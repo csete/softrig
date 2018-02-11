@@ -205,4 +205,3 @@ SdrDevice * sdr_device_create_file(void);
 SdrDevice * sdr_device_create_rtlsdr(void);
 SdrDevice * sdr_device_create_sdriq(void);
 SdrDevice * sdr_device_create_stdin(void);
-
