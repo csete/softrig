@@ -1,7 +1,7 @@
 /*
  * Airspy backend
  *
- * Copyright  2014-2017  Alexandru Csete OZ9AEC
+ * Copyright  2014-2018  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -105,11 +105,11 @@ static void (*airspy_lib_version)(airspy_lib_version_t * lib_version);
 static char * (*airspy_error_name)(enum airspy_error errcode);
 // end of Airspy API defs
 
-class SdrDeviceAirspy : public SdrDevice
+class SdrDeviceAirspyBase : public SdrDevice
 {
 public:
-    SdrDeviceAirspy(void);
-    virtual     ~SdrDeviceAirspy();
+    SdrDeviceAirspyBase(bool mini);
+    virtual     ~SdrDeviceAirspyBase();
 
     // Virtual function implementations
     int         init(float samprate, const char * options);
@@ -130,6 +130,10 @@ public:
     uint32_t    get_num_samples(void) const;
     uint32_t    read_bytes(void * buffer, uint32_t bytes);
     uint32_t    read_samples(complex_t * buffer, uint32_t samples);
+    int         type(void) const
+    {
+        return is_mini ? SDR_DEVICE_AIRSPYMINI : SDR_DEVICE_AIRSPY;
+    };
 
 private:
     int         load_libairspy(void);
@@ -148,7 +152,20 @@ private:
 
     ring_buffer_t  *sample_buffer;
 
+    bool        is_mini;
     bool        initialized;
+};
+
+class SdrDeviceAirspy : public SdrDeviceAirspyBase
+{
+public:
+    SdrDeviceAirspy() : SdrDeviceAirspyBase(false) {}
+};
+
+class SdrDeviceAirspyMini : public SdrDeviceAirspyBase
+{
+public:
+    SdrDeviceAirspyMini() : SdrDeviceAirspyBase(true) {}
 };
 
 SdrDevice * sdr_device_create_airspy()
@@ -156,13 +173,18 @@ SdrDevice * sdr_device_create_airspy()
     return new SdrDeviceAirspy();
 }
 
+SdrDevice * sdr_device_create_airspymini()
+{
+    return new SdrDeviceAirspyMini();
+}
+
 /* The callback function is a static method to allow access to private
  * members of the instance.
  */
-int SdrDeviceAirspy::airspy_rx_callback(airspy_transfer_t * transfer)
+int SdrDeviceAirspyBase::airspy_rx_callback(airspy_transfer_t * transfer)
 {
     // we are in a static method, so we need to get the instance
-    SdrDeviceAirspy *sdrdev = (SdrDeviceAirspy *) transfer->ctx;
+    SdrDeviceAirspyBase *sdrdev = (SdrDeviceAirspyBase *) transfer->ctx;
 
     if (transfer->sample_type != AIRSPY_SAMPLE_FLOAT32_IQ)
     {
@@ -178,7 +200,7 @@ int SdrDeviceAirspy::airspy_rx_callback(airspy_transfer_t * transfer)
     return 0;
 }
 
-SdrDeviceAirspy::SdrDeviceAirspy(void)
+SdrDeviceAirspyBase::SdrDeviceAirspyBase(bool mini)
 {
     lib = 0;
     dev = 0;
@@ -187,10 +209,11 @@ SdrDeviceAirspy::SdrDeviceAirspy(void)
     sample_rate = 0;
     current_freq = 0;
     sample_buffer = 0;
+    is_mini = mini;
     initialized = false;
 }
 
-SdrDeviceAirspy::~SdrDeviceAirspy()
+SdrDeviceAirspyBase::~SdrDeviceAirspyBase()
 {
     if (!initialized)
         return;
@@ -204,7 +227,7 @@ SdrDeviceAirspy::~SdrDeviceAirspy()
     close_library(lib);
 }
 
-int SdrDeviceAirspy::load_libairspy()
+int SdrDeviceAirspyBase::load_libairspy()
 {
     airspy_lib_version_t    lib_ver;
 
@@ -295,7 +318,7 @@ int SdrDeviceAirspy::load_libairspy()
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspy::init(float samprate, const char * options)
+int SdrDeviceAirspyBase::init(float samprate, const char * options)
 {
     (void)      options;
     int         result;
@@ -358,13 +381,19 @@ int SdrDeviceAirspy::init(float samprate, const char * options)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspy::set_sample_rate(float new_rate)
+int SdrDeviceAirspyBase::set_sample_rate(float new_rate)
 {
     uint32_t    rate;
     int         result;
 
     rate = new_rate;
-    if (rate != 2.5e6 && rate !=3.0e6 && rate != 6.0e6 && rate != 10.0e6)
+
+    if (is_mini)
+    {
+        if (rate != 3.0e6 && rate != 6.0e6 && rate != 10.0e6)
+            return SDR_DEVICE_EINVAL;
+    }
+    else if (rate != 2.5e6 && rate != 10.0e6)
         return SDR_DEVICE_EINVAL;
 
     result = airspy_set_samplerate(dev, rate);
@@ -381,22 +410,31 @@ int SdrDeviceAirspy::set_sample_rate(float new_rate)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspy::get_sample_rates(float * rates) const
+int SdrDeviceAirspyBase::get_sample_rates(float * rates) const
 {
-    // FIXME: get table from libairspy
+    if (is_mini)
+    {
+        if (rates != 0)
+        {
+            rates[0] = 3.0e6f;
+            rates[1] = 6.0e6f;
+            rates[2] = 10.e6f;
+        }
+
+        return 3;
+    }
+
+
     if (rates != 0)
     {
         rates[0] = 2.5e6f;
-        rates[1] = 3.0e6f;
-        rates[2] = 6.0e6f;
-        rates[3] = 10.e6f;
-        return 4;
+        rates[1] = 10.e6f;
     }
 
-    return 0;
+    return 2;
 }
 
-int SdrDeviceAirspy::set_freq(uint64_t freq)
+int SdrDeviceAirspyBase::set_freq(uint64_t freq)
 {
     current_freq = freq;
 
@@ -410,16 +448,16 @@ int SdrDeviceAirspy::set_freq(uint64_t freq)
         return SDR_DEVICE_ERANGE;
     }
 
-    sdr_device_debug("SdrDeviceAirspy::set_freq(%"PRIu32")\n", current_freq);
+    sdr_device_debug("SdrDeviceAirspyBase::set_freq(%"PRIu32")\n", current_freq);
     return SDR_DEVICE_OK;
 }
 
-uint64_t SdrDeviceAirspy::get_freq(void) const
+uint64_t SdrDeviceAirspyBase::get_freq(void) const
 {
     return current_freq;
 }
 
-int SdrDeviceAirspy::get_freq_range(freq_range_t * range) const
+int SdrDeviceAirspyBase::get_freq_range(freq_range_t * range) const
 {
     range->min = 24e6;
     range->max = 1800e6;
@@ -427,13 +465,13 @@ int SdrDeviceAirspy::get_freq_range(freq_range_t * range) const
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspy::set_freq_corr(float ppm)
+int SdrDeviceAirspyBase::set_freq_corr(float ppm)
 {
     fputs("*** FIXME: set_freq_corr() not implemented for Airspy.\n", stderr);
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspy::get_gain_stages(uint8_t * gains) const
+int SdrDeviceAirspyBase::get_gain_stages(uint8_t * gains) const
 {
     if (gains == 0)
         return 7;
@@ -449,7 +487,7 @@ int SdrDeviceAirspy::get_gain_stages(uint8_t * gains) const
     return 7;
 }
 
-uint16_t SdrDeviceAirspy::get_gain_stages_bf(void) const
+uint16_t SdrDeviceAirspyBase::get_gain_stages_bf(void) const
 {
     return (uint16_t)
         (1 << SDR_DEVICE_RX_LNA_GAIN) |
@@ -461,7 +499,7 @@ uint16_t SdrDeviceAirspy::get_gain_stages_bf(void) const
         (1 << SDR_DEVICE_RX_IF_AGC);
 }
 
-int SdrDeviceAirspy::set_gain(uint8_t stage, uint8_t value)
+int SdrDeviceAirspyBase::set_gain(uint8_t stage, uint8_t value)
 {
     uint8_t     gain;
     int         retval = SDR_DEVICE_OK;
@@ -509,13 +547,13 @@ int SdrDeviceAirspy::set_gain(uint8_t stage, uint8_t value)
         break;
     }
 
-    sdr_device_debug("SdrDeviceAirspy::set_gain(stage:%u,val:%u)  result:%d\n",
+    sdr_device_debug("SdrDeviceAirspyBase::set_gain(stage:%u,val:%u)  result:%d\n",
                      stage, value, retval);
 
     return retval;
 }
 
-int SdrDeviceAirspy::start(void)
+int SdrDeviceAirspyBase::start(void)
 {
     int     result = airspy_start_rx(dev, airspy_rx_callback, this);
     if (result != AIRSPY_SUCCESS)
@@ -531,7 +569,7 @@ int SdrDeviceAirspy::start(void)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspy::stop(void)
+int SdrDeviceAirspyBase::stop(void)
 {
     int     result = airspy_stop_rx(dev);
     if (result != AIRSPY_SUCCESS)
@@ -548,24 +586,24 @@ int SdrDeviceAirspy::stop(void)
     return SDR_DEVICE_OK;
 }
 
-uint32_t SdrDeviceAirspy::get_num_bytes(void) const
+uint32_t SdrDeviceAirspyBase::get_num_bytes(void) const
 {
     return 0;
 }
 
-uint32_t SdrDeviceAirspy::get_num_samples(void) const
+uint32_t SdrDeviceAirspyBase::get_num_samples(void) const
 {
     return ring_buffer_cplx_count(sample_buffer);
 }
 
-uint32_t SdrDeviceAirspy::read_bytes(void * buffer, uint32_t bytes)
+uint32_t SdrDeviceAirspyBase::read_bytes(void * buffer, uint32_t bytes)
 {
     return 0;
 }
 
 #define SAMPLE_SCALE (1.0f / 32768.f)
 
-uint32_t SdrDeviceAirspy::read_samples(complex_t * buffer, uint32_t samples)
+uint32_t SdrDeviceAirspyBase::read_samples(complex_t * buffer, uint32_t samples)
 {
     if (samples > ring_buffer_cplx_count(sample_buffer))
         return 0;
@@ -574,7 +612,7 @@ uint32_t SdrDeviceAirspy::read_samples(complex_t * buffer, uint32_t samples)
     return samples;
 }
 
-void SdrDeviceAirspy::free_memory(void)
+void SdrDeviceAirspyBase::free_memory(void)
 {
     if (sample_buffer)
         ring_buffer_cplx_delete(sample_buffer);

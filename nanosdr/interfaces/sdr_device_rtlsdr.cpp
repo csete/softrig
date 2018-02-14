@@ -1,7 +1,7 @@
 /*
  * RTL-SDR backend
  *
- * Copyright  2014-2017  Alexandru Csete OZ9AEC
+ * Copyright  2014-2018  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -70,12 +70,6 @@ static int (*rtlsdr_reset_buffer)(void * dev);
 static int (*rtlsdr_read_async)(void * dev, rtlsdr_read_async_cb_t cb,
 				                void *ctx, uint32_t buf_num, uint32_t buf_len);
 
-
-/**
- * Input reader from rtlsdr devices.
- *
- * @todo Support device index.
- */
 class SdrDeviceRtlsdr : public SdrDevice
 {
 public:
@@ -101,6 +95,7 @@ public:
     uint32_t    get_num_samples(void) const;
     uint32_t    read_bytes(void * buffer, uint32_t bytes);
     uint32_t    read_samples(complex_t * buffer, uint32_t samples);
+    int         type(void) const { return SDR_DEVICE_RTLSDR; };
 
 private:
     void        free_memory(void);
@@ -314,7 +309,7 @@ int SdrDeviceRtlsdr::get_sample_rates(float * rates) const
     if (rates == 0)
         return 13;
 
-    // we only support ratiometric rates.
+    // we only report ratiometric rates.
     rates[0] = 240e3f;
     rates[1] = 300e3f; 
     rates[2] = 900e3f;

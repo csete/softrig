@@ -1,7 +1,7 @@
 /*
  * I/Q file backend (for testing only)
  *
- * Copyright  2016  Alexandru Csete OZ9AEC
+ * Copyright  2016-2018  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -47,14 +47,15 @@
 #define     MAX_FRAMES_IN_BUFFER        5       // frames stored in buffer
 
 
-/**
+/*
  * Input reader from file with frequency translator.
  *
  * The frequency translation is done to simulate tuning and is mostly for
  * testing purposes.
  *
- * @todo    Currently only complex S16LE format is supported.
- * @todo    Add open/close methods?
+ * TODO:
+ *  - Currently only complex S16LE format is supported.
+ *  - Add open/close methods?
  */
 class SdrDeviceFile : public SdrDevice
 {
@@ -81,6 +82,7 @@ public:
     uint32_t    get_num_samples(void) const;
     uint32_t    read_bytes(void * buffer, uint32_t bytes);
     uint32_t    read_samples(complex_t * buffer, uint32_t samples);
+    int         type(void) const { return SDR_DEVICE_FILE; };
 
 private:
     Translate       ft;

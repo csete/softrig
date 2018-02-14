@@ -1,7 +1,7 @@
 /*
  * stdin backend (for testing only)
  *
- * Copyright  2016  Alexandru Csete OZ9AEC
+ * Copyright  2016-2018  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -39,12 +39,13 @@
 #include "sdr_device.h"
 
 
-/**
+/*
  * Input reader for stdin. Free running, i.e. there is no throttling to match
  * the sample rate.
  *
- * @todo    Currently only complex S16LE format is supported.
- * @todo    Add open/close methods?
+ * TODO:
+ *  - Currently only complex S16LE format is supported.
+ *  - Add open/close methods?
  */
 class SdrDeviceStdin : public SdrDevice
 {
@@ -71,6 +72,7 @@ public:
     uint32_t    get_num_samples(void) const { return wk_buflen; }
     uint32_t    read_bytes(void * buffer, uint32_t bytes);
     uint32_t    read_samples(complex_t * buffer, uint32_t samples);
+    int         type(void) const { return SDR_DEVICE_STDIN; };
 
 private:
     uint64_t        current_freq;
