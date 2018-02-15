@@ -21,6 +21,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 include(nanosdr/nanosdr.pro)
 
 SOURCES += \
+    app/app_config.cpp \
     app/main.cpp \
     app/sdr_thread.cpp \
     gui/control_panel.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
     interfaces/audio_output.cpp
 
 HEADERS += \
+    app/app_config.h \
     app/sdr_thread.h \
     gui/control_panel.h \
     gui/device_config_dialog.h \
