@@ -5,6 +5,7 @@
 
 #include <QtWidgets>
 
+#include "app/app_config.h"
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/freq_ctrl.h"
@@ -44,6 +45,7 @@ private:
 private:
     Ui::MainWindow   *ui;
 
+    AppConfig        *cfg;
     SdrThread        *sdr;
     QTimer           *fft_timer;
     real_t           *fft_data;

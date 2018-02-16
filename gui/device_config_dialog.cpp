@@ -32,6 +32,9 @@
 #include "device_config_dialog.h"
 #include "ui_device_config_dialog.h"
 
+// Flags used to match SDR type in combo box
+#define SDR_TYPE_MATCH_FLAGS    (Qt::MatchFixedString | Qt::MatchCaseSensitive)
+
 DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DeviceConfigDialog)
@@ -48,13 +51,29 @@ DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     // The item data is the string that can be passed to the backend
     ui->sdrTypeCombo->addItem(tr("RTL-SDR"), "rtlsdr");
     ui->sdrTypeCombo->addItem(tr("Airspy R2"), "airspy");
-    ui->sdrTypeCombo->addItem(tr("Airspy Mini"), "airspy");
+    ui->sdrTypeCombo->addItem(tr("Airspy Mini"), "airspymini");
     ui->sdrTypeCombo->addItem(tr("RFSpace SDR-IQ"), "sdriq");
 }
 
 DeviceConfigDialog::~DeviceConfigDialog()
 {
     delete ui;
+}
+
+void DeviceConfigDialog::readSettings(const device_config_t * input)
+{
+    selectSdrType(input->type);
+    selectSampleRate(input->rate);
+    selectDecimation(input->decimation);
+}
+
+void DeviceConfigDialog::saveSettings(device_config_t * input)
+{
+    input->type = ui->sdrTypeCombo->currentData(Qt::UserRole).toString();
+
+    // QString.toInt() returns 0 if conversion fails
+    input->rate = ui->inputRateCombo->currentText().toInt();
+    input->decimation = ui->decimCombo->currentText().toInt();
 }
 
 void DeviceConfigDialog::sdrTypeChanged(int index)
@@ -76,19 +95,19 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("1800000");
         ui->inputRateCombo->addItem("2400000");
         ui->inputRateCombo->addItem("3200000");
+        ui->inputRateCombo->setCurrentIndex(8);
     }
     else if (sdr_type == "airspy")
     {
-        if (ui->sdrTypeCombo->currentText().contains("mini", Qt::CaseInsensitive))
-        {
-            ui->inputRateCombo->addItem("3000000");
-            ui->inputRateCombo->addItem("6000000");
-        }
-        else
-        {
-            ui->inputRateCombo->addItem("2500000");
-            ui->inputRateCombo->addItem("10000000");
-        }
+        ui->inputRateCombo->addItem("2500000");
+        ui->inputRateCombo->addItem("10000000");
+        ui->inputRateCombo->setCurrentIndex(1);
+    }
+    else if (sdr_type == "airspymini")
+    {
+        ui->inputRateCombo->addItem("3000000");
+        ui->inputRateCombo->addItem("6000000");
+        ui->inputRateCombo->setCurrentIndex(1);
     }
     else if (sdr_type == "sdriq")
     {
@@ -96,9 +115,9 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("111111");
         ui->inputRateCombo->addItem("158730");
         ui->inputRateCombo->addItem("196078");
+        ui->inputRateCombo->setCurrentIndex(3);
     }
 }
-
 
 void DeviceConfigDialog::inputRateChanged(const QString &rate_str)
 {
@@ -162,4 +181,44 @@ void DeviceConfigDialog::decimationChanged(int index)
     else
         ui->sampRateString->setText(QString(" %1 ksps").
                                     arg(quad_rate * 1.e-3f, 0, 'f', 3));
+}
+
+// Select SDR type from type string
+void DeviceConfigDialog::selectSdrType(const QString &type)
+{
+    int     index;
+
+    if (type.isEmpty())
+        return;
+
+    index = ui->sdrTypeCombo->findData(type, Qt::UserRole, SDR_TYPE_MATCH_FLAGS);
+    if (index >= 0)
+        ui->sdrTypeCombo->setCurrentIndex(index);
+}
+
+void DeviceConfigDialog::selectSampleRate(unsigned int rate)
+{
+    if (rate == 0)
+        return;
+
+    ui->inputRateCombo->setCurrentText(QString("%1").arg(rate));
+}
+
+static int decim2index(unsigned int decim)
+{
+    int         idx;
+
+    if (decim == 0)
+        return 0;
+
+    idx = 0;
+    while (decim >>= 1)
+        ++idx;
+
+    return idx;
+}
+
+void DeviceConfigDialog::selectDecimation(unsigned int decimation)
+{
+    ui->decimCombo->setCurrentIndex(decim2index(decimation));
 }

@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QtWidgets>
 
+#include "app/app_config.h"
 #include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/device_config_dialog.h"
@@ -61,6 +62,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuBar->hide();
     ui->toolBar->hide();
     ui->statusBar->hide();
+
+    cfg = new AppConfig();
+    cfg->load("./softrig.conf");
+    {
+        app_config_t *cfg_dptr = cfg->getDataPtr();
+        if (cfg_dptr->input.type.isEmpty())
+            runDeviceConfig();
+    }
 
     sdr = new SdrThread();
 
@@ -145,6 +154,10 @@ MainWindow::~MainWindow()
     // stop SDR
     runButtonClicked(false);
 
+    cfg->save();
+    cfg->close();
+
+    delete cfg;
     delete sdr;
     delete fft_data;
     delete fft_avg;
@@ -230,7 +243,15 @@ void MainWindow::cfgButtonClicked(bool checked)
 void MainWindow::runDeviceConfig(void)
 {
     DeviceConfigDialog    conf_dialog(this);
-    conf_dialog.exec();
+    device_config_t      *input_settings = &cfg->getDataPtr()->input;
+
+    // FIXME: setInteractive()
+    conf_dialog.readSettings(input_settings);
+    if (conf_dialog.exec() == QDialog::Accepted)
+    {
+        // save changes
+        conf_dialog.saveSettings(input_settings);
+    }
 }
 
 void MainWindow::menuActivated(QAction *action)

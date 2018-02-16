@@ -109,7 +109,7 @@ int SdrThread::start(void)
 #endif
 
 #if 1
-    sdr_dev = sdr_device_create_airspy();
+    sdr_dev = sdr_device_create_airspymini();
     if (sdr_dev->init(3000000, "") != SDR_DEVICE_OK)
     {
         // FIXME: Emit error string

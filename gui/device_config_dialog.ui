@@ -119,6 +119,9 @@
      </item>
      <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="bwSpinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Analog bandwidth (0 means default)</string>
        </property>
@@ -148,6 +151,9 @@
      </item>
      <item row="5" column="1">
       <widget class="QDoubleSpinBox" name="convSpinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Up- or downconverter frequency. Negative value means upconverter.</string>
        </property>
@@ -177,6 +183,9 @@
      </item>
      <item row="6" column="1">
       <widget class="QSpinBox" name="spinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Frequency correction in parts per billion</string>
        </property>

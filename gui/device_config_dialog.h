@@ -5,6 +5,8 @@
 
 #include <QDialog>
 
+#include "app/app_config.h"
+
 namespace Ui {
 class DeviceConfigDialog;
 }
@@ -17,10 +19,18 @@ public:
     explicit DeviceConfigDialog(QWidget *parent = 0);
     ~DeviceConfigDialog();
 
+    void    readSettings(const device_config_t * input);
+    void    saveSettings(device_config_t * input);
+
 private slots:
     void    sdrTypeChanged(int);
     void    inputRateChanged(const QString &);
     void    decimationChanged(int);
+
+private:
+    void    selectSdrType(const QString &);
+    void    selectSampleRate(unsigned int);
+    void    selectDecimation(unsigned int);
 
 private:
     Ui::DeviceConfigDialog *ui;
