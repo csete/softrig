@@ -29,12 +29,14 @@
  */
 #include <QThread>
 
+#include "app_config.h"
 #include "interfaces/audio_output.h"
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
 #include "nanosdr/common/time.h"
 #include "nanosdr/interfaces/sdr_device.h"
 #include "nanosdr/fft_thread.h"
+#include "nanosdr/nanodsp/filter/decimator.h"
 #include "nanosdr/receiver.h"
 #include "sdr_thread.h"
 
@@ -50,8 +52,9 @@
 SdrThread::SdrThread(QObject *parent) : QObject(parent)
 {
     is_running = false;
-//    buflen = 30720;            // 20 msec @ 1.536 Msps
-    buflen = 60000;            // 20 msec @ 3 Mps
+    buflen_ms = 20;
+    buflen = 0;
+    decimation = 0;
 
     sdr_dev = 0;
     rx = 0;
@@ -72,7 +75,6 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     connect(thread, SIGNAL(started()), this, SLOT(process()));
     connect(thread, SIGNAL(finished()), this, SLOT(thread_finished()));
     thread->setObjectName("SdrThread\n");
-    thread->start();
 }
 
 SdrThread::~SdrThread()
@@ -80,46 +82,48 @@ SdrThread::~SdrThread()
     if (is_running)
         stop();
 
-    thread->requestInterruption();
-    thread->quit();
-    thread->wait(10000);
     delete thread;
-
     delete fft;
 }
 
-int SdrThread::start(void)
+int SdrThread::start(const app_config_t *conf)
 {
+    device_config_t     input_cfg;
+    float               rx_rate;
+
     if (is_running)
         return SDR_THREAD_OK;
 
     SDR_THREAD_DEBUG("Starting SDR thread...\n");
 
-#if 0
-    sdr_dev = sdr_device_create_rtlsdr();
-    if (sdr_dev->init(1536000, "") != SDR_DEVICE_OK)
+    input_cfg = conf->input;
+    if (input_cfg.type.isEmpty())
+        return SDR_THREAD_EDEV;
+
+    sdr_dev = sdr_device_create(input_cfg.type.toLatin1().data());
+    if (!sdr_dev)
+        return SDR_THREAD_EDEV;
+
+    if (sdr_dev->init(input_cfg.rate, "") != SDR_DEVICE_OK)
     {
         // FIXME: Emit error string
         return SDR_THREAD_EDEV;
     }
-    sdr_dev->set_gain(SDR_DEVICE_RX_LNA_GAIN, 60);
+    // set bandwidth
+    // set gain
+    // set frequency correction
 
-    rx = new Receiver();
-    rx->init(1536000, 48000, 100, buflen);
-#endif
-
-#if 1
-    sdr_dev = sdr_device_create_airspymini();
-    if (sdr_dev->init(3000000, "") != SDR_DEVICE_OK)
+    decimation = input_cfg.decimation;
+    rx_rate = input_cfg.rate;
+    if (decimation > 1)
     {
-        // FIXME: Emit error string
-        return SDR_THREAD_EDEV;
+        decimation = input_decim.init(decimation, sdr_dev->get_dynamic_range());
+        rx_rate /= (float)decimation;
     }
-    sdr_dev->set_gain(SDR_DEVICE_RX_LIN_GAIN, 70);
 
+    buflen = buflen_ms * 1.e-3f * rx_rate;
     rx = new Receiver();
-    rx->init(3000000, 48000, 100, buflen);
-#endif
+    rx->init(rx_rate, 48000, 100, buflen);
 
     is_running = true;
 
@@ -127,6 +131,7 @@ int SdrThread::start(void)
     audio_out.start();
     fft->start();
     sdr_dev->start();
+    thread->start();
 
     return SDR_THREAD_OK;
 }
@@ -137,6 +142,10 @@ void SdrThread::stop(void)
         return;
 
     SDR_THREAD_DEBUG("Stopping SDR thread...\n");
+
+    thread->requestInterruption();
+    thread->quit();
+    thread->wait(10000);
 
     stats.tstop = time_ms();
     /* *INDENT-OFF* */
@@ -165,7 +174,7 @@ void SdrThread::process(void)
     quint32    samples_read;
     int        samples_out;
 
-    SDR_THREAD_DEBUG("SDR process entered\n");
+    SDR_THREAD_DEBUG("SDR thread started\n");
 
     fft_data_buf = new complex_t[FFT_SIZE];
     fft_swap_buf = new complex_t[FFT_SIZE];
@@ -196,6 +205,8 @@ void SdrThread::process(void)
         stats.samples_in += samples_read;
 
         // TODO: Decimate
+        if (decimation > 1)
+            samples_read = input_decim.process(samples_read, input_samples);
 
         fft->add_fft_input(samples_read, input_samples);
         samples_out = rx->process(samples_read, input_samples, output_samples);

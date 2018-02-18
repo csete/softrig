@@ -113,8 +113,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Temporary FFT plot
     fft_plot = new CPlotter(this);
-    fft_plot->setSampleRate(3000000.0);
-    fft_plot->setSpanFreq(3000000);
+    fft_plot->setSampleRate(2400000.0);
+    fft_plot->setSpanFreq(2400000);
     fft_plot->setCenterFreq(DEFAULT_FREQ);
     fft_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     fft_plot->setFftRange(-100.0, 0.0);
@@ -214,7 +214,7 @@ void MainWindow::runButtonClicked(bool checked)
 {
     if (checked)
     {
-        if (sdr->start() == SDR_THREAD_OK)
+        if (sdr->start(cfg->getDataPtr()) == SDR_THREAD_OK)
         {
             newFrequency(fctl->getFrequency());
             fft_timer->start(50);
