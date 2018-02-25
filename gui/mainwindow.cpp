@@ -223,7 +223,21 @@ void MainWindow::runButtonClicked(bool checked)
 {
     if (checked)
     {
-        if (sdr->start(cfg->getDataPtr()) == SDR_THREAD_OK)
+        app_config_t *conf = cfg->getDataPtr();
+
+        if (conf->input.type.isEmpty())
+            runDeviceConfig();
+
+        if (conf->input.type.isEmpty())
+        {
+            // still no SDR configuration
+            (void)QMessageBox::critical(this, tr("SDR device error"),
+                                        tr("SDR device not configured"));
+            run_button->setChecked(false);
+            return;
+        }
+
+        if (sdr->start(conf) == SDR_THREAD_OK)
         {
             newFrequency(fctl->getFrequency());
             fft_timer->start(50);
@@ -234,7 +248,7 @@ void MainWindow::runButtonClicked(bool checked)
                     fft_avg[i] = -100.0;
             }
         }
-        // else FIXME
+        // FIXME: Error message
     }
     else
     {
