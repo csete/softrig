@@ -121,11 +121,6 @@ void ControlPanel::updateMode(quint8 mode)
     emit    cwOffsetChanged(mode_settings[mode].cw_offset);
 }
 
-void ControlPanel::on_runButton_clicked(bool checked)
-{
-    emit runButtonClicked(checked);
-}
-
 void ControlPanel::on_rxButton_clicked(bool checked)
 {
     Q_UNUSED(checked);

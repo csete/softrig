@@ -58,6 +58,7 @@ private:
 
     // Buttons
     QToolButton      *ptt_button;
+    QToolButton      *run_button;
     QToolButton      *cfg_button;
     QMenu            *cfg_menu;
 

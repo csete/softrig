@@ -20,14 +20,11 @@ public:
     ~ControlPanel();
 
 signals:
-    void    runButtonClicked(bool checked);
-
     void    demodChanged(sdr_demod_t new_demod);
     void    filterChanged(real_t low_cut, real_t high_cut);
     void    cwOffsetChanged(real_t offset);
 
 private slots:
-    void    on_runButton_clicked(bool);
     void    on_rxButton_clicked(bool);
     void    on_txButton_clicked(bool);
     void    on_fftButton_clicked(bool);

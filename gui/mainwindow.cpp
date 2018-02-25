@@ -66,8 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
     cfg = new AppConfig();
     cfg->load("./softrig.conf");
     {
-        app_config_t *cfg_dptr = cfg->getDataPtr();
-        if (cfg_dptr->input.type.isEmpty())
+        app_config_t *conf = cfg->getDataPtr();
+        if (conf->input.type.isEmpty())
             runDeviceConfig();
     }
 
@@ -102,8 +102,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Control panel
     cpanel = new ControlPanel(this);
-    connect(cpanel, SIGNAL(runButtonClicked(bool)),
-            this, SLOT(runButtonClicked(bool)));
     connect(cpanel, SIGNAL(demodChanged(sdr_demod_t)),
             this, SLOT(setDemod(sdr_demod_t)));
     connect(cpanel, SIGNAL(filterChanged(float,float)),
@@ -131,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     top_layout->addWidget(spacer2, 1);
     top_layout->addWidget(smeter, 2);
     top_layout->addWidget(spacer3, 1);
+    top_layout->addWidget(run_button, 0);
     top_layout->addWidget(cfg_button, 0);
 
     // main layout with FFT and control panel
@@ -164,6 +163,7 @@ MainWindow::~MainWindow()
 
     delete cfg_menu;
     delete cfg_button;
+    delete run_button;
     delete ptt_button;
 
     delete fctl;
@@ -197,6 +197,15 @@ void MainWindow::createButtons(void)
         action = cfg_menu->addAction(tr("User interface"));
         action->setData(QVariant((int)MENU_ID_GUI));
     }
+
+    run_button = new QToolButton(this);
+    run_button->setText("RUN");
+    run_button->setCheckable(true);
+    run_button->setMinimumSize(36, 36);
+    run_button->setSizePolicy(QSizePolicy::MinimumExpanding,
+                              QSizePolicy::MinimumExpanding);
+    connect(run_button, SIGNAL(clicked(bool)),
+            this, SLOT(runButtonClicked(bool)));
 
     cfg_button = new QToolButton(this);
     cfg_button->setText("C");
