@@ -11,6 +11,7 @@ QT       += core gui multimedia widgets
 
 TARGET = softrig
 TEMPLATE = app
+CONFIG += c++11
 
 # emit warnings when using deprecated features
 DEFINES += QT_DEPRECATED_WARNINGS
