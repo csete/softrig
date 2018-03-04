@@ -40,7 +40,9 @@ private slots:
 
 private:
     void    createButtons(void);
+    void    loadConfig(void);
     void    runDeviceConfig(void);
+    void    deviceConfigChanged(const device_config_t * conf);
 
 private:
     Ui::MainWindow   *ui;

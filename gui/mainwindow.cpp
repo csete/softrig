@@ -29,6 +29,7 @@
  */
 #include <QDebug>
 #include <QtWidgets>
+#include <QMessageBox>
 
 #include "app/app_config.h"
 #include "app/sdr_thread.h"
@@ -63,13 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toolBar->hide();
     ui->statusBar->hide();
 
-    cfg = new AppConfig();
-    cfg->load("./softrig.conf");
-    {
-        app_config_t *conf = cfg->getDataPtr();
-        if (conf->input.type.isEmpty())
-            runDeviceConfig();
-    }
+    cfg = nullptr;
 
     sdr = new SdrThread();
 
@@ -92,7 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
     fctl = new FreqCtrl(this);
     fctl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     fctl->setup(10, 0, 2e9, 1, FCTL_UNIT_NONE);
-    fctl->setFrequency(DEFAULT_FREQ);
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
 
@@ -111,9 +105,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Temporary FFT plot
     fft_plot = new CPlotter(this);
-    fft_plot->setSampleRate(2400000.0);
-    fft_plot->setSpanFreq(2400000);
-    fft_plot->setCenterFreq(DEFAULT_FREQ);
     fft_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     fft_plot->setFftRange(-100.0, 0.0);
     connect(fft_plot, SIGNAL(newCenterFreq(qint64)),
@@ -145,7 +136,7 @@ MainWindow::MainWindow(QWidget *parent) :
     win_layout->addWidget(cpanel, 2);
     ui->centralWidget->setLayout(win_layout);
 
-    // FIXME: Adjust default size as a function of desktop size
+    loadConfig();
 }
 
 MainWindow::~MainWindow()
@@ -174,6 +165,50 @@ MainWindow::~MainWindow()
     delete main_layout;
     delete win_layout;
     delete ui;
+}
+
+void MainWindow::loadConfig(void)
+{
+    app_config_t *conf;
+
+    if (cfg)
+        cfg->close();
+    else
+        cfg = new AppConfig();
+
+    if (cfg->load("./softrig.conf") == APP_CONFIG_OK)
+    {
+        conf = cfg->getDataPtr();
+        if (conf->input.type.isEmpty())
+            runDeviceConfig();
+        else
+            deviceConfigChanged(&conf->input);
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("Configuration error"),
+                              tr("Error loading configuration file"));
+    }
+}
+
+// SDR device configuration changed; update GUI
+void MainWindow::deviceConfigChanged(const device_config_t * conf)
+{
+    float   quad_rate;
+
+    quad_rate = conf->rate;
+    if (conf->decimation > 1)
+        quad_rate /= conf->decimation;
+
+    fft_plot->setSampleRate(quad_rate);
+    fft_plot->setSpanFreq(quad_rate);
+    fft_plot->setCenterFreq(DEFAULT_FREQ);
+    fctl->setFrequency(DEFAULT_FREQ);
+    if (sdr->isRunning())
+    {
+        runButtonClicked(false);
+        runButtonClicked(true);
+    }
 }
 
 void MainWindow::createButtons(void)
@@ -274,6 +309,7 @@ void MainWindow::runDeviceConfig(void)
     {
         // save changes
         conf_dialog.saveSettings(input_settings);
+        deviceConfigChanged(input_settings);
     }
 }
 
