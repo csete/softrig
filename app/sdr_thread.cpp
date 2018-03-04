@@ -68,7 +68,7 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     audio_out.init();
 
     fft = new FftThread();
-    fft->init(FFT_SIZE, 20);
+    fft->init(FFT_SIZE, 25);
 
     thread = new QThread();
     moveToThread(thread);
