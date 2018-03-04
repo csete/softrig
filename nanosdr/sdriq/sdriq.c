@@ -132,7 +132,7 @@ static void *sdriq_reader_thread(void *data_ptr)
     uint_fast64_t iq_bytes = 0;
     uint_fast64_t other_bytes = 0;
 
-    fputs("Starting SDR-IQ I/O thread.\n", stderr);
+    fputs("Starting SDR-IQ I/O thread\n", stderr);
 
     while (sdr->is_open)
     {
@@ -193,7 +193,7 @@ static void *sdriq_reader_thread(void *data_ptr)
     }
 
     fprintf(stderr,
-        "Exiting SDR-IQ I/O thread.\n"
+        "Exiting SDR-IQ I/O thread\n"
         "  IQ data bytes      : %" PRIu64 "\n"
         "  Other message bytes: %" PRIu64 "\n"
         "  Short reads (num)  : %" PRIu64 "\n",
@@ -487,9 +487,6 @@ void sdriq_free(sdriq_t *sdr)
 {
     if (sdr != NULL)
     {
-        if (sdr->is_loaded)
-            close_library(sdr->ftdi_lib_handle);
-
         /* ensure SDR is stopped and device closed */
         if (sdr->is_running)
             sdriq_stop(sdr);
@@ -497,9 +494,12 @@ void sdriq_free(sdriq_t *sdr)
         if (sdr->is_open)
             sdriq_close(sdr);
 
-        /* free resources */
         ftdi_free(sdr->ftdi);
         ring_buffer_delete(sdr->rb);
+
+        if (sdr->is_loaded)
+            close_library(sdr->ftdi_lib_handle);
+
         free(sdr);
     }
 }
