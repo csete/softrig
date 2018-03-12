@@ -54,11 +54,11 @@ extern "C"
 {
 #endif
 
-/** Packet representation */
+/* Packet representation */
 typedef struct {
-    uint16_t    length;         /* Packet length in bytes */
-    uint8_t     type;           /* Packet type (PKT_TYPE_... */
-    uint8_t     raw[MAX_PKT_LENGTH]; /* raw bytes */
+    uint16_t    length;                 /* Packet length in bytes */
+    uint8_t     type;                   /* Packet type (PKT_TYPE_... */
+    uint8_t     raw[MAX_PKT_LENGTH];    /* raw bytes */
 } pkt_t;
 
 /**

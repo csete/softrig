@@ -1,8 +1,5 @@
 /*
  * AM demodulator.
- *
- * Originally from CuteSdr and modified for nanosdr.
- *
  */
 #pragma once
 
@@ -14,10 +11,10 @@ class AmDemod
 public:
     AmDemod();
 
-    /**
+    /*
      * Setup demodulator parameters
-     * @param input rate    The sample rate of the input data
-     * @param bandwidth     Bandwidth of the post-demod audio filter.
+     *   input rate    The sample rate of the input data
+     *   bandwidth     Bandwidth of the post-demod audio filter.
      */
 	void        setup(real_t input_rate, real_t bandwidth);
 	int         process(int num, complex_t * data_in, real_t * data_out);

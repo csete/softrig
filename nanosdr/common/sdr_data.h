@@ -71,16 +71,10 @@ typedef struct _srv_info {
     uint8_t         dev_name[64];   /* SDR device name and description (0 terminated). */
 } srv_info_t;
 
-/**
- * Structure used to exchange FFT data.
- * 
- * @data    The FFT data
- * @size    The number of samples in data
- * @rate    The sample rate of the FFT data
- */
+/* Structure used to exchange FFT data */
 typedef struct _fft_data {
-    complex_t      *data;
-    unsigned int    size;
-    float           rate;
+    complex_t      *data;   /* the FFT data */
+    unsigned int    size;   /* the number of samples in data */
+    float           rate;   /* sample rate of the FFT data */
 } fft_data_t;
 

@@ -9,13 +9,11 @@
 #include "common/thread_class.h"
 #include "nanodsp/fft.h"
 
-/** FFT settings. */
 struct fft_settings {
     unsigned int    fft_rate;
     uint32_t        fft_size;
 };
 
-/** FFT statistics data. */
 struct fft_stats {
     uint_fast64_t       samples_in;
     uint_fast64_t       samples_out;
@@ -28,15 +26,15 @@ public:
     FftThread();
     virtual ~FftThread();
 
-    /**
-     * Inintialize FFT thread.
-     * @param fft_size The number of points in the FFT.
-     * @param fft_rate The rate in Hz.
-     * @retval 0 FFT initialized without errors.
-     * @retval 1 
+    /*
+     * Inintialize FFT thread
+     *   fft_size The number of points in the FFT.
+     *   fft_rate The rate in Hz.
      *
-     * @fixme   Add more error codes: fft_rate or size out of range, fft_size
-     *          not optimal, etc.
+     * Returns 0 if FFT initialized without errors, 1 otherwise
+     *
+     * FIXME: Add more error codes: fft_rate or size out of range, fft_size
+     *        not optimal, etc.
      */
     int         init(uint32_t fft_size, unsigned int fft_rate);
     void        start();

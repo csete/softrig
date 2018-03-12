@@ -1,8 +1,6 @@
 /*
  * This class implements the automatic gain control function.
  *
- * Originally from CuteSdr and modified for nanosdr.
- *
  */
 #pragma once
 
@@ -16,16 +14,19 @@ public:
     CAgc();
     virtual    ~CAgc();
 
-    /**
+    /*
      * Setup AGC parameters.
-     * @param AgcOn     Specifies whether AGC is ON or OFF.
-     * @param UseHang   Specifies whether to use a hang timer or gradual decay.
-     * @param Threshold Specifies the AGC "knee" in dB. Nominal ange is -160 to 0 dB.
-     * @param ManualGain  Manual gain in dB used when AGC is OFF. Nominal range is 0 to 100 dB.
-     * @param Slope Reduction in output (dB) at knee from maximum output level.
+     *
+     * Parameters:
+     *   AgcOn      AGC is ON or OFF.
+     *   UseHang    Use a hang timer or gradual decay.
+     *   Threshold  AGC "knee" in dB. Nominal ange is -160 to 0 dB.
+     *   ManualGain Manual gain in dB used when AGC is OFF. Nominal range is 0
+     *              to 100 dB.
+     *   Slope      Reduction in output (dB) at knee from maximum output level.
      *              Nominal range is 0 to 10 dB.
-     * @param Decay AGC decay in milliseconds. Nominal range between 20 and 5000 ms.
-     * @param SampleRate The current sample rate.
+     *   Decay      AGC decay in milliseconds. Nominal range between 20 and 5000 ms.
+     *   SampleRate The sample rate.
      */
     void        setup(bool AgcOn, bool UseHang, int Threshold, int ManualGain,
                       int Slope, int Decay, real_t SampleRate);

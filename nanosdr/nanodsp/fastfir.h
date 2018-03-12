@@ -2,8 +2,6 @@
  * This class implements a FIR bandpass filter using a FFT convolution algorithm
  * The filter is complex and is specified with 3 parameters: sample frequency,
  * high cut-off and low cut-off frequency
- *
- * Originally from CuteSdr and modified for nanosdr.
  */
 #pragma once
 
@@ -16,25 +14,26 @@ public:
     FastFIR();
     virtual    ~FastFIR();
 
-    /**
+    /*
      * Setup filter parameters
-     * @param low_cut   Low cutoff frequency of filter in Hz
-     * @param high_cut  High cutoff frequency of filter in Hz
-     * @param cw_offs   The CW tone frequency.
-     * @param fs        Sample rate in Hz.
+     *   low_cut   Low cutoff frequency of filter in Hz
+     *   high_cut  High cutoff frequency of filter in Hz
+     *   cw_offs   The CW tone frequency.
+     *   fs        Sample rate in Hz.
      *
      * Cutoff frequencies range from -SampleRate/2 to +SampleRate/2
-     * HiCut must be greater than LowCut
+     * high_cut must be greater than low_cut
      */
     void        setup(real_t low_cut, real_t high_cut, real_t cw_offs, real_t fs);
     void        set_sample_rate(real_t new_rate);
 
-    /**
-     * Process complex samples.
-     * @param  num      The number of complex samples in the input buffer.
-     * @param  inbuf    Input buffer.
-     * @param  outbuf   Outbut buffer.
-     * @return The number of complex samples placed in the output buffer.
+    /*
+     * Process complex samples
+     *   num      The number of complex samples in the input buffer.
+     *   inbuf    Input buffer.
+     *   outbuf   Outbut buffer.
+     *
+     * Returns the number of complex samples placed in the output buffer.
      *
      * The number of samples returned in general will not be equal to the number
      * of input samples due to FFT block size processing.

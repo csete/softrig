@@ -1,7 +1,7 @@
 /*
  * Simple ring buffer for nanosdr.
  * 
- * Copyright  2015  Alexandru Csete OZ9AEC
+ * Copyright 2015 Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -31,8 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/**
- * @file 
+/*
  * Simple ring buffer implementation.
  *
  * This file implements a simple byte FIFO buffer of a fixed size.
@@ -49,32 +48,18 @@
  * faster than reading.
  */
 
-/**
- * The ring buffer structure.
- * @size    The sizeof the buffer.
- * @start   Index of the oldest element.
- * @count   Number of elements currently in the buffer.
- * @buffer  The array of elements stored in the buffer.
- */
 typedef struct {
     uint_fast32_t   size;
-    uint_fast32_t   start;
-    uint_fast32_t   count;
+    uint_fast32_t   start;  /* index of the oldest element */
+    uint_fast32_t   count;  /* number of elements in the buffer */
     unsigned char  *buffer;
 } ring_buffer_t;
 
-
-/**
- * Allocate memory for a new ring buffer.
- *
- * @note The internal buffer will first be allocated when we call init().
- */
 static inline ring_buffer_t * ring_buffer_create(void)
 {
     return (ring_buffer_t *) malloc(sizeof(ring_buffer_t));
 }
 
-/** Delete all memory allocated to ring buffer. */
 static inline void ring_buffer_delete(ring_buffer_t * rb)
 {
     if (rb)
@@ -85,15 +70,6 @@ static inline void ring_buffer_delete(ring_buffer_t * rb)
     }
 }
 
-
-/**
- * Initialize the ring buffer.
- * @param rb Pointer to a newly allocated ring_buffer_t structure.
- * @param size The number of elements the buffer can hold.
- *
- * This function will allocate the memory for the internal buffer and
- * initialize the bookkeeping parameters.
- */
 static inline void ring_buffer_init(ring_buffer_t * rb, uint_fast32_t size)
 {
     rb->size = size;
@@ -102,14 +78,6 @@ static inline void ring_buffer_init(ring_buffer_t * rb, uint_fast32_t size)
     rb->buffer = (unsigned char *) malloc(rb->size);
 }
 
-/**
- * Resize the ring buffer.
- * @param  rb  Pointer to the ring buffer
- * @param  newsize The new size desired for the buffer.
- *
- * @warning The internal buffer will be reallocated and all data lost during
- *          this process.
- */
 static inline void ring_buffer_resize(ring_buffer_t * rb,
                                       uint_fast32_t newsize)
 {
@@ -117,41 +85,26 @@ static inline void ring_buffer_resize(ring_buffer_t * rb,
     ring_buffer_init(rb, newsize);
 }
 
-/**
- * Check whether the buffer is full.
- * @param rb Pointer to the ring buffer.
- * @return 1 if the buffer is full, otherwise 0.
- */
 static inline int ring_buffer_is_full(ring_buffer_t * rb)
 {
     return (rb->count == rb->size);
 }
 
-/** Check whether the buffer is empty. */
 static inline int ring_buffer_is_empty(ring_buffer_t * rb)
 {
     return (rb->count == 0);
 }
 
-/** Get number of elements in the buffer. */
 static inline uint_fast32_t ring_buffer_count(ring_buffer_t * rb)
 {
     return rb->count;
 }
 
-/** Get size of the ring buffer. */
 static inline uint_fast32_t ring_buffer_size(ring_buffer_t * rb)
 {
     return rb->size;
 }
 
-/**
- * Write data into the buffer
- * @param rb   The ring buffer handle.
- * @param src  The source array.
- * @param num  The the number of elements in the input buffer. Must be less
- *             than or equal to @ref rb->size.
- */
 static inline void ring_buffer_write(ring_buffer_t * rb, const unsigned char * src,
                                      uint_fast32_t num)
 {
@@ -187,14 +140,6 @@ static inline void ring_buffer_write(ring_buffer_t * rb, const unsigned char * s
     }
 }
 
-
-/**
- * Read data from the ring buffer.
- * @param  rb    The ring buffer handle.
- * @param  dest  Pointer to the preallocated destination buffer.
- * @param  num   The number of elements to read. Must be less than or equal to
- *               @ref rb->count.
- */
 static inline void ring_buffer_read(ring_buffer_t * rb, unsigned char * dest,
                                     uint_fast32_t num)
 {
@@ -222,12 +167,6 @@ static inline void ring_buffer_read(ring_buffer_t * rb, unsigned char * dest,
     rb->start = (end + 1) % rb->size;
 }
 
-/**
- * Clear the buffer.
- * @param rb The ring buffer handle.
- *
- * This function will clear the buffer by setting the start and the count to 0.
- */
 static inline void ring_buffer_clear(ring_buffer_t * rb)
 {
     rb->start = 0;

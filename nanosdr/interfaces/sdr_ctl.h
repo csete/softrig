@@ -60,40 +60,30 @@
 #define SDR_CTL_GAIN_NUM            SDR_GAIN_ID_NUM
 
 
-/**
- * AGC settings
- *
- * @todo    use_hang, manual gain and other parameters
- */
+/* AGC settings */
 typedef struct _ctl_agc {
-    int8_t          threshold;  /**< AGC threshold between -127 and 0 dB. */
-    uint8_t         slope;      /**< AGC slope between 0 and 10 dB. */
-    uint16_t        decay;      /**< AGC decay time between 20 and 2000 ms. */
+    int8_t          threshold;  // AGC threshold between -127 and 0 dB
+    uint8_t         slope;      // AGC slope between 0 and 10 dB
+    uint16_t        decay;      // AGC decay time between 20 and 2000 ms
 } ctl_agc_t;
 
-/**
- * Channel filter settings
- *
- * @fixme   We probably want to use 32 bit here
- * @fixme   CW offset should be separate!
- * @todo    Add transition width
- */
+/* Channel filter settings */
 typedef struct _ctl_filter {
-    int16_t         lo_cut;     /**< Low cut-off frequency in Hz. */
-    int16_t         hi_cut;     /**< High cut-off frequency in Hz. */
-    int16_t         offset;     /**< Frequency ofset. */
+    int16_t         lo_cut;     // Low cut-off frequency in Hz
+    int16_t         hi_cut;     // High cut-off frequency in Hz
+    int16_t         offset;     // Frequency ofset
 } ctl_filter_t;
 
-/** Gain setting. */
+/* Gain setting. */
 typedef struct _gain {
     uint8_t         id;         // See defines in sdr_device.h
     uint8_t         value;      // 0...100
 } gain_t;
 
-/** SDR CTL data structure. */
+/* SDR CTL data structure. */
 typedef struct _sdr_ctl {
-    uint8_t         type;       /**< The CTL type, see SDR_CTL_TYPE_* */
-    uint16_t        id;         /**< The CTL ID, see SDR_CTL_* */
+    uint8_t         type;       // The CTL type, see SDR_CTL_TYPE_*
+    uint16_t        id;         // The CTL ID, see SDR_CTL_*
 
     union {
         uint8_t         srv_state;

@@ -19,33 +19,40 @@ class Fir
 public:
     Fir();
 
-    /**
-     * Initializes a pre-designed FIR filter with real coefficients.
-     * @param ncoef The number of coefficients.
-     * @param coef  The array containing the filter coefficients.
-     * @param Fs    The sample rate in Hz.
+    /*
+     * Initializes a pre-designed FIR filter with real coefficients
+     *
+     * Parameters
+     *   ncoef The number of coefficients.
+     *   coef  The array containing the filter coefficients.
+     *   Fs    The sample rate in Hz.
      */
     void        init_const_fir(int ncoef, const real_t * coef, real_t Fs);
 
-    /**
-     * Initializes a pre-designed FIR filter with complex coefficients.
-     * @param ncoef The number of coefficients.
-     * @param icoef Array containing the filter coefficients (I).
-     * @param qcoef Array containing the filter coefficients (Q).
-     * @param Fs    The sample rate in Hz.
+    /*
+     * Initializes a pre-designed FIR filter with complex coefficients
+     *
+     * Parameters:
+     *   ncoef The number of coefficients.
+     *   icoef Array containing the filter coefficients (I).
+     *   qcoef Array containing the filter coefficients (Q).
+     *   Fs    The sample rate in Hz.
      */
     void        init_const_fir(int ncoef, const real_t * icoef,
                                const real_t * qcoef, real_t Fs);
 
-    /**
-     * Create a FIR Low Pass filter with scaled amplitude.
-     * @param ntaps If non-zero, forces filter design to be this number of taps.
-     * @param scale Linear amplitude scale factor.
-     * @param Astop Stopband Atenuation in dB (i.e. 40 is 40 dB attenuation).
-     * @param Fpass Lowpass passband frequency in Hz.
-     * @param Fstop Lowpass stopband frequency in Hz.
-     * @param Fs    Sample Rate in Hz.
-     * @returns The number of taps.
+    /*
+     * Create a FIR Low Pass filter with scaled amplitude
+     *
+     * Parameters:
+     *   ntaps If non-zero, forces filter design to be this number of taps.
+     *   scale Linear amplitude scale factor.
+     *   Astop Stopband Atenuation in dB (i.e. 40 is 40 dB attenuation).
+     *   Fpass Lowpass passband frequency in Hz.
+     *   Fstop Lowpass stopband frequency in Hz.
+     *   Fs    Sample Rate in Hz.
+     *
+     * Returns the number of taps.
      *
      *           -------------
      *                        \
@@ -58,15 +65,18 @@ public:
     int         init_lpf(int ntaps, real_t scale, real_t Astop, real_t Fpass,
                          real_t Fstop, real_t Fs);
 
-    /**
-     * Create a FIR high Pass filter with scaled amplitude.
-     * @param ntaps If non-zero, forces filter design to be this number of taps.
-     * @param scale Linear amplitude scale factor.
-     * @param Astop Stopband atenuation in dB (i.e. 40 is 40 dB attenuation).
-     * @param Fpass Highpass passband frequency in Hz.
-     * @param Fstop Highpass stopband frequency in Hz.
-     * @param Fs    Sample Rate in Hz.
-     * @returns The number of taps.
+    /*
+     * Create a FIR high Pass filter with scaled amplitude
+     *
+     * Parameters:
+     *   ntaps If non-zero, forces filter design to be this number of taps.
+     *   scale Linear amplitude scale factor.
+     *   Astop Stopband atenuation in dB (i.e. 40 is 40 dB attenuation).
+     *   Fpass Highpass passband frequency in Hz.
+     *   Fstop Highpass stopband frequency in Hz.
+     *   Fs    Sample Rate in Hz.
+     *
+     * Returns the number of taps.
      *
      *                        -------------
      *                       /

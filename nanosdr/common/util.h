@@ -34,12 +34,12 @@ extern "C"
 {
 #endif
 
-inline uint32_t    clamp_u32(uint32_t val, uint32_t max)
+inline uint32_t clamp_u32(uint32_t val, uint32_t max)
 {
     return (val <= max ? val : max);
 }
 
-inline uint32_t    clamp2_u32(uint32_t val, uint32_t min, uint32_t max)
+inline uint32_t clamp2_u32(uint32_t val, uint32_t min, uint32_t max)
 {
     if (val < min)
         return min;
@@ -49,7 +49,7 @@ inline uint32_t    clamp2_u32(uint32_t val, uint32_t min, uint32_t max)
         return val;
 }
 
-inline float        clamp2f(float val, float min, float max)
+inline float clamp2f(float val, float min, float max)
 {
     if (val < min)
         return min;

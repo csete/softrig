@@ -1,7 +1,6 @@
 /*
  * AM demodulator.
- *
- * Originally from CuteSdr and modified for nanosdr.
+ * Originally from CuteSdr.
  *
  * Copyright  2010  Moe Wheatley AE4JY
  * Copyright  2015  Alexandru Csete OZ9AEC

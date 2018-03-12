@@ -5,7 +5,7 @@
 
 #include "common/datatypes.h"
 
-/**
+/*
  * Class for performing frequency translation.
  *
  * This class takes I/Q baseband data and performs frequency translation
@@ -17,9 +17,8 @@ class Translate
 public:
     Translate();
 
-    /**
+    /*
      * Set NCO frequency
-     * @param  freq_hz  The NCO frequency in Hz.
      *
      * The NCO frequency corresponds to the frequency translation. For
      * example, a value of -20000 means that the spectrum will be shifted
@@ -28,29 +27,13 @@ public:
      */
     void        set_nco_frequency(real_t freq_hz);
 
-    /**
-     * Set additional CW offset.
-     * @param  offset_hz  Additional CW offset.
-     */
+    /* Set additional CW offset. */
     void        set_cw_offset(real_t offset_hz);
 
-    /**
-     * Process data.
-     * @param  length  The length of the input array.
-     * @param  data    Pointer to the input data which is also use for
-     *                 output.
-     */
     void        process(int length, complex_t * data);
-
-    /**
-     * Set Sample input and output sample rates.
-     * @param rate The new sample rate in Hz.
-     */
     void        set_sample_rate(real_t rate);
 
-
 private:
-
     real_t     sample_rate;   // sample rate.
     real_t     nco_freq;      // NCO frequency in Hz.
     real_t     cw_offset;     // Additional CW offset.

@@ -1,7 +1,6 @@
 /*
  * Decimate by power-of-2 using half band filters.
- *
- * Originally from CuteSdr and modified for nanosdr.
+ * Origin: CuteSdr.
  *
  * Copyright 2010  Moe Wheatley AE4JY
  * Copyright 2015  Alexandru Csete OZ9AEC

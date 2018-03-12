@@ -1,7 +1,6 @@
 /*
  * This class implements the automatic gain control function.
- *
- * Originally from CuteSdr and modified for nanosdr.
+ * Originally from CuteSdr.
  *
  * Copyright 2010-2013  Moe Wheatley AE4JY
  * Copyright 2014       Alexandru Csete OZ9AEC

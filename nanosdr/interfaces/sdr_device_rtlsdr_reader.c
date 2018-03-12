@@ -43,35 +43,26 @@ static int (*rtlsdr_reset_buffer)(void * dev);
 static int (*rtlsdr_read_async)(void * dev, rtlsdr_read_async_cb_t cb,
 				                void *ctx, uint32_t buf_num, uint32_t buf_len);
 
-
-/**
- * Rtlsdr reader data structure.
- *
- * @thread  Reader thread ID.
- * @rwlock  Read/write lock.
- * @dev     Local pointer to the rtlsdr handle (owned by parent object).
- * @rb      Ring buffer used to store 100 msec of I/Q samples.
- * @running Flag indicating whether the reader thread is running.
- * @exiting Flag indicating whether we are exiting the reader. If read_async()
- *          returns and this flag is false, a device error must have occured.
- */
 struct _rtlsdr_reader {
-    pthread_t           thread;
-    pthread_rwlock_t    rwlock;
+    pthread_t           thread;     // Reader thread ID
+    pthread_rwlock_t    rwlock;     // Read/write lock
 
-    void           *dev;
-    ring_buffer_t  *rb;
+    void           *dev;    // Local pointer to the rtlsdr handle (owned by parent object)
+    ring_buffer_t  *rb;     // Ring buffer used to store 100 msec of I/Q samples
 
-    int     running;
-    int     exiting;
+    int     running;    // Flag indicating whether the reader thread is running
+    int     exiting;    // Flag indicating whether we are exiting the reader. If read_async()
+                        // returns and this flag is false, a device error must have occured
 };
 
-/**
+/*
  * Rtlsdr reader callback.
- * @param buf Pointer to the buffer holding the input samples.
- * @param len The number of bytes in the input buffer. Equals buf_len from the
- *            rtlsdr_read_async() call.
- * @param data Pointer to the rtlsdr reader handle.
+ *
+ * Parameters:
+ *   buf    Pointer to the buffer holding the input samples.
+ *   len    The number of bytes in the input buffer. Equals buf_len from the
+ *          rtlsdr_read_async() call.
+ *   data   Pointer to the rtlsdr reader handle.
  */
 static void rtlsdr_reader_cb(unsigned char *buf, uint32_t len, void *data)
 {
@@ -98,9 +89,9 @@ static void rtlsdr_reader_cb(unsigned char *buf, uint32_t len, void *data)
     }
 }
 
-/**
+/*
  * Rtlsdr reader thread function.
- * @param data Pointer to the rtlsdr reader handle.
+ * data is a pointer to the rtlsdr reader handle.
  */
 static void *rtlsdr_reader_thread(void * data)
 {

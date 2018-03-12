@@ -1,8 +1,5 @@
 /*
  * Decimate by power-of-2 using half band filters.
- *
- * Originally from CuteSdr and modified for nanosdr.
- *
  */
 #pragma once
 
@@ -11,21 +8,18 @@
 
 #include "common/datatypes.h"
 
-
-/**
- * Decimate by power-of-2 usinf half band filters.
- */
 class Decimator
 {
 public:
     Decimator();
     virtual    ~Decimator();
 
-    /**
+    /*
      * Initialise the decimator.
-     * @param _decim The decimation factor. Must be power of 2 and less than 512.
-     * @param _att   The desired stop band attenuation in dB.
-     * @returns The actual decimation.
+     * _decim is the decimation factor. Must be power of 2 and less than 512.
+     * _att is the desired stop band attenuation in dB.
+     *
+     * Returns The actual decimation.
      *
      * Given the decimation and desired stop band attenuation, this function
      * will construct a chain of half band filters that will be used for
@@ -36,9 +30,7 @@ public:
 
 private:
 
-    /**
-     * Abstract base class for decimate-by-2 stages
-     */
+    /* Abstract base class for decimate-by-2 stages */
     class CDec2
     {
     public:
@@ -46,9 +38,7 @@ private:
         virtual int DecBy2(int InLength, complex_t* pInData, complex_t* pOutData) = 0;
     };
 
-    /**
-     * Generic decimate-by-2 implementation using half band filters
-     */
+    /* Generic decimate-by-2 implementation using half band filters */
     class CHalfBandDecimateBy2 : public CDec2
     {
     public:
@@ -66,9 +56,7 @@ private:
         const real_t   *m_pCoef;
     };
 
-    /**
-     * Decimate-by-2 implementation using 11-tap half band filter
-     */
+    /* Decimate-by-2 implementation using 11-tap half band filter */
     class CHalfBand11TapDecimateBy2 : public CDec2
     {
     public:

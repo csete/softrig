@@ -1,5 +1,5 @@
 /*
- * Various bithacks from
+ * Various bit hacks by Sean Eron Anderson (public domain)
  * http://graphics.stanford.edu/~seander/bithacks.html
  */
 #pragma once
@@ -10,7 +10,6 @@
 extern "C"
 {
 #endif
-
 
 /* could also use (x && ((x & (~x + 1)) == x)) */
 inline unsigned int is_power_of_two(unsigned int v)
@@ -33,7 +32,6 @@ inline unsigned int next_power_of_two(unsigned int v)
 
     return v;
 }
-
 
 #ifdef __cplusplus
 }

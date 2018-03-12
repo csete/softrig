@@ -29,10 +29,9 @@
 
 #include <pthread.h>
 
-/**
+/*
  * Base class for enabling threads in classes.
- *
- * See nanosdr-server/fft_thread.cpp for how to use it.
+ * See for example nanosdr-server/fft_thread.cpp for how to use it.
  */
 class ThreadClass
 {
@@ -40,20 +39,20 @@ public:
     ThreadClass() { }
     virtual ~ThreadClass() { }
 
-    /**
+    /*
      * Start the thread.
-     * @returns True if the thread was successfully started, false if an error
-     *          occurred.
+     * Returns true if the thread was successfully started, false if an error
+     * occurred.
      */
     bool start_thread()
     {
         return (pthread_create(&_thread, NULL, thread_func_entry, this) == 0);
     }
 
-    /**
+    /*
      * Wait for thread to exit. This will happen when thread_func returns.
-     * @return The function returns 0 if the thread exited successfully
-     *         or a non-zero error code otherwise.
+     * Returns 0 if the thread exited successfully or a non-zero error code
+     * otherwise.
      */
     int exit_thread()
     {
@@ -61,7 +60,7 @@ public:
     }
 
 protected:
-    /**
+    /*
      * Thread function.
      *
      * This is the thread function that should be implemented by the subclass.
