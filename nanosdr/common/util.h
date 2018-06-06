@@ -59,6 +59,16 @@ inline float clamp2f(float val, float min, float max)
         return val;
 }
 
+inline int clamp2_int(int val, int min, int max)
+{
+    if (val < min)
+        return min;
+    else if (val > max)
+        return max;
+    else
+        return val;
+}    
+
 #ifdef __cplusplus
 }
 #endif

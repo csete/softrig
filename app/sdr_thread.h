@@ -21,7 +21,7 @@
 #define SDR_THREAD_ERROR   -1  // unspecified error
 #define SDR_THREAD_EDEV    -2  // device error
 
-#define FFT_SIZE 16384  // FIXME
+#define FFT_SIZE 8192  // FIXME
 
 class SdrThread : public QObject
 {

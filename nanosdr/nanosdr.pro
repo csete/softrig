@@ -1,5 +1,5 @@
 
-NANOSDR_VERSION = 0.65
+NANOSDR_VERSION = 0.72
 
 message(Building with nanosdr version $${NANOSDR_VERSION})
 
@@ -29,6 +29,7 @@ NANODSP_HEADERS += \
     nanosdr/nanodsp/filter/filtercoef_hbf_140.h \
 #    nanosdr/nanodsp/filtercoef.h \
     nanosdr/nanodsp/fir.h \
+    nanosdr/nanodsp/fract_resampler.h \
     nanosdr/nanodsp/kiss_fft.h \
     nanosdr/nanodsp/_kiss_fft_guts.h \
     nanosdr/nanodsp/nfm_demod.h \
@@ -45,6 +46,7 @@ NANODSP_SOURCES += \
     nanosdr/nanodsp/fft.cpp \
     nanosdr/nanodsp/filter/decimator.cpp \
     nanosdr/nanodsp/fir.cpp \
+    nanosdr/nanodsp/fract_resampler.cpp \
     nanosdr/nanodsp/kiss_fft.c \
     nanosdr/nanodsp/nfm_demod.cpp \
     nanosdr/nanodsp/smeter.cpp \

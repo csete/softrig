@@ -34,8 +34,6 @@
  */
 #include "fir.h"
 
-#define MAX_HALF_BAND_BUFSIZE 8192
-
 Fir::Fir()
 {
     m_NumTaps = 1;

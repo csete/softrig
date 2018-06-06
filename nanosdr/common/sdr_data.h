@@ -16,21 +16,6 @@ typedef enum _audio_codec {
     AUDIO_CODEC_G726_16 = 6     /* 2 bit 16 kbps G.726 */
 } audio_codec_t;
 
-/* Gain stage identifiers */
-#define SDR_GAIN_ID_RX_LNA         0
-#define SDR_GAIN_ID_RX_MIX         1
-#define SDR_GAIN_ID_RX_IF          2
-#define SDR_GAIN_ID_RX_VGA         3
-#define SDR_GAIN_ID_RX_LIN         4
-#define SDR_GAIN_ID_RX_SENS        5
-#define SDR_GAIN_ID_RX_RF_AGC      6
-#define SDR_GAIN_ID_RX_IF_AGC      7
-#define SDR_GAIN_ID_TX_PA          8
-#define SDR_GAIN_ID_TX_MIX         9
-#define SDR_GAIN_ID_TX_IF          10
-#define SDR_GAIN_ID_TX_VGA         11
-#define SDR_GAIN_ID_NUM           (SDR_GAIN_ID_TX_VGA + 1)
-
 typedef struct _range {
     uint64_t        min;
     uint64_t        max;
@@ -62,7 +47,6 @@ typedef struct _srv_info {
     uint64_t        freq_max;       /* Upper limit of RF frequency [Hz]. */
     uint64_t        span_min;       /* Minimum spectrum span, i.e. max zoom in [Hz]. */
     uint64_t        span_max;       /* Maximum spectrum span, i.e. max zoom out [Hz]. */
-    uint32_t        gains;          /* Bit field of available gain stages. */
     uint16_t        if_version;     /* Server interface version (MSB.LSB). */
     uint16_t        hw_version;     /* Hardware version (MSB.LSB). */
     uint16_t        fw_version;     /* Firmware version (MSB.LSB). */

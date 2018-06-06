@@ -121,9 +121,7 @@ public:
     uint64_t    get_freq(void) const;
     int         get_freq_range(freq_range_t * range) const;
     int         set_freq_corr(float ppm);
-    int         get_gain_stages(uint8_t * gains) const;
-    uint16_t    get_gain_stages_bf(void) const;
-    int         set_gain(uint8_t stage, uint8_t value);
+    int         set_gain(int value);
     int         start(void);
     int         stop(void);
     uint32_t    get_num_bytes(void) const;
@@ -399,7 +397,7 @@ int SdrDeviceAirspyBase::set_sample_rate(float new_rate)
     result = airspy_set_samplerate(dev, rate);
     if (result != AIRSPY_SUCCESS)
     {
-        fprintf(stderr, "airspy_set_samplerate(%"PRIu32") failed (%d): %s\n",
+        fprintf(stderr, "airspy_set_samplerate(%" PRIu32 ") failed (%d): %s\n",
                 rate, result, airspy_error_name((enum airspy_error)result));
         return SDR_DEVICE_ERROR;
     }
@@ -442,13 +440,13 @@ int SdrDeviceAirspyBase::set_freq(uint64_t freq)
 
     if (result != AIRSPY_SUCCESS)
     {
-        fprintf(stderr, "airspy_set_freq(%"PRIu32") failed (%d): %s\n",
+        fprintf(stderr, "airspy_set_freq(%" PRIu32 ") failed (%d): %s\n",
                 current_freq, result,
                 airspy_error_name((enum airspy_error)result));
         return SDR_DEVICE_ERANGE;
     }
 
-    sdr_device_debug("SdrDeviceAirspyBase::set_freq(%"PRIu32")\n", current_freq);
+    sdr_device_debug("SdrDeviceAirspyBase::set_freq(%" PRIu32 ")\n", current_freq);
     return SDR_DEVICE_OK;
 }
 
@@ -471,86 +469,18 @@ int SdrDeviceAirspyBase::set_freq_corr(float ppm)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspyBase::get_gain_stages(uint8_t * gains) const
-{
-    if (gains == 0)
-        return 7;
-
-    gains[0] = SDR_DEVICE_RX_LNA_GAIN;
-    gains[1] = SDR_DEVICE_RX_MIX_GAIN;
-    gains[2] = SDR_DEVICE_RX_VGA_GAIN;
-    gains[3] = SDR_DEVICE_RX_LIN_GAIN;
-    gains[4] = SDR_DEVICE_RX_SENS_GAIN;
-    gains[5] = SDR_DEVICE_RX_RF_AGC;
-    gains[6] = SDR_DEVICE_RX_IF_AGC;
-
-    return 7;
-}
-
-uint16_t SdrDeviceAirspyBase::get_gain_stages_bf(void) const
-{
-    return (uint16_t)
-        (1 << SDR_DEVICE_RX_LNA_GAIN) |
-        (1 << SDR_DEVICE_RX_MIX_GAIN) |
-        (1 << SDR_DEVICE_RX_VGA_GAIN) |
-        (1 << SDR_DEVICE_RX_LIN_GAIN) |
-        (1 << SDR_DEVICE_RX_SENS_GAIN) |
-        (1 << SDR_DEVICE_RX_RF_AGC) |
-        (1 << SDR_DEVICE_RX_IF_AGC);
-}
-
-int SdrDeviceAirspyBase::set_gain(uint8_t stage, uint8_t value)
+int SdrDeviceAirspyBase::set_gain(int value)
 {
     uint8_t     gain;
-    int         retval = SDR_DEVICE_OK;
-
-    if (value > 100)
+    
+    if (value < 0 || value > 100)
         return SDR_DEVICE_ERANGE;
 
-    switch (stage)
-    {
-    case SDR_DEVICE_RX_LNA_GAIN:
-        gain = (value * 15) / 100;
-        if (airspy_set_lna_gain(dev, gain) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    case SDR_DEVICE_RX_MIX_GAIN:
-        gain = (value * 15) / 100;
-        if (airspy_set_mixer_gain(dev, gain) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    case SDR_DEVICE_RX_VGA_GAIN:
-        gain = (value * 15) / 100;
-        if (airspy_set_vga_gain(dev, gain) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    case SDR_DEVICE_RX_LIN_GAIN:
-        gain = (value * 21) / 100;
-        if (airspy_set_linearity_gain(dev, gain) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    case SDR_DEVICE_RX_SENS_GAIN:
-        gain = (value * 21) / 100;
-        if (airspy_set_sensitivity_gain(dev, gain) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    case SDR_DEVICE_RX_RF_AGC:
-        if (airspy_set_lna_agc(dev, value ? 1 : 0) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    case SDR_DEVICE_RX_IF_AGC:
-        if (airspy_set_mixer_agc(dev, value ? 1 : 0) != AIRSPY_SUCCESS)
-            retval = SDR_DEVICE_ERROR;
-        break;
-    default:
-        retval = SDR_DEVICE_EINVAL;
-        break;
-    }
+    gain = (uint8_t)((value * 21) / 100);
+    if (airspy_set_linearity_gain(dev, gain) != AIRSPY_SUCCESS)
+        return SDR_DEVICE_ERROR;
 
-    sdr_device_debug("SdrDeviceAirspyBase::set_gain(stage:%u,val:%u)  result:%d\n",
-                     stage, value, retval);
-
-    return retval;
+    return SDR_DEVICE_OK;
 }
 
 int SdrDeviceAirspyBase::start(void)
@@ -580,7 +510,8 @@ int SdrDeviceAirspyBase::stop(void)
     }
 
     uint64_t    dt = time_ms() - start_time;
-    fprintf(stderr, "Airspy: Read %"PRIu64" samples in %"PRIu64" ms = %.4f Msps\n",
+    fprintf(stderr,
+            "Airspy: Read %" PRIu64 " samples in %" PRIu64 " ms = %.4f Msps\n",
             total_samples, dt, 1.e-3f * (float)total_samples / (float)dt);
 
     return SDR_DEVICE_OK;

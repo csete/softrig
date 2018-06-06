@@ -63,9 +63,7 @@ public:
     uint64_t    get_freq(void) const { return current_freq; }
     int         get_freq_range(freq_range_t * range) const;
     int         set_freq_corr(float ppm);
-    int         get_gain_stages(uint8_t * gains) const { return 0; }
-    uint16_t    get_gain_stages_bf(void) const {return 0; }
-    int         set_gain(uint8_t stage, uint8_t value) { return SDR_DEVICE_EINVAL; }
+    int         set_gain(int value) { return SDR_DEVICE_EINVAL; }
     int         start(void);
     int         stop(void);
     uint32_t    get_num_bytes(void) const { return wk_buflen * 2; }

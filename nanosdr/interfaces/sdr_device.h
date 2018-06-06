@@ -37,21 +37,6 @@
 #define SDR_DEVICE_FILE         6       // Throttled file input
 
 
-// Gain stage identifiers
-// FIXME: Use SDR_GAIN_ID... directly
-#define SDR_DEVICE_RX_LNA_GAIN      SDR_GAIN_ID_RX_LNA
-#define SDR_DEVICE_RX_MIX_GAIN      SDR_GAIN_ID_RX_MIX
-#define SDR_DEVICE_RX_IF_GAIN       SDR_GAIN_ID_RX_IF
-#define SDR_DEVICE_RX_VGA_GAIN      SDR_GAIN_ID_RX_VGA
-#define SDR_DEVICE_RX_LIN_GAIN      SDR_GAIN_ID_RX_LIN
-#define SDR_DEVICE_RX_SENS_GAIN     SDR_GAIN_ID_RX_SENS
-#define SDR_DEVICE_RX_RF_AGC        SDR_GAIN_ID_RX_RF_AGC
-#define SDR_DEVICE_RX_IF_AGC        SDR_GAIN_ID_RX_IF_AGC
-#define SDR_DEVICE_TX_PA_GAIN       SDR_GAIN_ID_TX_PA
-#define SDR_DEVICE_TX_MIX_GAIN      SDR_GAIN_ID_TX_MIX
-#define SDR_DEVICE_TX_IF_GAIN       SDR_GAIN_ID_TX_IF
-#define SDR_DEVICE_TX_VGA_GAIN      SDR_GAIN_ID_TX_VGA
-
 class SdrDevice
 {
 
@@ -110,54 +95,6 @@ public:
     virtual float       get_dynamic_range(void) const = 0;
 
     /*
-     * Get list of gain stages.
-     *
-     * Parameters:
-     *   gains: Pointer to preallocated storage where the supported gains
-     *          will be stored. If 0, the number of gains is returned
-     *
-     * Returns the number of gains available or copied into the gains
-     * array. If an error occurs SDR_DEVICE_ERROR is returned.
-     *
-     * TODO: We should use a bit field instead, or add it as an option.
-     */
-    virtual int         get_gain_stages(uint8_t * gains) const  = 0;
-
-    /* Get gain stages as a bit field. */
-    virtual uint16_t    get_gain_stages_bf(void) const = 0;
-
-    /*
-     * Set gain.
-     *
-     * Parameters:
-     *   stage: The gain stage to set
-     *   value: The new gain value between 0 and 100
-     *
-     * Returns:
-     *   SDR_DEVICE_OK        Operation was successful
-     *   SDR_DEVICE_EINVAL    Invalid gain stage
-     *   SDR_DEVICE_ERANGE    Gain value out of range
-     *   SDR_DEVICE_ERROR     Error setting gain
-     */
-    virtual int         set_gain(uint8_t stage, uint8_t value) = 0;
-
-    /*
-     * Start reading from the device.
-     * Returns:
-     *   SDR_DEVICE_OK
-     *   SDR_DEVICE_ERROR
-     */
-    virtual int         start(void) = 0;
-
-    /*
-     * Stop reading from the device.
-     * Returns:
-     *   SDR_DEVICE_OK
-     *   SDR_DEVICE_ERROR
-     */
-    virtual int         stop(void) = 0;
-
-    /*
      * Set new RF frequency in Hz
      *
      * Parameters:
@@ -187,6 +124,33 @@ public:
      *   SDR_DEVICE_ERROR
      */
     virtual int         set_freq_corr(float ppm) = 0;
+
+    /*
+     * Set gain according to gain mode. Value is between 0 and 100.
+     *
+     * Returns:
+     *   SDR_DEVICE_OK
+     *   SDR_DEVICE_ERROR
+     *   SDR_DEVICE_EINVAL      Function not supproted by backend
+     *   SDR_DEVICE_ERANGE      Value out of range
+     */
+    virtual int         set_gain(int value) = 0;
+
+    /*
+     * Start reading from the device.
+     * Returns:
+     *   SDR_DEVICE_OK
+     *   SDR_DEVICE_ERROR
+     */
+    virtual int         start(void) = 0;
+
+    /*
+     * Stop reading from the device.
+     * Returns:
+     *   SDR_DEVICE_OK
+     *   SDR_DEVICE_ERROR
+     */
+    virtual int         stop(void) = 0;
 
     /* Get number of bytes available for reading */
     virtual uint32_t    get_num_bytes(void) const = 0;

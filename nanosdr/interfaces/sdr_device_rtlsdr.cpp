@@ -86,9 +86,7 @@ public:
     uint64_t    get_freq(void) const;
     int         get_freq_range(freq_range_t * range) const;
     int         set_freq_corr(float ppm);
-    int         get_gain_stages(uint8_t * gain_stages) const;
-    uint16_t    get_gain_stages_bf(void) const;
-    int         set_gain(uint8_t stage, uint8_t value);
+    int         set_gain(int value);
     int         start(void);
     int         stop(void);
     uint32_t    get_num_bytes(void) const;
@@ -336,11 +334,11 @@ int SdrDeviceRtlsdr::set_freq(uint64_t freq)
 {
     if (rtlsdr_set_center_freq(dev, freq))
     {
-        fprintf(stderr, "SdrDeviceRtlsdr::set_freq(%"PRIu64") failed\n", freq);
+        fprintf(stderr, "SdrDeviceRtlsdr::set_freq(%" PRIu64 ") failed\n", freq);
         return SDR_DEVICE_ERANGE;
     }
 
-    sdr_device_debug("SdrDeviceRtlsdr::set_freq(%"PRIu64")\n", freq);
+    sdr_device_debug("SdrDeviceRtlsdr::set_freq(%" PRIu64 ")\n", freq);
     return SDR_DEVICE_OK;
 }
 
@@ -394,63 +392,18 @@ int SdrDeviceRtlsdr::set_freq_corr(float ppm)
     return rtlsdr_set_freq_correction(dev, ppm) ? SDR_DEVICE_ERROR : SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::get_gain_stages(uint8_t * gain_stages) const
+int SdrDeviceRtlsdr::set_gain(int value)
 {
-    if (gain_stages == 0)
-        return 3;
+    int     idx;
 
-    gain_stages[0] = SDR_DEVICE_RX_LNA_GAIN;
-    gain_stages[1] = SDR_DEVICE_RX_RF_AGC;
-    gain_stages[2] = SDR_DEVICE_RX_IF_AGC;
-    // FIXME: E4000 tuner has 6 IF gain stages
-
-    return 3;
-}
-
-uint16_t SdrDeviceRtlsdr::get_gain_stages_bf(void) const
-{
-    return (uint16_t)
-        (1 << SDR_DEVICE_RX_LNA_GAIN) |
-        (1 << SDR_DEVICE_RX_RF_AGC) |
-        (1 << SDR_DEVICE_RX_IF_AGC);
-}
-
-int SdrDeviceRtlsdr::set_gain(uint8_t stage, uint8_t value)
-{
-    int         idx;
-    int         retval = SDR_DEVICE_OK;
-
-    if (value > 100)
+    if (value < 0 || value > 100)
         return SDR_DEVICE_ERANGE;
 
-    switch (stage)
-    {
-    default:
-        return SDR_DEVICE_EINVAL;
+    idx = (value * (num_gains - 1)) / 100;
+    if (rtlsdr_set_tuner_gain(dev, gains[idx]))
+        return SDR_DEVICE_ERROR;
 
-    case SDR_DEVICE_RX_LNA_GAIN:
-        idx = (value * (num_gains - 1)) / 100;
-        if (rtlsdr_set_tuner_gain(dev, gains[idx]))
-            retval = SDR_DEVICE_ERROR;
-        break;
-
-    case SDR_DEVICE_RX_RF_AGC:
-        // nanosdr API uses 0 = disable AGC and 1 = enable AGC
-        // rtl-sdr API uses 1 = enable manual gain mode
-        if (rtlsdr_set_tuner_gain_mode(dev, value ? 0 : 1))
-            retval = SDR_DEVICE_ERROR;
-        break;
-
-    case SDR_DEVICE_RX_IF_AGC:
-        if (rtlsdr_set_agc_mode(dev, value ? 1 : 0))
-            retval = SDR_DEVICE_ERROR;
-        break;
-    }
-
-    sdr_device_debug("SdrDeviceRtlsdr::set_gain(stage:%u,val:%u)  result:%d\n",
-                     stage, value, retval);
-
-    return retval;
+    return SDR_DEVICE_OK;
 }
 
 int SdrDeviceRtlsdr::start(void)

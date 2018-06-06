@@ -59,9 +59,7 @@ public:
     uint64_t    get_freq(void) const;
     int         get_freq_range(freq_range_t * range) const;
     int         set_freq_corr(float ppm);
-    int         get_gain_stages(uint8_t * gains) const;
-    uint16_t    get_gain_stages_bf(void) const;
-    int         set_gain(uint8_t stage, uint8_t value);
+    int         set_gain(int value);
     int         start(void);
     int         stop(void);
     uint32_t    get_num_bytes(void) const;
@@ -253,50 +251,21 @@ int SdrDeviceSdriq::set_freq_corr(float ppm)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceSdriq::get_gain_stages(uint8_t * gains) const
+int SdrDeviceSdriq::set_gain(int value)
 {
-    if (gains == 0)
-        return 2;
-
-    gains[0] = SDR_DEVICE_RX_LNA_GAIN;
-    gains[1] = SDR_DEVICE_RX_IF_GAIN;
-    return 2;
-}
-
-uint16_t SdrDeviceSdriq::get_gain_stages_bf(void) const
-{
-    return (uint16_t)
-        (1 << SDR_DEVICE_RX_LNA_GAIN) |
-        (1 << SDR_DEVICE_RX_IF_GAIN);
-}
-
-int SdrDeviceSdriq::set_gain(uint8_t stage, uint8_t value)
-{
-    int         ret = SDR_DEVICE_OK;
     int8_t      gain = 0;
 
-    if (value > 100)
+    if (value < 0 || value > 100)
         return SDR_DEVICE_ERANGE;
 
-    if (stage == SDR_DEVICE_RX_LNA_GAIN)
-    {
-        // [0; 100] -> { -30, -20, -10, 0}
-        gain = 10 * (value / 30) - 30;
-        ret = sdriq_set_fixed_rf_gain(sdr, gain) ? SDR_DEVICE_ERROR : SDR_DEVICE_OK;
-    }
-    else if (stage == SDR_DEVICE_RX_IF_GAIN)
-    {
-        // [0; 100] -> { 0, 6, 12, 18, 24}
-        gain = 6 * (value / 23);
-        ret = sdriq_set_fixed_if_gain(sdr, gain) ? SDR_DEVICE_ERROR : SDR_DEVICE_OK;
-    }
-    else
-        return SDR_DEVICE_EINVAL;
+    fputs("FIXME: SdrDeviceSdriq::set_gain() does not use IF gain\n", stderr);
 
-    sdr_device_debug("SdrDeviceSdriq::set_gain(stage:%u,val:%u)  g:%d  res:%d\n",
-                     stage, value, gain, ret);
+    // [0; 100] -> { -30, -20, -10, 0}
+    gain = (int8_t)(10 * (value / 30) - 30);
+    if (sdriq_set_fixed_rf_gain(sdr, gain))
+        return SDR_DEVICE_ERROR;
 
-    return ret;
+    return SDR_DEVICE_OK;
 }
 
 int SdrDeviceSdriq::start(void)

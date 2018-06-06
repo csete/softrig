@@ -48,7 +48,8 @@
 #define MENU_ID_AUDIO       1
 #define MENU_ID_GUI         2
 
-#define DEFAULT_FREQ        127100000
+//#define DEFAULT_FREQ        127100000
+#define DEFAULT_FREQ        7100000
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
