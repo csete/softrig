@@ -12,10 +12,6 @@ unix:LIBS += -ldl
 DEFINES += NANOSDR_OS_LITTLE_ENDIAN
 DEFINES += LINUX
 
-## FIXME: speexdsp
-CONFIG += link_pkgconfig
-PKGCONFIG += speexdsp
-
 NANODSP_HEADERS += \
     nanosdr/nanodsp/agc.h \
     nanosdr/nanodsp/amdemod.h \

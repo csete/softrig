@@ -1,7 +1,7 @@
 /*
  * SDR receiver implementation
  *
- * Copyright 2017 Alexandru Csete OZ9AEC
+ * Copyright 2017-2018 Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,7 +29,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <speex/speex_resampler.h> // must come after stdint.h
 
 #include "common/bithacks.h"
 #include "common/datatypes.h"
@@ -39,6 +38,7 @@
 #include "nanodsp/amdemod.h"
 #include "nanodsp/fastfir.h"
 #include "nanodsp/filter/decimator.h"
+#include "nanodsp/fract_resampler.h"
 #include "nanodsp/smeter.h"
 #include "nanodsp/ssbdemod.h"
 #include "nanodsp/translate.h"
@@ -53,7 +53,6 @@ Receiver::Receiver()
     quad_rate = input_rate / quad_decim;
     output_rate = 48000.0f;
     demod = SDR_DEMOD_SSB;
-    resampler = 0;
     cplx_buf0 = 0;
     cplx_buf1 = 0;
     cplx_buf2 = 0;
@@ -67,9 +66,6 @@ Receiver::~Receiver()
 
 void Receiver::free_memory()
 {
-    if (resampler)
-        speex_resampler_destroy(resampler);
-
     delete[] cplx_buf0;
     delete[] cplx_buf1;
     delete[] cplx_buf2;
@@ -79,8 +75,6 @@ void Receiver::free_memory()
 void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
                     uint32_t frame_length)
 {
-    int error;
-
     fprintf(stderr,
             "Initializing receiver (dynamic range %.2f dB)...\n",
             dyn_range);
@@ -135,16 +129,8 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
     nfm.set_sample_rate(quad_rate);
     bfo.set_sample_rate(quad_rate);
 
-    // re-initialize resampler
-    if (rintf(quad_rate) != quad_rate)
-        fputs("*** WARNING: quad_rate is not an integer\n", stderr);
-    if (rintf(output_rate) != output_rate)
-        fputs("*** WARNING: output_rate is not an integer\n", stderr);
-    fputs("*** FIXME: Check resampler quality setting\n", stderr);
-    resampler = speex_resampler_init(1, quad_rate, output_rate, 3, &error);
-    if (error || !resampler)
-        fprintf(stderr, "%s\n", speex_resampler_strerror(error));
-        // FIXME: now what?
+    audio_rr = quad_rate / output_rate;
+    audio_resampler.init(frame_length);
 }
 
 
@@ -192,10 +178,9 @@ void Receiver::set_demod(sdr_demod_t new_demod)
  */
 int Receiver::process(int input_length, complex_t * input, real_t * output)
 {
-    spx_uint32_t    sin, sout;
     int         filt_samples;
     int         quad_samples;
-    int         error;
+    int         out_samples;
 
     //xlate->process(input_length, input);
     quad_samples = decim.process(input_length, input);
@@ -230,14 +215,9 @@ int Receiver::process(int input_length, complex_t * input, real_t * output)
         break;
     }
 
-    sin = filt_samples;
-    sout = filt_samples;
-    error = speex_resampler_process_float(resampler, 0, real_buf1, &sin,
-                                          output, &sout);
-    if (error)
-        fprintf(stderr, "%s\n", speex_resampler_strerror(error));
+    out_samples = audio_resampler.resample(filt_samples, audio_rr, real_buf1, output);
 
-    return sout;
+    return out_samples;
 }
 
 real_t Receiver::get_signal_strength(void) const

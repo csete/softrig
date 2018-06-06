@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <speex/speex_resampler.h> // must come after stdint.h
 
 #include "common/datatypes.h"
 #include "common/sdr_data.h"
@@ -9,6 +8,7 @@
 #include "nanodsp/amdemod.h"
 #include "nanodsp/fastfir.h"
 #include "nanodsp/filter/decimator.h"
+#include "nanodsp/fract_resampler.h"
 #include "nanodsp/nfm_demod.h"
 #include "nanodsp/smeter.h"
 #include "nanodsp/ssbdemod.h"
@@ -49,13 +49,13 @@ private:
     AmDemod     am;
     SsbDemod    ssb;
     Translate   bfo;            // used to provide CW offset in single user mode
-
-    SpeexResamplerState *resampler; 
+    FractResampler  audio_resampler;
 
     real_t      sql_level;
     real_t      input_rate;
     real_t      quad_rate;
     real_t      output_rate;
+    real_t      audio_rr;
 
     unsigned int    quad_decim;
 
