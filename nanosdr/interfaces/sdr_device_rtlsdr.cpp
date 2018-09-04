@@ -65,6 +65,8 @@ static int (*rtlsdr_set_tuner_gain)(void * dev, int gain);
 static int (*rtlsdr_set_tuner_gain_mode)(void * dev, int manual);
 static int (*rtlsdr_get_tuner_gains)(void * dev, int *gains);
 static int (*rtlsdr_set_tuner_bandwidth)(void * dev, uint32_t bw);
+static int (*rtlsdr_set_direct_sampling)(void * dev, int on);
+static int (*rtlsdr_get_direct_sampling)(void * dev);
 static int (*rtlsdr_cancel_async)(void * dev);
 static int (*rtlsdr_reset_buffer)(void * dev);
 static int (*rtlsdr_read_async)(void * dev, rtlsdr_read_async_cb_t cb,
@@ -144,82 +146,145 @@ int SdrDeviceRtlsdr::load_librtlsdr()
     if (is_loaded)
         return SDR_DEVICE_OK;
 
-    fprintf(stderr, "Loading RTLSDR library... ");
+    fputs("Loading RTLSDR library... ", stderr);
     lib = load_library("rtlsdr");
     if (lib == NULL)
     {
-        fprintf(stderr, "Error loading library\n");
+        fputs("Error loading library\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    fprintf(stderr, "OK (unknown version)\n");
+    fputs("OK (unknown version)\nLoading symbols... ", stderr);
 
     rtlsdr_open = (int (*)(void **, uint32_t)) get_symbol(lib, "rtlsdr_open");
     if (rtlsdr_open == NULL)
+    {
+        fputs("Error loading symbol address for \n", stderr); // FIXME: add error func to base class
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_close = (int (*)(void *)) get_symbol(lib, "rtlsdr_close");
     if (rtlsdr_close == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_close\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_sample_rate = (int (*)(void *, uint32_t)) get_symbol(lib, "rtlsdr_set_sample_rate");
     if (rtlsdr_set_sample_rate == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_sample_rate\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_get_sample_rate = (uint32_t (*)(void *)) get_symbol(lib, "rtlsdr_get_sample_rate");
     if (rtlsdr_get_sample_rate == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_get_sample_rate\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_center_freq = (int (*)(void *, uint32_t)) get_symbol(lib, "rtlsdr_set_center_freq");
     if (rtlsdr_set_center_freq == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_center_freq\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_get_center_freq = (uint32_t (*)(void *)) get_symbol(lib, "rtlsdr_get_center_freq");
     if (rtlsdr_get_center_freq == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_get_center_freq\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_freq_correction = (int (*)(void *, int)) get_symbol(lib, "rtlsdr_set_freq_correction");
     if (rtlsdr_set_freq_correction == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_freq_correction\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_get_tuner_type = (enum rtlsdr_tuner (*)(void *)) get_symbol(lib, "rtlsdr_get_tuner_type");
     if (rtlsdr_get_tuner_type == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_get_tuner_type\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_agc_mode = (int (*)(void *, int)) get_symbol(lib, "rtlsdr_set_agc_mode");
     if (rtlsdr_set_agc_mode == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_agc_mode\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_tuner_gain = (int (*)(void *, int)) get_symbol(lib, "rtlsdr_set_tuner_gain");
     if (rtlsdr_set_tuner_gain == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_tuner_gain\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_tuner_gain_mode = (int (*)(void *, int)) get_symbol(lib, "rtlsdr_set_tuner_gain_mode");
     if (rtlsdr_set_tuner_gain_mode == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_tuner_gain_mode\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_get_tuner_gains = (int (*)(void *, int *)) get_symbol(lib, "rtlsdr_get_tuner_gains");
     if (rtlsdr_get_tuner_gains == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_get_tuner_gains\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_set_tuner_bandwidth = (int (*)(void *, uint32_t)) get_symbol(lib, "rtlsdr_set_tuner_bandwidth");
     if (rtlsdr_set_tuner_bandwidth == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_tuner_bandwidth\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
+
+    rtlsdr_set_direct_sampling = (int (*)(void *, int)) get_symbol(lib, "rtlsdr_set_direct_sampling");
+    if (rtlsdr_set_direct_sampling == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_set_direct_sampling\n", stderr);
+        return SDR_DEVICE_ELIB;
+    }
+
+    rtlsdr_get_direct_sampling = (int (*)(void *)) get_symbol(lib, "rtlsdr_get_direct_sampling");
+    if (rtlsdr_get_direct_sampling == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_get_direct_sampling\n", stderr);
+        return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_cancel_async = (int (*)(void *)) get_symbol(lib, "rtlsdr_cancel_async");
     if (rtlsdr_cancel_async == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_cancel_async\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_reset_buffer = (int (*)(void *)) get_symbol(lib, "rtlsdr_reset_buffer");
     if (rtlsdr_reset_buffer == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_reset_buffer\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     rtlsdr_read_async = (int (*)(void *, rtlsdr_read_async_cb_t, void *,
                          uint32_t, uint32_t)) get_symbol(lib, "rtlsdr_read_async");
     if (rtlsdr_read_async == NULL)
+    {
+        fputs("Error loading symbol address for rtlsdr_read_async\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     is_loaded = true;
+    fputs("OK\n", stderr);
 
     return SDR_DEVICE_OK;
 }
@@ -305,24 +370,23 @@ int SdrDeviceRtlsdr::set_sample_rate(float new_rate)
 int SdrDeviceRtlsdr::get_sample_rates(float * rates) const
 {
     if (rates == 0)
-        return 13;
+        return 12;
 
     // we only report ratiometric rates.
     rates[0] = 240e3f;
-    rates[1] = 300e3f; 
-    rates[2] = 900e3f;
-    rates[3] = 960e3f;
-    rates[4] = 1152e3f;
-    rates[5] = 1200e3f;
-    rates[6] = 1440e3f;
-    rates[7] = 1600e3f;
-    rates[8] = 1800e3f;
-    rates[9] = 1920e3f;
-    rates[10] = 2400e3f;
-    rates[11] = 2880e3f;
-    rates[12] = 3200e3f;
+    rates[1] = 300e3f;
+    rates[2] = 960e3f;
+    rates[3] = 1152e3f;
+    rates[4] = 1200e3f;
+    rates[5] = 1440e3f;
+    rates[6] = 1600e3f;
+    rates[7] = 1800e3f;
+    rates[8] = 1920e3f;
+    rates[9] = 2400e3f;
+    rates[10] = 2880e3f;
+    rates[11] = 3200e3f;
 
-    return 13;
+    return 12;
 }
 
 float SdrDeviceRtlsdr::get_sample_rate(void) const
@@ -332,6 +396,8 @@ float SdrDeviceRtlsdr::get_sample_rate(void) const
 
 int SdrDeviceRtlsdr::set_freq(uint64_t freq)
 {
+    int     result;
+
     if (rtlsdr_set_center_freq(dev, freq))
     {
         fprintf(stderr, "SdrDeviceRtlsdr::set_freq(%" PRIu64 ") failed\n", freq);
@@ -339,6 +405,19 @@ int SdrDeviceRtlsdr::set_freq(uint64_t freq)
     }
 
     sdr_device_debug("SdrDeviceRtlsdr::set_freq(%" PRIu64 ")\n", freq);
+    if (freq < 24e6 && !rtlsdr_get_direct_sampling(dev))
+    {
+        if ((result = rtlsdr_set_direct_sampling(dev, 2)))
+            fprintf(stderr, "Note: rtlsdr_set_direct_sampling returned %d\n",
+                    result);
+    }
+    else if (freq >= 24e6 && rtlsdr_get_direct_sampling(dev))
+    {
+        if ((result = rtlsdr_set_direct_sampling(dev, 0)))
+            fprintf(stderr, "Note: rtlsdr_set_direct_sampling returned %d\n",
+            result);
+    }
+
     return SDR_DEVICE_OK;
 }
 
@@ -350,6 +429,9 @@ uint64_t SdrDeviceRtlsdr::get_freq(void) const
 int SdrDeviceRtlsdr::get_freq_range(freq_range_t * range) const
 {
     range->step = 1;
+
+    fputs("*** FIXME: SdrDeviceRtlsdr::get_freq_range ignores direct sampling\n",
+          stderr);
 
     switch (rtlsdr_get_tuner_type(dev))
     {

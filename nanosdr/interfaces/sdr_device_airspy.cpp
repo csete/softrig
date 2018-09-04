@@ -229,17 +229,20 @@ int SdrDeviceAirspyBase::load_libairspy()
 {
     airspy_lib_version_t    lib_ver;
 
-    fprintf(stderr, "Loading Airspy library... ");
+    fputs("Loading Airspy library... ", stderr);
     lib = load_library("airspy");
     if (lib == NULL)
     {
-        fprintf(stderr, "Error loading library\n");
+        fputs("Error loading library\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
     airspy_lib_version = (void (*)(airspy_lib_version_t *)) get_symbol(lib, "airspy_lib_version");
     if (airspy_lib_version == NULL)
+    {
+        fputs("Error loading symbol address for airspy_lib_version\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
     airspy_lib_version(&lib_ver);
     fprintf(stderr, "OK (version: %d.%d.%d)\n", lib_ver.major_version,
             lib_ver.minor_version, lib_ver.revision);
@@ -248,70 +251,122 @@ int SdrDeviceAirspyBase::load_libairspy()
         fprintf(stderr, "NOTE: Backend uses API version %d.%d\n",
                 AIRSPY_VER_MAJOR, AIRSPY_VER_MINOR);
 
+    fputs("Loading symbols... ", stderr);
+
     airspy_open = (int (*)(struct airspy_device **)) get_symbol(lib, "airspy_open");
     if (airspy_open == NULL)
+    {
+        fputs("Error loading symbol address for airspy_open\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_close = (int (*)(void *)) get_symbol(lib, "airspy_close");
     if (airspy_close == NULL)
+    {
+        fputs("Error loading symbol address for airspy_close\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_samplerate = (int (*)(void *, uint32_t)) get_symbol(lib, "airspy_set_samplerate");
     if (airspy_set_samplerate == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_samplerate\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_start_rx = (int (*)(void *, airspy_sample_block_cb_fn, void *))
                         get_symbol(lib, "airspy_start_rx");
     if (airspy_start_rx == NULL)
+    {
+        fputs("Error loading symbol address for airspy_start_rx\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_stop_rx = (int (*)(void *)) get_symbol(lib, "airspy_stop_rx");
     if (airspy_stop_rx == NULL)
+    {
+        fputs("Error loading symbol address for airspy_stop_rx\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_is_streaming = (int (*)(void *)) get_symbol(lib, "airspy_is_streaming");
     if (airspy_is_streaming == NULL)
+    {
+        fputs("Error loading symbol address for airspy_is_streaming\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_sample_type = (int (*)(void *, enum airspy_sample_type)) get_symbol(lib, "airspy_set_sample_type");
     if (airspy_set_sample_type == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_sample_type\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_freq = (int (*)(void *, uint32_t)) get_symbol(lib, "airspy_set_freq");
     if (airspy_set_freq == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_freq\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_linearity_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_linearity_gain");
     if (airspy_set_linearity_gain == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_linearity_gain\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_sensitivity_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_sensitivity_gain");
     if (airspy_set_sensitivity_gain == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_sensitivity_gain\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_lna_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_lna_gain");
     if (airspy_set_lna_gain == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_lna_gain\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_mixer_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_mixer_gain");
     if (airspy_set_mixer_gain == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_mixer_gain\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_vga_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_vga_gain");
     if (airspy_set_vga_gain == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_vga_gain\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_lna_agc = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_lna_agc");
     if (airspy_set_lna_agc == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_lna_agc\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_set_mixer_agc = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_mixer_agc");
     if (airspy_set_mixer_agc == NULL)
+    {
+        fputs("Error loading symbol address for airspy_set_mixer_agc\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
 
     airspy_error_name = (char * (*)(enum airspy_error)) get_symbol(lib, "airspy_error_name");
     if (airspy_error_name == NULL)
+    {
+        fputs("Error loading symbol address for airspy_error_name\n", stderr);
         return SDR_DEVICE_ELIB;
+    }
+
+    fputs("OK\n", stderr);
 
     return SDR_DEVICE_OK;
 }
