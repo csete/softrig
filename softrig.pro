@@ -51,8 +51,7 @@ HEADERS += \
 
 FORMS += \
     gui/control_panel.ui \
-    gui/device_config_dialog.ui \
-    gui/mainwindow.ui
+    gui/device_config_dialog.ui
 
 # make clean target
 QMAKE_CLEAN += softrig

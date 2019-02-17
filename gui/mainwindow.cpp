@@ -39,7 +39,6 @@
 #include "gui/ssi_widget.h"
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 #include "gui/tmp_plotter.h"
 
@@ -52,18 +51,13 @@
 #define DEFAULT_FREQ        7100000
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
+    QFrame    *central_widget;
     QWidget   *spacer1;
     QWidget   *spacer2;
     QWidget   *spacer3;
 
-
-    ui->setupUi(this);
-    ui->menuBar->hide();
-    ui->toolBar->hide();
-    ui->statusBar->hide();
 
     cfg = nullptr;
 
@@ -135,7 +129,10 @@ MainWindow::MainWindow(QWidget *parent) :
     win_layout->setSpacing(2);
     win_layout->addLayout(main_layout, 12);
     win_layout->addWidget(cpanel, 2);
-    ui->centralWidget->setLayout(win_layout);
+
+    central_widget = new QFrame(this);
+    central_widget->setLayout(win_layout);
+    setCentralWidget(central_widget);
 
     loadConfig();
 }
@@ -165,7 +162,6 @@ MainWindow::~MainWindow()
     delete top_layout;
     delete main_layout;
     delete win_layout;
-    delete ui;
 }
 
 void MainWindow::loadConfig(void)

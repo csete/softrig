@@ -15,10 +15,6 @@
 
 #include "gui/tmp_plotter.h"
 
-namespace Ui {
-    class MainWindow;
-}
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -45,8 +41,6 @@ private:
     void    deviceConfigChanged(const device_config_t * conf);
 
 private:
-    Ui::MainWindow   *ui;
-
     AppConfig        *cfg;
     SdrThread        *sdr;
     QTimer           *fft_timer;
