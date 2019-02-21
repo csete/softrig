@@ -9,6 +9,7 @@
 //#include "common/datatypes.h"
 #include "common/sdr_data.h"
 
+/* clang-format off */
 // Command IDs
 //   0x0000 ... 0x00FF  High level commands that may affect both device and DSP
 #define SDR_CTL_NONE                0x0000
@@ -58,45 +59,44 @@
 #define SDR_CTL_GAIN_TX_IF          SDR_GAIN_ID_TX_IF
 #define SDR_CTL_GAIN_TX_VGA         SDR_GAIN_ID_TX_VGA
 #define SDR_CTL_GAIN_NUM            SDR_GAIN_ID_NUM
-
+/* clang-format on */
 
 /* AGC settings */
 typedef struct _ctl_agc {
-    int8_t          threshold;  // AGC threshold between -127 and 0 dB
-    uint8_t         slope;      // AGC slope between 0 and 10 dB
-    uint16_t        decay;      // AGC decay time between 20 and 2000 ms
+    int8_t   threshold;  // AGC threshold between -127 and 0 dB
+    uint8_t  slope;      // AGC slope between 0 and 10 dB
+    uint16_t decay;      // AGC decay time between 20 and 2000 ms
 } ctl_agc_t;
 
 /* Channel filter settings */
 typedef struct _ctl_filter {
-    int16_t         lo_cut;     // Low cut-off frequency in Hz
-    int16_t         hi_cut;     // High cut-off frequency in Hz
-    int16_t         offset;     // Frequency ofset
+    int16_t lo_cut;  // Low cut-off frequency in Hz
+    int16_t hi_cut;  // High cut-off frequency in Hz
+    int16_t offset;  // Frequency ofset
 } ctl_filter_t;
 
 /* Gain setting. */
 typedef struct _gain {
-    uint8_t         id;         // See defines in sdr_device.h
-    uint8_t         value;      // 0...100
+    uint8_t id;     // See defines in sdr_device.h
+    uint8_t value;  // 0...100
 } gain_t;
 
 /* SDR CTL data structure. */
 typedef struct _sdr_ctl {
-    uint8_t         type;       // The CTL type, see SDR_CTL_TYPE_*
-    uint16_t        id;         // The CTL ID, see SDR_CTL_*
+    uint8_t  type;  // The CTL type, see SDR_CTL_TYPE_*
+    uint16_t id;    // The CTL ID, see SDR_CTL_*
 
     union {
-        uint8_t         srv_state;
-        gain_t          gain;
-        uint64_t        freq;
-        sdr_demod_t     mode;       // AM, FM, SSB, ...
-        ctl_agc_t       agc;        // AGC settings
-        ctl_filter_t    filter;     // Channel filter settings
-        int16_t         sql;        // Squelch threshold in dB
-        audio_codec_t   codec;      // Audio codec
+        uint8_t       srv_state;
+        gain_t        gain;
+        uint64_t      freq;
+        sdr_demod_t   mode;    // AM, FM, SSB, ...
+        ctl_agc_t     agc;     // AGC settings
+        ctl_filter_t  filter;  // Channel filter settings
+        int16_t       sql;     // Squelch threshold in dB
+        audio_codec_t codec;   // Audio codec
 
         /* ranges */
-        freq_range_t    freq_range;
+        freq_range_t freq_range;
     };
 } sdr_ctl_t;
-

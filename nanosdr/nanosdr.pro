@@ -1,5 +1,5 @@
 
-NANOSDR_VERSION = 0.76
+NANOSDR_VERSION = 0.85
 
 message(Building with nanosdr version $${NANOSDR_VERSION})
 
@@ -63,6 +63,7 @@ HEADERS += \
 #    nanosdr/interfaces/sdr_ctl.h \
 #    nanosdr/interfaces/sdr_ctl_queue.h \
     nanosdr/interfaces/sdr_device.h \
+    nanosdr/interfaces/sdr_device_airspy_fir.h \
     nanosdr/interfaces/sdr_device_rtlsdr_reader.h \
     nanosdr/fft_thread.h \
     nanosdr/receiver.h \

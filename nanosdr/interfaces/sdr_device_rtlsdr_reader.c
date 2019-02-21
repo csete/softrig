@@ -36,23 +36,24 @@
 #include "sdr_device_rtlsdr_reader.h"
 
 // RTLSDR API functions loaded in sdr_device_rtlsdr.cpp
-typedef void (*rtlsdr_read_async_cb_t)(unsigned char *buf, uint32_t len, void *ctx);
-static uint32_t (*rtlsdr_get_sample_rate)(void * dev);
-static int (*rtlsdr_cancel_async)(void * dev);
-static int (*rtlsdr_reset_buffer)(void * dev);
-static int (*rtlsdr_read_async)(void * dev, rtlsdr_read_async_cb_t cb,
-				                void *ctx, uint32_t buf_num, uint32_t buf_len);
+typedef void (*rtlsdr_read_async_cb_t)(unsigned char *buf, uint32_t len,
+                                       void *ctx);
+static uint32_t (*rtlsdr_get_sample_rate)(void *dev);
+static int (*rtlsdr_cancel_async)(void *dev);
+static int (*rtlsdr_reset_buffer)(void *dev);
+static int (*rtlsdr_read_async)(void *dev, rtlsdr_read_async_cb_t cb, void *ctx,
+                                uint32_t buf_num, uint32_t buf_len);
 
 struct _rtlsdr_reader {
-    pthread_t           thread;     // Reader thread ID
-    pthread_rwlock_t    rwlock;     // Read/write lock
+    pthread_t        thread;  // Reader thread ID
+    pthread_rwlock_t rwlock;  // Read/write lock
+    ring_buffer_t *  rb;  // Ring buffer used to store 100 msec of I/Q samples
 
-    void           *dev;    // Local pointer to the rtlsdr handle (owned by parent object)
-    ring_buffer_t  *rb;     // Ring buffer used to store 100 msec of I/Q samples
-
-    int     running;    // Flag indicating whether the reader thread is running
-    int     exiting;    // Flag indicating whether we are exiting the reader. If read_async()
-                        // returns and this flag is false, a device error must have occured
+    void *dev;  // Local pointer to the rtlsdr handle (owned by parent object)
+    int   running;  // Flag indicating whether the reader thread is running
+    int   exiting;  // Flag indicating whether we are exiting the reader. If
+                  // read_async() returns and this flag is false, a device error
+                  // must have occured
 };
 
 /*
@@ -71,7 +72,7 @@ static void rtlsdr_reader_cb(unsigned char *buf, uint32_t len, void *data)
         rtlsdr_reader_t *reader;
         uint32_t         bytes_to_write;
 
-        reader = (rtlsdr_reader_t *) data;
+        reader = (rtlsdr_reader_t *)data;
         if (reader->exiting)
             return;
 
@@ -93,11 +94,11 @@ static void rtlsdr_reader_cb(unsigned char *buf, uint32_t len, void *data)
  * Rtlsdr reader thread function.
  * data is a pointer to the rtlsdr reader handle.
  */
-static void *rtlsdr_reader_thread(void * data)
+static void *rtlsdr_reader_thread(void *data)
 {
-    rtlsdr_reader_t    *reader = (rtlsdr_reader_t *) data;
-    uint32_t            sample_rate;
-    uint32_t            buf_len;
+    rtlsdr_reader_t *reader = (rtlsdr_reader_t *)data;
+    uint32_t         sample_rate;
+    uint32_t         buf_len;
 
     fputs("Rtlsdr reader thread started.\n", stderr);
 
@@ -121,23 +122,31 @@ static void *rtlsdr_reader_thread(void * data)
     pthread_exit(NULL);
 }
 
-rtlsdr_reader_t *rtlsdr_reader_create(void * rtldev, lib_handle_t lib)
+rtlsdr_reader_t *rtlsdr_reader_create(void *rtldev, lib_handle_t lib)
 {
     rtlsdr_reader_t *reader;
     uint32_t         sample_rate;
 
-    /* load librtlsdr functions */
-    rtlsdr_get_sample_rate = (uint32_t (*)(void *)) get_symbol(lib, "rtlsdr_get_sample_rate");
-    rtlsdr_cancel_async = (int (*)(void *)) get_symbol(lib, "rtlsdr_cancel_async");
-    rtlsdr_reset_buffer = (int (*)(void *)) get_symbol(lib, "rtlsdr_reset_buffer");
-    rtlsdr_read_async = (int (*)(void *, rtlsdr_read_async_cb_t, void *,
-                         uint32_t, uint32_t)) get_symbol(lib, "rtlsdr_read_async");
+    /* clang-format off */
+    /* NB:
+     * The assignment used below is the POSIX.1-2003 (Technical
+     * Corrigendum 1) workaround for the "ISO C forbids conversion of object
+     * pointer to function pointer type" earning when using -Wpedantic with gcc;
+     * See the Rationale for the POSIX specification of dlsym().
+     * See https://linux.die.net/man/3/dlsym
+     * This is not a problem in C++
+     */
+    *(void **)(&rtlsdr_get_sample_rate) = get_symbol(lib, "rtlsdr_get_sample_rate");
+    *(void **)(&rtlsdr_cancel_async) = get_symbol(lib, "rtlsdr_cancel_async");
+    *(void **)(&rtlsdr_reset_buffer) = get_symbol(lib, "rtlsdr_reset_buffer");
+    *(void **)(&rtlsdr_read_async) = get_symbol(lib, "rtlsdr_read_async");
+    /* clang-format on */
 
     if (rtlsdr_get_sample_rate == NULL || rtlsdr_cancel_async == NULL ||
         rtlsdr_reset_buffer == NULL || rtlsdr_read_async == NULL)
         return NULL;
 
-    reader = (rtlsdr_reader_t *) malloc(sizeof(rtlsdr_reader_t));
+    reader = (rtlsdr_reader_t *)malloc(sizeof(rtlsdr_reader_t));
     reader->dev = rtldev;
     reader->running = 0;
     reader->exiting = 0;
@@ -154,7 +163,7 @@ rtlsdr_reader_t *rtlsdr_reader_create(void * rtldev, lib_handle_t lib)
     return reader;
 }
 
-void rtlsdr_reader_destroy(rtlsdr_reader_t * reader)
+void rtlsdr_reader_destroy(rtlsdr_reader_t *reader)
 {
     if (!reader)
         return;
@@ -167,9 +176,9 @@ void rtlsdr_reader_destroy(rtlsdr_reader_t * reader)
     free(reader);
 }
 
-int rtlsdr_reader_start(rtlsdr_reader_t * reader)
+int rtlsdr_reader_start(rtlsdr_reader_t *reader)
 {
-    int     ret;
+    int ret;
 
     ret = pthread_create(&reader->thread, NULL, rtlsdr_reader_thread, reader);
     if (ret)
@@ -184,7 +193,7 @@ int rtlsdr_reader_start(rtlsdr_reader_t * reader)
     return 0;
 }
 
-int rtlsdr_reader_stop(rtlsdr_reader_t * reader)
+int rtlsdr_reader_stop(rtlsdr_reader_t *reader)
 {
     reader->exiting = 1;
     rtlsdr_cancel_async(reader->dev);
@@ -192,19 +201,19 @@ int rtlsdr_reader_stop(rtlsdr_reader_t * reader)
     return 0;
 }
 
-uint32_t rtlsdr_reader_get_num_bytes(rtlsdr_reader_t * reader)
+uint32_t rtlsdr_reader_get_num_bytes(rtlsdr_reader_t *reader)
 {
     return ring_buffer_count(reader->rb);
 }
 
-uint32_t rtlsdr_reader_read_bytes(rtlsdr_reader_t * reader, void * buffer,
+uint32_t rtlsdr_reader_read_bytes(rtlsdr_reader_t *reader, void *buffer,
                                   uint32_t bytes)
 {
     if (bytes > ring_buffer_count(reader->rb))
         return 0;
 
     pthread_rwlock_rdlock(&reader->rwlock);
-    ring_buffer_read(reader->rb, (unsigned char *) buffer, bytes);
+    ring_buffer_read(reader->rb, (unsigned char *)buffer, bytes);
     pthread_rwlock_unlock(&reader->rwlock);
 
     return bytes;

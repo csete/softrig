@@ -38,7 +38,6 @@
 #include "common/time.h"
 #include "sdr_device.h"
 
-
 /*
  * Input reader for stdin. Free running, i.e. there is no throttling to match
  * the sample rate.
@@ -49,44 +48,61 @@
  */
 class SdrDeviceStdin : public SdrDevice
 {
-public:
+  public:
     SdrDeviceStdin(void);
-    virtual     ~SdrDeviceStdin();
+    virtual ~SdrDeviceStdin();
 
     /* optarg is filename or stdint */
-    int         init(float samprate, const char * options);
-    int         set_sample_rate(float new_rate);
-    int         get_sample_rates(float * rates) const { return 0; }
-    float       get_sample_rate(void) const {return 0.f; }
-    float       get_dynamic_range(void) const { return 120.f; }
-    int         set_freq(uint64_t freq);
-    uint64_t    get_freq(void) const { return current_freq; }
-    int         get_freq_range(freq_range_t * range) const;
-    int         set_freq_corr(float ppm);
-    int         set_gain(int value) { return SDR_DEVICE_EINVAL; }
-    int         start(void);
-    int         stop(void);
-    uint32_t    get_num_bytes(void) const { return wk_buflen * 2; }
-    uint32_t    get_num_samples(void) const { return wk_buflen; }
-    uint32_t    read_bytes(void * buffer, uint32_t bytes);
-    uint32_t    read_samples(complex_t * buffer, uint32_t samples);
-    int         type(void) const { return SDR_DEVICE_STDIN; };
+    int   init(float samprate, const char *options);
+    int   set_sample_rate(float new_rate);
+    int   get_sample_rates(float *rates) const;
+    float get_sample_rate(void) const
+    {
+        return 0.f;
+    }
+    float get_dynamic_range(void) const
+    {
+        return 120.f;
+    }
+    int      set_freq(uint64_t freq);
+    uint64_t get_freq(void) const
+    {
+        return current_freq;
+    }
+    int      get_freq_range(freq_range_t *range) const;
+    int      set_freq_corr(float ppm);
+    int      set_gain(int value);
+    int      start(void);
+    int      stop(void);
+    uint32_t get_num_bytes(void) const
+    {
+        return wk_buflen * 2;
+    }
+    uint32_t get_num_samples(void) const
+    {
+        return wk_buflen;
+    }
+    uint32_t read_bytes(void *buffer, uint32_t bytes);
+    uint32_t read_samples(complex_t *buffer, uint32_t samples);
+    int      type(void) const
+    {
+        return SDR_DEVICE_STDIN;
+    };
 
-private:
-    uint64_t        current_freq;
+  private:
+    uint64_t current_freq;
 
     // internal working buffer used for S16->fc convresion
-    int16_t        *wk_buf;
-    uint32_t        wk_buflen;
+    int16_t *wk_buf;
+    uint32_t wk_buflen;
 
     // statistics
-    uint64_t        bytes_read;     // bytes read between start() and stop()
+    uint64_t bytes_read;  // bytes read between start() and stop()
 
-    void            free_memory(void);
+    void free_memory(void);
 };
 
-
-SdrDevice * sdr_device_create_stdin()
+SdrDevice *sdr_device_create_stdin()
 {
     return new SdrDeviceStdin();
 }
@@ -102,7 +118,7 @@ SdrDeviceStdin::~SdrDeviceStdin()
     free_memory();
 }
 
-int SdrDeviceStdin::init(float samprate, const char * options)
+int SdrDeviceStdin::init(float samprate, const char *options)
 {
     fprintf(stderr, "\n**********************************************\n");
     fprintf(stderr, "  SdrDeviceStdin::init\n");
@@ -125,13 +141,19 @@ int SdrDeviceStdin::set_sample_rate(float new_rate)
     return SDR_DEVICE_OK;
 }
 
+int SdrDeviceStdin::get_sample_rates(float *rates) const
+{
+    (void)rates;
+    return 0;
+}
+
 int SdrDeviceStdin::set_freq(uint64_t freq)
 {
     current_freq = freq;
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceStdin::get_freq_range(freq_range_t * range) const
+int SdrDeviceStdin::get_freq_range(freq_range_t *range) const
 {
     range->min = 0;
     range->max = 100e9;
@@ -141,8 +163,14 @@ int SdrDeviceStdin::get_freq_range(freq_range_t * range) const
 
 int SdrDeviceStdin::set_freq_corr(float ppm)
 {
-    (void) ppm;
+    (void)ppm;
     return SDR_DEVICE_OK;
+}
+
+int SdrDeviceStdin::set_gain(int value)
+{
+    (void)value;
+    return SDR_DEVICE_EINVAL;
 }
 
 int SdrDeviceStdin::start(void)
@@ -161,12 +189,12 @@ int SdrDeviceStdin::stop(void)
     return SDR_DEVICE_OK;
 }
 
-uint32_t SdrDeviceStdin::read_bytes(void * buffer, uint32_t bytes)
+uint32_t SdrDeviceStdin::read_bytes(void *buffer, uint32_t bytes)
 {
     if (bytes > 2 * wk_buflen)
         return 0;
 
-    size_t      bytes_in = fread(buffer, 1, bytes, stdin);
+    size_t bytes_in = fread(buffer, 1, bytes, stdin);
     if (bytes_in < bytes)
     {
         return 0;
@@ -177,13 +205,13 @@ uint32_t SdrDeviceStdin::read_bytes(void * buffer, uint32_t bytes)
 }
 
 #define SAMPLE_SCALE (1.0f / 32768.f)
-uint32_t SdrDeviceStdin::read_samples(complex_t * buffer, uint32_t samples)
+uint32_t SdrDeviceStdin::read_samples(complex_t *buffer, uint32_t samples)
 {
     if (samples > wk_buflen)
         return 0;
 
-    real_t     *out_buf = (real_t *) buffer;
-    size_t      samples_in = fread(wk_buf, 4, samples, stdin);
+    real_t *out_buf = (real_t *)buffer;
+    size_t  samples_in = fread(wk_buf, 4, samples, stdin);
 
     if (samples_in < samples)
         return 0;

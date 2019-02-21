@@ -37,141 +37,158 @@
 #include "common/sdr_data.h"
 #include "common/time.h"
 #include "sdr_device.h"
-
+#include "sdr_device_airspy_fir.h"
 
 // Airspy API definitions
 #define AIRSPY_VER_MAJOR 1
 #define AIRSPY_VER_MINOR 0
 
-enum airspy_error
-{
-	AIRSPY_SUCCESS = 0,
-	AIRSPY_TRUE = 1,
-	AIRSPY_ERROR_INVALID_PARAM = -2,
-	AIRSPY_ERROR_NOT_FOUND = -5,
-	AIRSPY_ERROR_BUSY = -6,
-	AIRSPY_ERROR_NO_MEM = -11,
-	AIRSPY_ERROR_LIBUSB = -1000,
-	AIRSPY_ERROR_THREAD = -1001,
-	AIRSPY_ERROR_STREAMING_THREAD_ERR = -1002,
-	AIRSPY_ERROR_STREAMING_STOPPED = -1003,
-	AIRSPY_ERROR_OTHER = -9999,
+enum airspy_error {
+    AIRSPY_SUCCESS = 0,
+    AIRSPY_TRUE = 1,
+    AIRSPY_ERROR_INVALID_PARAM = -2,
+    AIRSPY_ERROR_NOT_FOUND = -5,
+    AIRSPY_ERROR_BUSY = -6,
+    AIRSPY_ERROR_NO_MEM = -11,
+    AIRSPY_ERROR_LIBUSB = -1000,
+    AIRSPY_ERROR_THREAD = -1001,
+    AIRSPY_ERROR_STREAMING_THREAD_ERR = -1002,
+    AIRSPY_ERROR_STREAMING_STOPPED = -1003,
+    AIRSPY_ERROR_OTHER = -9999,
 };
 
-enum airspy_sample_type
-{
-	AIRSPY_SAMPLE_FLOAT32_IQ = 0,   /* 2 * 32bit float per sample */
-	AIRSPY_SAMPLE_FLOAT32_REAL = 1, /* 1 * 32bit float per sample */
-	AIRSPY_SAMPLE_INT16_IQ = 2,     /* 2 * 16bit int per sample */
-	AIRSPY_SAMPLE_INT16_REAL = 3,   /* 1 * 16bit int per sample */
-	AIRSPY_SAMPLE_UINT16_REAL = 4,  /* 1 * 16bit unsigned int per sample */
-	AIRSPY_SAMPLE_RAW = 5,          /* Raw packed samples from the device */
-	AIRSPY_SAMPLE_END = 6           /* Number of supported sample types */
+enum airspy_sample_type {
+    AIRSPY_SAMPLE_FLOAT32_IQ = 0,   /* 2 * 32bit float per sample */
+    AIRSPY_SAMPLE_FLOAT32_REAL = 1, /* 1 * 32bit float per sample */
+    AIRSPY_SAMPLE_INT16_IQ = 2,     /* 2 * 16bit int per sample */
+    AIRSPY_SAMPLE_INT16_REAL = 3,   /* 1 * 16bit int per sample */
+    AIRSPY_SAMPLE_UINT16_REAL = 4,  /* 1 * 16bit unsigned int per sample */
+    AIRSPY_SAMPLE_RAW = 5,          /* Raw packed samples from the device */
+    AIRSPY_SAMPLE_END = 6           /* Number of supported sample types */
 };
 
 typedef struct {
-	struct airspy_device* device;
-	void* ctx;
-	void* samples;
-	int sample_count;
-	uint64_t dropped_samples;
-	enum airspy_sample_type sample_type;
+    struct airspy_device *  device;
+    void *                  ctx;
+    void *                  samples;
+    int                     sample_count;
+    uint64_t                dropped_samples;
+    enum airspy_sample_type sample_type;
 } airspy_transfer_t, airspy_transfer;
 
 typedef struct {
-	uint32_t major_version;
-	uint32_t minor_version;
-	uint32_t revision;
+    uint32_t major_version;
+    uint32_t minor_version;
+    uint32_t revision;
 } airspy_lib_version_t;
 
-typedef int (*airspy_sample_block_cb_fn)(airspy_transfer* transfer);
+typedef int (*airspy_sample_block_cb_fn)(airspy_transfer *transfer);
 
-static int (*airspy_open)(struct airspy_device ** device);
-static int (*airspy_close)(void * device);
-static int (*airspy_set_samplerate)(void * device, uint32_t samplerate);
-static int (*airspy_start_rx)(void * device, airspy_sample_block_cb_fn cb, void * ctx);
-static int (*airspy_stop_rx)(void * device);
-static int (*airspy_is_streaming)(void * device);
-static int (*airspy_set_sample_type)(void * device, enum airspy_sample_type sample_type);
-static int (*airspy_set_freq)(void * device, const uint32_t freq);
-static int (*airspy_set_linearity_gain)(void * device, uint8_t gain);
-static int (*airspy_set_sensitivity_gain)(void * device, uint8_t gain);
-static int (*airspy_set_lna_gain)(void * device, uint8_t gain);
-static int (*airspy_set_mixer_gain)(void * device, uint8_t gain);
-static int (*airspy_set_vga_gain)(void * device, uint8_t gain);
-static int (*airspy_set_lna_agc)(void * device, uint8_t gain);
-static int (*airspy_set_mixer_agc)(void * device, uint8_t gain);
-static void (*airspy_lib_version)(airspy_lib_version_t * lib_version);
-static char * (*airspy_error_name)(enum airspy_error errcode);
+static int (*airspy_open)(struct airspy_device **device);
+static int (*airspy_close)(void *device);
+static int (*airspy_set_samplerate)(void *device, uint32_t samplerate);
+static int (*airspy_set_conversion_filter_float32)(void *         device,
+                                                   const float *  kernel,
+                                                   const uint32_t len);
+static int (*airspy_start_rx)(void *device, airspy_sample_block_cb_fn cb,
+                              void *ctx);
+static int (*airspy_stop_rx)(void *device);
+static int (*airspy_is_streaming)(void *device);
+static int (*airspy_set_sample_type)(void *                  device,
+                                     enum airspy_sample_type sample_type);
+static int (*airspy_set_freq)(void *device, const uint32_t freq);
+static int (*airspy_set_linearity_gain)(void *device, uint8_t gain);
+static int (*airspy_set_sensitivity_gain)(void *device, uint8_t gain);
+static int (*airspy_set_lna_gain)(void *device, uint8_t gain);
+static int (*airspy_set_mixer_gain)(void *device, uint8_t gain);
+static int (*airspy_set_vga_gain)(void *device, uint8_t gain);
+static int (*airspy_set_lna_agc)(void *device, uint8_t gain);
+static int (*airspy_set_mixer_agc)(void *device, uint8_t gain);
+static void (*airspy_lib_version)(airspy_lib_version_t *lib_version);
+static char *(*airspy_error_name)(enum airspy_error errcode);
 // end of Airspy API defs
 
 class SdrDeviceAirspyBase : public SdrDevice
 {
-public:
+  public:
     SdrDeviceAirspyBase(bool mini);
-    virtual     ~SdrDeviceAirspyBase();
+    virtual ~SdrDeviceAirspyBase();
 
     // Virtual function implementations
-    int         init(float samprate, const char * options);
-    int         set_sample_rate(float new_rate);
-    int         get_sample_rates(float * rates) const;
-    float       get_sample_rate(void) const { return sample_rate; };
-    float       get_dynamic_range(void) const { return 100.f; };
-    int         set_freq(uint64_t freq);
-    uint64_t    get_freq(void) const;
-    int         get_freq_range(freq_range_t * range) const;
-    int         set_freq_corr(float ppm);
-    int         set_gain(int value);
-    int         start(void);
-    int         stop(void);
-    uint32_t    get_num_bytes(void) const;
-    uint32_t    get_num_samples(void) const;
-    uint32_t    read_bytes(void * buffer, uint32_t bytes);
-    uint32_t    read_samples(complex_t * buffer, uint32_t samples);
-    int         type(void) const
+    int   init(float samprate, const char *options);
+    int   set_sample_rate(float new_rate);
+    int   get_sample_rates(float *rates) const;
+    float get_sample_rate(void) const
+    {
+        return sample_rate;
+    };
+    int   set_bandwidth(uint32_t bw);
+    float get_dynamic_range(void) const
+    {
+        return 100.f;
+    };
+    int      set_freq(uint64_t freq);
+    uint64_t get_freq(void) const;
+    int      get_freq_range(freq_range_t *range) const;
+    int      set_freq_corr(float ppm);
+    int      set_gain(int value);
+    int      set_gain_mode(int mode);
+    int      start(void);
+    int      stop(void);
+    uint32_t get_num_bytes(void) const;
+    uint32_t get_num_samples(void) const;
+    uint32_t read_bytes(void *buffer, uint32_t bytes);
+    uint32_t read_samples(complex_t *buffer, uint32_t samples);
+    int      type(void) const
     {
         return is_mini ? SDR_DEVICE_AIRSPYMINI : SDR_DEVICE_AIRSPY;
     };
 
-private:
-    int         load_libairspy(void);
-    void        free_memory(void);
+  private:
+    int  load_libairspy(void);
+    void free_memory(void);
 
-    static int  airspy_rx_callback(airspy_transfer_t * transfer);
+    static int airspy_rx_callback(airspy_transfer_t *transfer);
 
-private:
-    lib_handle_t            lib;
-    struct airspy_device   *dev;
+  private:
+    lib_handle_t          lib;
+    struct airspy_device *dev;
 
-    uint64_t    total_samples;
-    uint64_t    start_time;
-    uint32_t    sample_rate;
-    uint32_t    current_freq;   // Airspy max freq is 1.9 GHz (don't need 64 bit)
+    uint64_t total_samples;
+    uint64_t start_time;
+    uint32_t sample_rate;
+    uint32_t current_freq;  // Airspy max freq is 1.9 GHz (don't need 64 bit)
+    int      gain_mode;
+    int last_gain;  // Cached gain value (0-100) used to restore manual gain
 
-    ring_buffer_t  *sample_buffer;
+    ring_buffer_t *sample_buffer;
 
-    bool        is_mini;
-    bool        initialized;
+    bool is_mini;
+    bool initialized;
 };
 
 class SdrDeviceAirspy : public SdrDeviceAirspyBase
 {
-public:
-    SdrDeviceAirspy() : SdrDeviceAirspyBase(false) {}
+  public:
+    SdrDeviceAirspy() : SdrDeviceAirspyBase(false)
+    {
+    }
 };
 
 class SdrDeviceAirspyMini : public SdrDeviceAirspyBase
 {
-public:
-    SdrDeviceAirspyMini() : SdrDeviceAirspyBase(true) {}
+  public:
+    SdrDeviceAirspyMini() : SdrDeviceAirspyBase(true)
+    {
+    }
 };
 
-SdrDevice * sdr_device_create_airspy()
+SdrDevice *sdr_device_create_airspy()
 {
     return new SdrDeviceAirspy();
 }
 
-SdrDevice * sdr_device_create_airspymini()
+SdrDevice *sdr_device_create_airspymini()
 {
     return new SdrDeviceAirspyMini();
 }
@@ -179,10 +196,10 @@ SdrDevice * sdr_device_create_airspymini()
 /* The callback function is a static method to allow access to private
  * members of the instance.
  */
-int SdrDeviceAirspyBase::airspy_rx_callback(airspy_transfer_t * transfer)
+int SdrDeviceAirspyBase::airspy_rx_callback(airspy_transfer_t *transfer)
 {
     // we are in a static method, so we need to get the instance
-    SdrDeviceAirspyBase *sdrdev = (SdrDeviceAirspyBase *) transfer->ctx;
+    SdrDeviceAirspyBase *sdrdev = (SdrDeviceAirspyBase *)transfer->ctx;
 
     if (transfer->sample_type != AIRSPY_SAMPLE_FLOAT32_IQ)
     {
@@ -192,8 +209,9 @@ int SdrDeviceAirspyBase::airspy_rx_callback(airspy_transfer_t * transfer)
     }
 
     sdrdev->total_samples += transfer->sample_count;
-    ring_buffer_cplx_write(sdrdev->sample_buffer, (complex_t *)transfer->samples,
-        transfer->sample_count);
+    ring_buffer_cplx_write(sdrdev->sample_buffer,
+                           (complex_t *)transfer->samples,
+                           transfer->sample_count);
 
     return 0;
 }
@@ -207,6 +225,8 @@ SdrDeviceAirspyBase::SdrDeviceAirspyBase(bool mini)
     sample_rate = 0;
     current_freq = 0;
     sample_buffer = 0;
+    gain_mode = SDR_DEVICE_GAIN_DEFAULT;
+    last_gain = 0;
     is_mini = mini;
     initialized = false;
 }
@@ -227,7 +247,7 @@ SdrDeviceAirspyBase::~SdrDeviceAirspyBase()
 
 int SdrDeviceAirspyBase::load_libairspy()
 {
-    airspy_lib_version_t    lib_ver;
+    airspy_lib_version_t lib_ver;
 
     fputs("Loading Airspy library... ", stderr);
     lib = load_library("airspy");
@@ -237,7 +257,8 @@ int SdrDeviceAirspyBase::load_libairspy()
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_lib_version = (void (*)(airspy_lib_version_t *)) get_symbol(lib, "airspy_lib_version");
+    airspy_lib_version =
+        (void (*)(airspy_lib_version_t *))get_symbol(lib, "airspy_lib_version");
     if (airspy_lib_version == NULL)
     {
         fputs("Error loading symbol address for airspy_lib_version\n", stderr);
@@ -253,113 +274,144 @@ int SdrDeviceAirspyBase::load_libairspy()
 
     fputs("Loading symbols... ", stderr);
 
-    airspy_open = (int (*)(struct airspy_device **)) get_symbol(lib, "airspy_open");
+    airspy_open =
+        (int (*)(struct airspy_device **))get_symbol(lib, "airspy_open");
     if (airspy_open == NULL)
     {
         fputs("Error loading symbol address for airspy_open\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_close = (int (*)(void *)) get_symbol(lib, "airspy_close");
+    airspy_close = (int (*)(void *))get_symbol(lib, "airspy_close");
     if (airspy_close == NULL)
     {
         fputs("Error loading symbol address for airspy_close\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_samplerate = (int (*)(void *, uint32_t)) get_symbol(lib, "airspy_set_samplerate");
+    airspy_set_samplerate =
+        (int (*)(void *, uint32_t))get_symbol(lib, "airspy_set_samplerate");
     if (airspy_set_samplerate == NULL)
     {
-        fputs("Error loading symbol address for airspy_set_samplerate\n", stderr);
+        fputs("Error loading symbol address for airspy_set_samplerate\n",
+              stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_start_rx = (int (*)(void *, airspy_sample_block_cb_fn, void *))
-                        get_symbol(lib, "airspy_start_rx");
+    airspy_set_conversion_filter_float32 =
+        (int (*)(void *, const float *, uint32_t))get_symbol(
+            lib, "airspy_set_conversion_filter_float32");
+    if (airspy_set_conversion_filter_float32 == NULL)
+    {
+        fputs(
+            "Error loading symbol address for airspy_set_conversion_filter_float32\n",
+            stderr);
+        return SDR_DEVICE_ELIB;
+    }
+
+    airspy_start_rx = (int (*)(void *, airspy_sample_block_cb_fn,
+                               void *))get_symbol(lib, "airspy_start_rx");
     if (airspy_start_rx == NULL)
     {
         fputs("Error loading symbol address for airspy_start_rx\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_stop_rx = (int (*)(void *)) get_symbol(lib, "airspy_stop_rx");
+    airspy_stop_rx = (int (*)(void *))get_symbol(lib, "airspy_stop_rx");
     if (airspy_stop_rx == NULL)
     {
         fputs("Error loading symbol address for airspy_stop_rx\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_is_streaming = (int (*)(void *)) get_symbol(lib, "airspy_is_streaming");
+    airspy_is_streaming =
+        (int (*)(void *))get_symbol(lib, "airspy_is_streaming");
     if (airspy_is_streaming == NULL)
     {
         fputs("Error loading symbol address for airspy_is_streaming\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_sample_type = (int (*)(void *, enum airspy_sample_type)) get_symbol(lib, "airspy_set_sample_type");
+    airspy_set_sample_type =
+        (int (*)(void *, enum airspy_sample_type))get_symbol(
+            lib, "airspy_set_sample_type");
     if (airspy_set_sample_type == NULL)
     {
-        fputs("Error loading symbol address for airspy_set_sample_type\n", stderr);
+        fputs("Error loading symbol address for airspy_set_sample_type\n",
+              stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_freq = (int (*)(void *, uint32_t)) get_symbol(lib, "airspy_set_freq");
+    airspy_set_freq =
+        (int (*)(void *, uint32_t))get_symbol(lib, "airspy_set_freq");
     if (airspy_set_freq == NULL)
     {
         fputs("Error loading symbol address for airspy_set_freq\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_linearity_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_linearity_gain");
+    airspy_set_linearity_gain =
+        (int (*)(void *, uint8_t))get_symbol(lib, "airspy_set_linearity_gain");
     if (airspy_set_linearity_gain == NULL)
     {
-        fputs("Error loading symbol address for airspy_set_linearity_gain\n", stderr);
+        fputs("Error loading symbol address for airspy_set_linearity_gain\n",
+              stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_sensitivity_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_sensitivity_gain");
+    airspy_set_sensitivity_gain = (int (*)(void *, uint8_t))get_symbol(
+        lib, "airspy_set_sensitivity_gain");
     if (airspy_set_sensitivity_gain == NULL)
     {
-        fputs("Error loading symbol address for airspy_set_sensitivity_gain\n", stderr);
+        fputs("Error loading symbol address for airspy_set_sensitivity_gain\n",
+              stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_lna_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_lna_gain");
+    airspy_set_lna_gain =
+        (int (*)(void *, uint8_t))get_symbol(lib, "airspy_set_lna_gain");
     if (airspy_set_lna_gain == NULL)
     {
         fputs("Error loading symbol address for airspy_set_lna_gain\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_mixer_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_mixer_gain");
+    airspy_set_mixer_gain =
+        (int (*)(void *, uint8_t))get_symbol(lib, "airspy_set_mixer_gain");
     if (airspy_set_mixer_gain == NULL)
     {
-        fputs("Error loading symbol address for airspy_set_mixer_gain\n", stderr);
+        fputs("Error loading symbol address for airspy_set_mixer_gain\n",
+              stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_vga_gain = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_vga_gain");
+    airspy_set_vga_gain =
+        (int (*)(void *, uint8_t))get_symbol(lib, "airspy_set_vga_gain");
     if (airspy_set_vga_gain == NULL)
     {
         fputs("Error loading symbol address for airspy_set_vga_gain\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_lna_agc = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_lna_agc");
+    airspy_set_lna_agc =
+        (int (*)(void *, uint8_t))get_symbol(lib, "airspy_set_lna_agc");
     if (airspy_set_lna_agc == NULL)
     {
         fputs("Error loading symbol address for airspy_set_lna_agc\n", stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_set_mixer_agc = (int (*)(void *, uint8_t)) get_symbol(lib, "airspy_set_mixer_agc");
+    airspy_set_mixer_agc =
+        (int (*)(void *, uint8_t))get_symbol(lib, "airspy_set_mixer_agc");
     if (airspy_set_mixer_agc == NULL)
     {
-        fputs("Error loading symbol address for airspy_set_mixer_agc\n", stderr);
+        fputs("Error loading symbol address for airspy_set_mixer_agc\n",
+              stderr);
         return SDR_DEVICE_ELIB;
     }
 
-    airspy_error_name = (char * (*)(enum airspy_error)) get_symbol(lib, "airspy_error_name");
+    airspy_error_name =
+        (char *(*)(enum airspy_error))get_symbol(lib, "airspy_error_name");
     if (airspy_error_name == NULL)
     {
         fputs("Error loading symbol address for airspy_error_name\n", stderr);
@@ -371,10 +423,10 @@ int SdrDeviceAirspyBase::load_libairspy()
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspyBase::init(float samprate, const char * options)
+int SdrDeviceAirspyBase::init(float samprate, const char *options)
 {
-    (void)      options;
-    int         result;
+    (void)options;
+    int result;
 
     if (initialized)
         return SDR_DEVICE_OK;
@@ -436,8 +488,8 @@ int SdrDeviceAirspyBase::init(float samprate, const char * options)
 
 int SdrDeviceAirspyBase::set_sample_rate(float new_rate)
 {
-    uint32_t    rate;
-    int         result;
+    uint32_t rate;
+    int      result;
 
     rate = new_rate;
 
@@ -463,7 +515,7 @@ int SdrDeviceAirspyBase::set_sample_rate(float new_rate)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceAirspyBase::get_sample_rates(float * rates) const
+int SdrDeviceAirspyBase::get_sample_rates(float *rates) const
 {
     if (is_mini)
     {
@@ -477,7 +529,6 @@ int SdrDeviceAirspyBase::get_sample_rates(float * rates) const
         return 3;
     }
 
-
     if (rates != 0)
     {
         rates[0] = 2.5e6f;
@@ -487,11 +538,54 @@ int SdrDeviceAirspyBase::get_sample_rates(float * rates) const
     return 2;
 }
 
+int SdrDeviceAirspyBase::set_bandwidth(uint32_t bw)
+{
+    int          ret;
+    int          decim;
+    int          size;
+    const float *kernel;
+
+    if (!initialized || bw == 0.f)
+        return SDR_DEVICE_OK;
+
+    decim = (int)(sample_rate / bw);
+
+    if (decim < 4)
+    {
+        kernel = KERNEL_2_80;
+        size = KERNEL_2_80_LEN;
+    }
+    else if (decim < 8)
+    {
+        kernel = KERNEL_4_90;
+        size = KERNEL_4_90_LEN;
+    }
+    else if (decim < 16)
+    {
+        kernel = KERNEL_8_100;
+        size = KERNEL_8_100_LEN;
+    }
+    else
+    {
+        kernel = KERNEL_16_110;
+        size = KERNEL_16_110_LEN;
+    }
+
+    fprintf(stderr, "Airspy BW = %" PRIu32 ", decim = %d, kernel size = %d\n",
+            bw, decim, size);
+
+    ret = airspy_set_conversion_filter_float32(dev, kernel, size);
+    if (ret)
+        fprintf(stderr, "Error setting airspy conversion filter (%d)\n", ret);
+
+    return ret ? SDR_DEVICE_ERROR : SDR_DEVICE_OK;
+}
+
 int SdrDeviceAirspyBase::set_freq(uint64_t freq)
 {
     current_freq = freq;
 
-    int     result = airspy_set_freq(dev, current_freq);
+    int result = airspy_set_freq(dev, current_freq);
 
     if (result != AIRSPY_SUCCESS)
     {
@@ -501,7 +595,8 @@ int SdrDeviceAirspyBase::set_freq(uint64_t freq)
         return SDR_DEVICE_ERANGE;
     }
 
-    sdr_device_debug("SdrDeviceAirspyBase::set_freq(%" PRIu32 ")\n", current_freq);
+    sdr_device_debug("SdrDeviceAirspyBase::set_freq(%" PRIu32 ")\n",
+                     current_freq);
     return SDR_DEVICE_OK;
 }
 
@@ -510,7 +605,7 @@ uint64_t SdrDeviceAirspyBase::get_freq(void) const
     return current_freq;
 }
 
-int SdrDeviceAirspyBase::get_freq_range(freq_range_t * range) const
+int SdrDeviceAirspyBase::get_freq_range(freq_range_t *range) const
 {
     range->min = 24e6;
     range->max = 1800e6;
@@ -520,27 +615,66 @@ int SdrDeviceAirspyBase::get_freq_range(freq_range_t * range) const
 
 int SdrDeviceAirspyBase::set_freq_corr(float ppm)
 {
+    (void)ppm;
     fputs("*** FIXME: set_freq_corr() not implemented for Airspy.\n", stderr);
     return SDR_DEVICE_OK;
 }
 
 int SdrDeviceAirspyBase::set_gain(int value)
 {
-    uint8_t     gain;
-    
+    uint8_t gain;
+
     if (value < 0 || value > 100)
         return SDR_DEVICE_ERANGE;
 
     gain = (uint8_t)((value * 21) / 100);
-    if (airspy_set_linearity_gain(dev, gain) != AIRSPY_SUCCESS)
+    if (gain_mode == SDR_DEVICE_GAIN_LIN)
+    {
+        if (airspy_set_linearity_gain(dev, gain) != AIRSPY_SUCCESS)
+            return SDR_DEVICE_ERROR;
+    }
+    else if (gain_mode == SDR_DEVICE_GAIN_SENS)
+    {
+        if (airspy_set_sensitivity_gain(dev, gain) != AIRSPY_SUCCESS)
+            return SDR_DEVICE_ERROR;
+    }
+    last_gain = value;
+
+    return SDR_DEVICE_OK;
+}
+
+int SdrDeviceAirspyBase::set_gain_mode(int mode)
+{
+    int agc;
+
+    if (mode == SDR_DEVICE_GAIN_LIN || mode == SDR_DEVICE_GAIN_SENS ||
+        mode == SDR_DEVICE_GAIN_AUTO)
+    {
+        gain_mode = mode;
+    }
+    else
+    {
+        return SDR_DEVICE_ERANGE;
+    }
+
+    agc = gain_mode == SDR_DEVICE_GAIN_AUTO;
+    if (airspy_set_lna_agc(dev, agc) != AIRSPY_SUCCESS ||
+        airspy_set_mixer_agc(dev, agc) != AIRSPY_SUCCESS)
+    {
+        fprintf(stderr, "Airspy: set_gain_mode() failed to %s hardware AGC\n",
+                agc ? "enable" : "disable");
         return SDR_DEVICE_ERROR;
+    }
+
+    if (!agc)
+        set_gain(last_gain);
 
     return SDR_DEVICE_OK;
 }
 
 int SdrDeviceAirspyBase::start(void)
 {
-    int     result = airspy_start_rx(dev, airspy_rx_callback, this);
+    int result = airspy_start_rx(dev, airspy_rx_callback, this);
     if (result != AIRSPY_SUCCESS)
     {
         fprintf(stderr, "airspy_start_rx() failed (%d): %s\n", result,
@@ -556,7 +690,7 @@ int SdrDeviceAirspyBase::start(void)
 
 int SdrDeviceAirspyBase::stop(void)
 {
-    int     result = airspy_stop_rx(dev);
+    int result = airspy_stop_rx(dev);
     if (result != AIRSPY_SUCCESS)
     {
         fprintf(stderr, "airspy_stop_rx() failed (%d): %s\n", result,
@@ -564,7 +698,7 @@ int SdrDeviceAirspyBase::stop(void)
         return SDR_DEVICE_ERROR;
     }
 
-    uint64_t    dt = time_ms() - start_time;
+    uint64_t dt = time_ms() - start_time;
     fprintf(stderr,
             "Airspy: Read %" PRIu64 " samples in %" PRIu64 " ms = %.4f Msps\n",
             total_samples, dt, 1.e-3f * (float)total_samples / (float)dt);
@@ -582,14 +716,16 @@ uint32_t SdrDeviceAirspyBase::get_num_samples(void) const
     return ring_buffer_cplx_count(sample_buffer);
 }
 
-uint32_t SdrDeviceAirspyBase::read_bytes(void * buffer, uint32_t bytes)
+uint32_t SdrDeviceAirspyBase::read_bytes(void *buffer, uint32_t bytes)
 {
+    (void)buffer;
+    (void)bytes;
     return 0;
 }
 
 #define SAMPLE_SCALE (1.0f / 32768.f)
 
-uint32_t SdrDeviceAirspyBase::read_samples(complex_t * buffer, uint32_t samples)
+uint32_t SdrDeviceAirspyBase::read_samples(complex_t *buffer, uint32_t samples)
 {
     if (samples > ring_buffer_cplx_count(sample_buffer))
         return 0;

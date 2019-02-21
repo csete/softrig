@@ -20,7 +20,7 @@ public:
      * Parameters:
      *   AgcOn      AGC is ON or OFF.
      *   UseHang    Use a hang timer or gradual decay.
-     *   Threshold  AGC "knee" in dB. Nominal ange is -160 to 0 dB.
+     *   Threshold  AGC "knee" in dB. Nominal range is -160 to 0 dB.
      *   ManualGain Manual gain in dB used when AGC is OFF. Nominal range is 0
      *              to 100 dB.
      *   Slope      Reduction in output (dB) at knee from maximum output level.

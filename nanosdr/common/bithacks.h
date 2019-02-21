@@ -7,8 +7,7 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* could also use (x && ((x & (~x + 1)) == x)) */
@@ -28,7 +27,7 @@ inline unsigned int next_power_of_two(unsigned int v)
     v |= v >> 16;
     v++;
 
-    v += (v == 0);      /* if v = 0 return 1 */
+    v += (v == 0); /* if v = 0 return 1 */
 
     return v;
 }

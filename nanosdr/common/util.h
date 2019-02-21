@@ -1,6 +1,6 @@
 /*
  * Misc utility functions for nanosdr.
- * 
+ *
  * Copyright  2014  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +30,7 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 inline uint32_t clamp_u32(uint32_t val, uint32_t max)
@@ -67,9 +66,8 @@ inline int clamp2_int(int val, int min, int max)
         return max;
     else
         return val;
-}    
+}
 
 #ifdef __cplusplus
 }
 #endif
-

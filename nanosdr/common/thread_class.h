@@ -35,9 +35,13 @@
  */
 class ThreadClass
 {
-public:
-    ThreadClass() { }
-    virtual ~ThreadClass() { }
+  public:
+    ThreadClass()
+    {
+    }
+    virtual ~ThreadClass()
+    {
+    }
 
     /*
      * Start the thread.
@@ -59,7 +63,7 @@ public:
         return pthread_join(_thread, NULL);
     }
 
-protected:
+  protected:
     /*
      * Thread function.
      *
@@ -77,8 +81,8 @@ protected:
      */
     virtual void thread_func() = 0;
 
-private:
-    static void * thread_func_entry(void * _this)
+  private:
+    static void *thread_func_entry(void *_this)
     {
         ((ThreadClass *)_this)->thread_func();
         return NULL;

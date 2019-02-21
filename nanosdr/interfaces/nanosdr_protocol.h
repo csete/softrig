@@ -28,12 +28,13 @@
  */
 #pragma once
 
+#include "common/sdr_data.h"
+#include "sdr_ctl.h"
 #include <assert.h>
 #include <stdint.h>
 #include <string.h>
-#include "common/sdr_data.h"
-#include "sdr_ctl.h"
 
+/* clang-format off */
 #define MAX_PKT_LENGTH          65536
 #define MAX_CTL_LENGTH          256     // TBC
 
@@ -47,18 +48,17 @@
 #define PKT_TYPE_AUDIO          0x10
 #define PKT_TYPE_FFT            0x20
 #define PKT_TYPE_INVALID        0xFF
-
+/* clang-format on */
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Packet representation */
 typedef struct {
-    uint16_t    length;                 /* Packet length in bytes */
-    uint8_t     type;                   /* Packet type (PKT_TYPE_... */
-    uint8_t     raw[MAX_PKT_LENGTH];    /* raw bytes */
+    uint16_t length;              /* Packet length in bytes */
+    uint8_t  type;                /* Packet type (PKT_TYPE_... */
+    uint8_t  raw[MAX_PKT_LENGTH]; /* raw bytes */
 } pkt_t;
 
 /**
@@ -69,7 +69,7 @@ typedef struct {
  * @returns Number of bytes read, 0 in case of EOF or -1 if an error occurred
  *          during the read
  */
-int read_packet_from_fd(int fd, pkt_t * packet);
+int read_packet_from_fd(int fd, pkt_t *packet);
 
 /**
  * Write packet to file descriptor
@@ -78,7 +78,7 @@ int read_packet_from_fd(int fd, pkt_t * packet);
  * @param packet The packet to write
  * @return The number of bytes written or -1 if an error occurred
  */
-int write_packet_to_fd(int fd, const pkt_t * packet);
+int write_packet_to_fd(int fd, const pkt_t *packet);
 
 /**
  * Convert server info to raw packet.
@@ -91,7 +91,7 @@ int write_packet_to_fd(int fd, const pkt_t * packet);
  *
  * @todo Change to use pkt_t
  */
-int server_info_to_raw_packet(const srv_info_t * info, uint8_t * data,
+int server_info_to_raw_packet(const srv_info_t *info, uint8_t *data,
                               uint32_t max_count);
 
 /**
@@ -100,7 +100,7 @@ int server_info_to_raw_packet(const srv_info_t * info, uint8_t * data,
  * @param info Pointer to the server info structure.
  * @param data Pointer to the packet struct.
  */
-void packet_to_server_info(srv_info_t * info, const pkt_t * pkt);
+void packet_to_server_info(srv_info_t *info, const pkt_t *pkt);
 
 /**
  * Convert CTL to a raw packet.
@@ -113,7 +113,7 @@ void packet_to_server_info(srv_info_t * info, const pkt_t * pkt);
  *
  * @note CTL type must be SET, GET or GET_RANGE.
  */
-int ctl_to_raw_packet(const sdr_ctl_t * ctl, uint8_t * data, int max_count);
+int ctl_to_raw_packet(const sdr_ctl_t *ctl, uint8_t *data, int max_count);
 
 /**
  * Extract CTL from packet data.
@@ -123,8 +123,7 @@ int ctl_to_raw_packet(const sdr_ctl_t * ctl, uint8_t * data, int max_count);
  *
  * @note The packet must be either SET_CI, GET_CI or GET_CI_RANGE
  */
-void packet_to_ctl(sdr_ctl_t * ctl, const pkt_t * pkt);
-
+void packet_to_ctl(sdr_ctl_t *ctl, const pkt_t *pkt);
 
 #ifdef __cplusplus
 }

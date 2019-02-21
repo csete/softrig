@@ -47,7 +47,7 @@ void AmDemod::setup(real_t input_rate, real_t bandwidth)
 {
     sample_rate = input_rate;
     z1 = 0.0;
-	audio_filter.init_lpf(0, 1.0, 50.0, bandwidth, bandwidth * 1.8, sample_rate);
+	audio_filter.init_lpf(0, 1.0, 60.0, bandwidth, bandwidth * 1.8, sample_rate);
 }
 
 int AmDemod::process(int num, complex_t * data_in, real_t * data_out)
@@ -69,7 +69,6 @@ int AmDemod::process(int num, complex_t * data_in, real_t * data_out)
 		z1 = z0;
 	}
 
-	// post demod audio filter to limit high frequency noise
 	audio_filter.process(num, data_out, data_out);
 
 	return num;

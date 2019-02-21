@@ -1,6 +1,6 @@
 /*
  * Time utility functions for nanosdr.
- * 
+ *
  * Copyright  2014  Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,12 @@
 #include <sys/time.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
 
 inline uint64_t time_ms(void)
 {
-    struct timeval  tval;
+    struct timeval tval;
 
     gettimeofday(&tval, NULL);
 
@@ -47,13 +45,12 @@ inline uint64_t time_ms(void)
 
 inline uint64_t time_us(void)
 {
-    struct timeval  tval;
+    struct timeval tval;
 
     gettimeofday(&tval, NULL);
 
     return 1e6 * tval.tv_sec + tval.tv_usec;
 }
-
 
 #ifdef __cplusplus
 }

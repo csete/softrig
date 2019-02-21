@@ -42,10 +42,11 @@
 #include "sdr_ctl.h"
 #include "sdr_device.h"
 
-#define     FRAME_LENGTH_SEC            0.1f
-#define     FRAME_LENGTH_MSEC           100
-#define     MAX_FRAMES_IN_BUFFER        5       // frames stored in buffer
-
+/* clang-format off */
+#define     FRAME_LENGTH_SEC        0.1f
+#define     FRAME_LENGTH_MSEC       100
+#define     MAX_FRAMES_IN_BUFFER    5       // frames stored in buffer
+/* clang-format on */
 
 /*
  * Input reader from file with frequency translator.
@@ -59,69 +60,74 @@
  */
 class SdrDeviceFile : public SdrDevice
 {
-public:
+  public:
     SdrDeviceFile(void);
-    virtual     ~SdrDeviceFile();
+    virtual ~SdrDeviceFile();
 
     /* optarg is filename or stdint */
-    int         init(float samprate, const char * options);
-    int         set_sample_rate(float new_rate);
-    int         get_sample_rates(float * rates) const { return 0; }
-    float       get_sample_rate(void) const;
-    float       get_dynamic_range(void) const { return 120.f; }
-    int         set_freq(uint64_t freq);
-    uint64_t    get_freq(void) const;
-    int         get_freq_range(freq_range_t * range) const;
-    int         set_freq_corr(float ppm);
-    int         set_gain(int value) { return SDR_DEVICE_EINVAL; }
-    int         start(void);
-    int         stop(void);
-    uint32_t    get_num_bytes(void) const;
-    uint32_t    get_num_samples(void) const;
-    uint32_t    read_bytes(void * buffer, uint32_t bytes);
-    uint32_t    read_samples(complex_t * buffer, uint32_t samples);
-    int         type(void) const { return SDR_DEVICE_FILE; };
+    int   init(float samprate, const char *options);
+    int   set_sample_rate(float new_rate);
+    int   get_sample_rates(float *rates) const;
+    float get_sample_rate(void) const;
+    float get_dynamic_range(void) const
+    {
+        return 120.f;
+    }
+    int      set_freq(uint64_t freq);
+    uint64_t get_freq(void) const;
+    int      get_freq_range(freq_range_t *range) const;
+    int      set_freq_corr(float ppm);
+    int      set_gain(int value);
+    int      start(void);
+    int      stop(void);
+    uint32_t get_num_bytes(void) const;
+    uint32_t get_num_samples(void) const;
+    uint32_t read_bytes(void *buffer, uint32_t bytes);
+    uint32_t read_samples(complex_t *buffer, uint32_t samples);
+    int      type(void) const
+    {
+        return SDR_DEVICE_FILE;
+    };
 
-private:
-    Translate       ft;
-    bool            is_running;
-    float           sample_rate;
-    uint32_t        bytes_per_frame;    // Bytes read in each cycle
-    real_t          tuning_offset;
-    uint64_t        initial_freq;       // Initial "RF" frequency
-    uint64_t        tlast_ms;           // Last time we read data in msec
-    pthread_t       reader_thread_id;
+  private:
+    Translate ft;
+    bool      is_running;
+    float     sample_rate;
+    uint32_t  bytes_per_frame;  // Bytes read in each cycle
+    real_t    tuning_offset;
+    uint64_t  initial_freq;  // Initial "RF" frequency
+    uint64_t  tlast_ms;      // Last time we read data in msec
+    pthread_t reader_thread_id;
 
-    char           *file_name;
-    FILE           *fp;
-    uint8_t        *input_buffer;
-    ring_buffer_t  *rb;
+    char *         file_name;
+    FILE *         fp;
+    uint8_t *      input_buffer;
+    ring_buffer_t *rb;
 
     // internal working buffer used for S16->fc convresion
-    int16_t        *wk_buf;
-    uint32_t        wk_buflen;
+    int16_t *wk_buf;
+    uint32_t wk_buflen;
 
     // statistics
-    uint64_t        bytes_read;     // bytes read between start() and stop()
-    uint32_t        overflows;      // number of buffer overflows
+    uint64_t bytes_read;  // bytes read between start() and stop()
+    uint32_t overflows;   // number of buffer overflows
 
-    static void    *reader_thread(void * data);
-    void            free_memory(void);
-    int             process_ctl_get_range(sdr_ctl_t * ctl);
+    static void *reader_thread(void *data);
+    void         free_memory(void);
+    int          process_ctl_get_range(sdr_ctl_t *ctl);
 };
 
-SdrDevice * sdr_device_create_file()
+SdrDevice *sdr_device_create_file()
 {
     return new SdrDeviceFile();
 }
 
-
 /** Input reader thread. */
-void *SdrDeviceFile::reader_thread(void * data)
+void *SdrDeviceFile::reader_thread(void *data)
 {
-    SdrDeviceFile   *reader = (SdrDeviceFile *)data;
-    uint64_t        tnow_ms;
-    size_t          bytes_in;
+    SdrDeviceFile *reader = (SdrDeviceFile *)data;
+    uint64_t       tnow_ms;
+    size_t         bytes_in;
 
     while (reader->is_running)
     {
@@ -134,8 +140,8 @@ void *SdrDeviceFile::reader_thread(void * data)
 
         reader->tlast_ms = tnow_ms;
 
-        bytes_in = fread(reader->input_buffer, 1, reader->bytes_per_frame,
-                         reader->fp);
+        bytes_in =
+            fread(reader->input_buffer, 1, reader->bytes_per_frame, reader->fp);
 
         if (bytes_in == reader->bytes_per_frame)
         {
@@ -162,13 +168,11 @@ void *SdrDeviceFile::reader_thread(void * data)
         {
             fprintf(stderr, "Error reading input.\n");
         }
-
     }
 
     fprintf(stderr, "Exiting input reader thread.\n");
     pthread_exit(NULL);
 }
-
 
 SdrDeviceFile::SdrDeviceFile(void)
 {
@@ -181,7 +185,7 @@ SdrDeviceFile::~SdrDeviceFile()
     free_memory();
 }
 
-int SdrDeviceFile::init(float samprate, const char * options)
+int SdrDeviceFile::init(float samprate, const char *options)
 {
     if (is_running)
         return SDR_DEVICE_EBUSY;
@@ -208,7 +212,7 @@ int SdrDeviceFile::init(float samprate, const char * options)
         return SDR_DEVICE_EINVAL;
 
     input_buffer = new uint8_t[bytes_per_frame];
-    rb = (ring_buffer_t *) malloc(sizeof(ring_buffer_t));
+    rb = (ring_buffer_t *)malloc(sizeof(ring_buffer_t));
     ring_buffer_init(rb, MAX_FRAMES_IN_BUFFER * bytes_per_frame);
 
     return SDR_DEVICE_OK;
@@ -233,6 +237,12 @@ int SdrDeviceFile::set_sample_rate(float new_rate)
     wk_buf = new int16_t[2 * wk_buflen];
 
     return SDR_DEVICE_OK;
+}
+
+int SdrDeviceFile::get_sample_rates(float *rates) const
+{
+    (void)rates;
+    return 0;
 }
 
 float SdrDeviceFile::get_sample_rate(void) const
@@ -260,7 +270,7 @@ uint64_t SdrDeviceFile::get_freq(void) const
     return initial_freq - tuning_offset;
 }
 
-int SdrDeviceFile::get_freq_range(freq_range_t * range) const
+int SdrDeviceFile::get_freq_range(freq_range_t *range) const
 {
     range->min = 0;
     range->max = 100e9;
@@ -270,6 +280,7 @@ int SdrDeviceFile::get_freq_range(freq_range_t * range) const
 
 int SdrDeviceFile::set_freq_corr(float ppm)
 {
+    (void)ppm;
     // TODO
     // Fc = F + F * PPM / 1e6
     fprintf(stderr, " *** set_freq_corr() not implemented\n");
@@ -277,9 +288,15 @@ int SdrDeviceFile::set_freq_corr(float ppm)
     return SDR_DEVICE_OK;
 }
 
+int SdrDeviceFile::set_gain(int value)
+{
+    (void)value;
+    return SDR_DEVICE_EINVAL;
+}
+
 int SdrDeviceFile::start(void)
 {
-    int     ret;
+    int ret;
 
     fprintf(stderr, "Starting input reader: %s\n", file_name);
 
@@ -299,7 +316,8 @@ int SdrDeviceFile::start(void)
 
     // create reader thread
     is_running = true;
-    ret = pthread_create(&reader_thread_id, NULL, &SdrDeviceFile::reader_thread, this);
+    ret = pthread_create(&reader_thread_id, NULL, &SdrDeviceFile::reader_thread,
+                         this);
     if (ret)
     {
         fprintf(stderr, "Error creating input reader thread: %d\n", ret);
@@ -312,7 +330,7 @@ int SdrDeviceFile::start(void)
 
 int SdrDeviceFile::stop(void)
 {
-    int     ret;
+    int ret;
 
     fprintf(stderr, "Stopping input reader\n");
     fprintf(stderr, "   Bytes read: %" PRIu64 "\n", bytes_read);
@@ -335,25 +353,25 @@ uint32_t SdrDeviceFile::get_num_bytes(void) const
 
 uint32_t SdrDeviceFile::get_num_samples(void) const
 {
-    //fprintf(stderr, "Samples: %u\n", ring_buffer_count(rb) / 4);
+    // fprintf(stderr, "Samples: %u\n", ring_buffer_count(rb) / 4);
     return ring_buffer_count(rb) / 4;
 }
 
-uint32_t SdrDeviceFile::read_bytes(void * buffer, uint32_t bytes)
+uint32_t SdrDeviceFile::read_bytes(void *buffer, uint32_t bytes)
 {
     if (bytes > ring_buffer_count(rb))
         return 0;
 
-    ring_buffer_read(rb, (unsigned char *) buffer, bytes);
+    ring_buffer_read(rb, (unsigned char *)buffer, bytes);
 
     return bytes;
 }
 
 #define SAMPLE_SCALE (1.0f / 32768.f)
-uint32_t SdrDeviceFile::read_samples(complex_t * buffer, uint32_t samples)
+uint32_t SdrDeviceFile::read_samples(complex_t *buffer, uint32_t samples)
 {
-    real_t     *out_buf = (real_t *) buffer;
-    uint32_t    i;
+    real_t * out_buf = (real_t *)buffer;
+    uint32_t i;
 
     if (samples > wk_buflen || ring_buffer_count(rb) < samples * 4)
     {
@@ -361,7 +379,7 @@ uint32_t SdrDeviceFile::read_samples(complex_t * buffer, uint32_t samples)
         return 0;
     }
 
-    ring_buffer_read(rb, (unsigned char *) wk_buf, samples * 4);
+    ring_buffer_read(rb, (unsigned char *)wk_buf, samples * 4);
     for (i = 0; i < 2 * samples; i++)
         out_buf[i] = ((real_t)wk_buf[i] + 0.5f) * SAMPLE_SCALE;
 
@@ -378,4 +396,3 @@ void SdrDeviceFile::free_memory(void)
     delete[] wk_buf;
     wk_buflen = 0;
 }
-

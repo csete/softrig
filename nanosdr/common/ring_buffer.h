@@ -1,6 +1,6 @@
 /*
  * Simple ring buffer for nanosdr.
- * 
+ *
  * Copyright 2015 Alexandru Csete OZ9AEC
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,18 +49,18 @@
  */
 
 typedef struct {
-    uint_fast32_t   size;
-    uint_fast32_t   start;  /* index of the oldest element */
-    uint_fast32_t   count;  /* number of elements in the buffer */
-    unsigned char  *buffer;
+    uint_fast32_t  size;
+    uint_fast32_t  start; /* index of the oldest element */
+    uint_fast32_t  count; /* number of elements in the buffer */
+    unsigned char *buffer;
 } ring_buffer_t;
 
-static inline ring_buffer_t * ring_buffer_create(void)
+static inline ring_buffer_t *ring_buffer_create(void)
 {
-    return (ring_buffer_t *) malloc(sizeof(ring_buffer_t));
+    return (ring_buffer_t *)malloc(sizeof(ring_buffer_t));
 }
 
-static inline void ring_buffer_delete(ring_buffer_t * rb)
+static inline void ring_buffer_delete(ring_buffer_t *rb)
 {
     if (rb)
     {
@@ -70,52 +70,52 @@ static inline void ring_buffer_delete(ring_buffer_t * rb)
     }
 }
 
-static inline void ring_buffer_init(ring_buffer_t * rb, uint_fast32_t size)
+static inline void ring_buffer_init(ring_buffer_t *rb, uint_fast32_t size)
 {
     rb->size = size;
     rb->start = 0;
     rb->count = 0;
-    rb->buffer = (unsigned char *) malloc(rb->size);
+    rb->buffer = (unsigned char *)malloc(rb->size);
 }
 
-static inline void ring_buffer_resize(ring_buffer_t * rb,
-                                      uint_fast32_t newsize)
+static inline void ring_buffer_resize(ring_buffer_t *rb, uint_fast32_t newsize)
 {
     free(rb->buffer);
     ring_buffer_init(rb, newsize);
 }
 
-static inline int ring_buffer_is_full(ring_buffer_t * rb)
+static inline int ring_buffer_is_full(ring_buffer_t *rb)
 {
     return (rb->count == rb->size);
 }
 
-static inline int ring_buffer_is_empty(ring_buffer_t * rb)
+static inline int ring_buffer_is_empty(ring_buffer_t *rb)
 {
     return (rb->count == 0);
 }
 
-static inline uint_fast32_t ring_buffer_count(ring_buffer_t * rb)
+static inline uint_fast32_t ring_buffer_count(ring_buffer_t *rb)
 {
     return rb->count;
 }
 
-static inline uint_fast32_t ring_buffer_size(ring_buffer_t * rb)
+static inline uint_fast32_t ring_buffer_size(ring_buffer_t *rb)
 {
     return rb->size;
 }
 
-static inline void ring_buffer_write(ring_buffer_t * rb, const unsigned char * src,
-                                     uint_fast32_t num)
+static inline void ring_buffer_write(ring_buffer_t *      rb,
+                                     const unsigned char *src,
+                                     uint_fast32_t        num)
 {
     if (!num)
         return;
 
     /* write pointer to first available slot */
-    uint_fast32_t   wp = (rb->start + rb->count) % rb->size;
+    uint_fast32_t wp = (rb->start + rb->count) % rb->size;
 
     /* new write pointer after successful write */
-    uint_fast32_t   new_wp = (wp + num) % rb->size;
+    uint_fast32_t new_wp = (wp + num) % rb->size;
 
     if (new_wp > wp)
     {
@@ -140,19 +140,19 @@ static inline void ring_buffer_write(ring_buffer_t * rb, const unsigned char * s
     }
 }
 
-static inline void ring_buffer_read(ring_buffer_t * rb, unsigned char * dest,
+static inline void ring_buffer_read(ring_buffer_t *rb, unsigned char *dest,
                                     uint_fast32_t num)
 {
     if (!num)
         return;
 
     /* index of the last value to read */
-    uint_fast32_t   end = (rb->start + num - 1) % rb->size;
+    uint_fast32_t end = (rb->start + num - 1) % rb->size;
 
     if (end < rb->start)
     {
         /* we need to read in two passes */
-        uint_fast32_t   split = rb->size - rb->start;
+        uint_fast32_t split = rb->size - rb->start;
 
         memcpy(dest, &rb->buffer[rb->start], split);
         memcpy(&dest[split], rb->buffer, end + 1);
@@ -167,7 +167,7 @@ static inline void ring_buffer_read(ring_buffer_t * rb, unsigned char * dest,
     rb->start = (end + 1) % rb->size;
 }
 
-static inline void ring_buffer_clear(ring_buffer_t * rb)
+static inline void ring_buffer_clear(ring_buffer_t *rb)
 {
     rb->start = 0;
     rb->count = 0;

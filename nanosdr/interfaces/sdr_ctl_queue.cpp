@@ -25,7 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <new>          // std::nothrow
+#include <new>  // std::nothrow
 
 #include "sdr_ctl.h"
 #include "sdr_ctl_queue.h"
@@ -74,7 +74,7 @@ void SdrCtlQueue::clear(void)
     num = 0;
 }
 
-int SdrCtlQueue::add_ctl(const sdr_ctl_t * ctl)
+int SdrCtlQueue::add_ctl(const sdr_ctl_t *ctl)
 {
     if (num >= size)
     {
@@ -82,7 +82,7 @@ int SdrCtlQueue::add_ctl(const sdr_ctl_t * ctl)
         return SDR_CTL_QUEUE_FULL;
     }
 
-    unsigned int    idx = head + num;
+    unsigned int idx = head + num;
     if (idx >= size)
         idx = 0;
 
@@ -92,7 +92,7 @@ int SdrCtlQueue::add_ctl(const sdr_ctl_t * ctl)
     return SDR_CTL_QUEUE_OK;
 }
 
-int SdrCtlQueue::get_ctl(sdr_ctl_t * ctl)
+int SdrCtlQueue::get_ctl(sdr_ctl_t *ctl)
 {
     if (!num)
         return SDR_CTL_QUEUE_EMPTY;
@@ -105,7 +105,6 @@ int SdrCtlQueue::get_ctl(sdr_ctl_t * ctl)
     return SDR_CTL_QUEUE_OK;
 }
 
-
 #ifdef UNITTEST
 
 #define __STDC_FORMAT_MACROS
@@ -115,9 +114,9 @@ int SdrCtlQueue::get_ctl(sdr_ctl_t * ctl)
 
 int main(void)
 {
-    SdrCtlQueue     queue;
-    sdr_ctl_t       ctl;
-    int             i;
+    SdrCtlQueue queue;
+    sdr_ctl_t   ctl;
+    int         i;
 
     fputs("Unit test for sdr_ctl_queue.cpp\n", stderr);
 
@@ -136,7 +135,7 @@ int main(void)
     queue.get_ctl(&ctl);
     fprintf(stderr, "CTL TYPE = %u /  ID = %u\n", ctl.type, ctl.id);
 
-    fprintf(stderr, "Overflows: %"PRIu64"\n", queue.get_overflows());
+    fprintf(stderr, "Overflows: %" PRIu64 "\n", queue.get_overflows());
 
     return 0;
 }

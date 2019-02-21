@@ -37,51 +37,53 @@
 #include "sdr_device.h"
 #include "sdriq/sdriq.h"
 
-
 class SdrDeviceSdriq : public SdrDevice
 {
-public:
+  public:
     SdrDeviceSdriq(void);
-    virtual     ~SdrDeviceSdriq();
+    virtual ~SdrDeviceSdriq();
 
     // Virtual function implementations
-    int         init(float samprate, const char * options);
-    int         set_sample_rate(float new_rate);
-    float       get_sample_rate(void) const;
-    int         get_sample_rates(float * rates) const;
-    float       get_dynamic_range(void) const
+    int   init(float samprate, const char *options);
+    int   set_sample_rate(float new_rate);
+    float get_sample_rate(void) const;
+    int   get_sample_rates(float *rates) const;
+    float get_dynamic_range(void) const
     {
         // 84 dB (14 bit ADC) + 36 dB potential processing gain from AD6620
         return 120.f;
     }
 
-    int         set_freq(uint64_t freq);
-    uint64_t    get_freq(void) const;
-    int         get_freq_range(freq_range_t * range) const;
-    int         set_freq_corr(float ppm);
-    int         set_gain(int value);
-    int         start(void);
-    int         stop(void);
-    uint32_t    get_num_bytes(void) const;
-    uint32_t    get_num_samples(void) const;
-    uint32_t    read_bytes(void * buffer, uint32_t bytes);
-    uint32_t    read_samples(complex_t * buffer, uint32_t samples);
-    int         type(void) const { return SDR_DEVICE_SDRIQ; };
+    int      set_freq(uint64_t freq);
+    uint64_t get_freq(void) const;
+    int      get_freq_range(freq_range_t *range) const;
+    int      set_freq_corr(float ppm);
+    int      set_gain(int value);
+    int      start(void);
+    int      stop(void);
+    uint32_t get_num_bytes(void) const;
+    uint32_t get_num_samples(void) const;
+    uint32_t read_bytes(void *buffer, uint32_t bytes);
+    uint32_t read_samples(complex_t *buffer, uint32_t samples);
+    int      type(void) const
+    {
+        return SDR_DEVICE_SDRIQ;
+    };
 
-private:
-    void        free_memory(void);
+  private:
+    void free_memory(void);
 
-private:
-    sdriq_t    *sdr;            // handle to SDR-IQ driver object
-    int16_t    *buf;            // internal buffer used for s16->fc conversion
-    uint32_t    buflen;         // internal buffer length in samples
+  private:
+    sdriq_t *sdr;     // handle to SDR-IQ driver object
+    int16_t *buf;     // internal buffer used for s16->fc conversion
+    uint32_t buflen;  // internal buffer length in samples
 
-    uint32_t    sample_rate;
-    uint32_t    current_freq;   // SDR-IQ max freq is 33 MHz (don't need 64 bit)
-    bool        initialized;
+    uint32_t sample_rate;
+    uint32_t current_freq;  // SDR-IQ max freq is 33 MHz (don't need 64 bit)
+    bool     initialized;
 };
 
-SdrDevice * sdr_device_create_sdriq()
+SdrDevice *sdr_device_create_sdriq()
 {
     return new SdrDeviceSdriq();
 }
@@ -108,10 +110,10 @@ SdrDeviceSdriq::~SdrDeviceSdriq()
     sdriq_free(sdr);
 }
 
-int SdrDeviceSdriq::init(float samprate, const char * options)
+int SdrDeviceSdriq::init(float samprate, const char *options)
 {
-    (void)  options;
-    int     err;
+    (void)options;
+    int err;
 
     if (initialized)
         return SDR_DEVICE_EBUSY;
@@ -159,7 +161,7 @@ int SdrDeviceSdriq::init(float samprate, const char * options)
 
 int SdrDeviceSdriq::set_sample_rate(float new_rate)
 {
-    sample_rate = (uint32_t) new_rate;
+    sample_rate = (uint32_t)new_rate;
 
     // FIXME: can't set sample rate while SDR-IQ is running
     // FIXME: check error code
@@ -187,12 +189,12 @@ int SdrDeviceSdriq::set_sample_rate(float new_rate)
     return SDR_DEVICE_OK;
 }
 
-float SdrDeviceSdriq::get_sample_rate(void) const 
+float SdrDeviceSdriq::get_sample_rate(void) const
 {
     return sdriq_get_sample_rate(sdr);
 }
 
-int SdrDeviceSdriq::get_sample_rates(float * rates) const
+int SdrDeviceSdriq::get_sample_rates(float *rates) const
 {
     if (rates == 0)
         return 7;
@@ -215,8 +217,8 @@ int SdrDeviceSdriq::set_freq(uint64_t freq)
     int ret = sdriq_set_freq(sdr, current_freq);
     if (ret)
     {
-        fprintf(stderr, "sdriq_set_freq(%" PRIu32 ") failed:%d\n",
-                current_freq, ret);
+        fprintf(stderr, "sdriq_set_freq(%" PRIu32 ") failed:%d\n", current_freq,
+                ret);
         return SDR_DEVICE_ERANGE;
     }
 
@@ -229,7 +231,7 @@ uint64_t SdrDeviceSdriq::get_freq(void) const
     return current_freq;
 }
 
-int SdrDeviceSdriq::get_freq_range(freq_range_t * range) const
+int SdrDeviceSdriq::get_freq_range(freq_range_t *range) const
 {
     range->min = 0;
     range->max = 33333333;
@@ -240,9 +242,9 @@ int SdrDeviceSdriq::get_freq_range(freq_range_t * range) const
 int SdrDeviceSdriq::set_freq_corr(float ppm)
 {
     // Fc = F + F * PPM / 1e6
-    float   rate = 66666667.f + 66666667.e-6f * ppm;
+    float rate = 66666667.f + 66666667.e-6f * ppm;
 
-    if (sdriq_set_input_rate(sdr, (uint32_t) rate))
+    if (sdriq_set_input_rate(sdr, (uint32_t)rate))
     {
         fputs("*** Failed to set SDR-IQ input rate\n", stderr);
         return SDR_DEVICE_ERROR;
@@ -253,7 +255,7 @@ int SdrDeviceSdriq::set_freq_corr(float ppm)
 
 int SdrDeviceSdriq::set_gain(int value)
 {
-    int8_t      gain = 0;
+    int8_t gain = 0;
 
     if (value < 0 || value > 100)
         return SDR_DEVICE_ERANGE;
@@ -288,23 +290,23 @@ uint32_t SdrDeviceSdriq::get_num_samples(void) const
     return sdriq_get_num_samples(sdr);
 }
 
-uint32_t SdrDeviceSdriq::read_bytes(void * buffer, uint32_t bytes)
+uint32_t SdrDeviceSdriq::read_bytes(void *buffer, uint32_t bytes)
 {
-    return sdriq_get_samples(sdr, (unsigned char *) buffer, bytes / 4) * 4;
+    return sdriq_get_samples(sdr, (unsigned char *)buffer, bytes / 4) * 4;
 }
 
 #define SAMPLE_SCALE (1.0f / 32768.f)
 
-uint32_t SdrDeviceSdriq::read_samples(complex_t * buffer, uint32_t samples)
+uint32_t SdrDeviceSdriq::read_samples(complex_t *buffer, uint32_t samples)
 {
-    real_t     *workbuf = (real_t *) buffer;
-    uint32_t    samples_read;
-    uint32_t    i;
+    real_t * workbuf = (real_t *)buffer;
+    uint32_t samples_read;
+    uint32_t i;
 
     if (samples > buflen)
         return 0;
 
-    samples_read = sdriq_get_samples(sdr, (unsigned char *) buf, samples);
+    samples_read = sdriq_get_samples(sdr, (unsigned char *)buf, samples);
     for (i = 0; i < 2 * samples_read; i++)
         workbuf[i] = ((real_t)buf[i] + 0.7f) * SAMPLE_SCALE;
 
@@ -317,4 +319,3 @@ void SdrDeviceSdriq::free_memory(void)
     buf = 0;
     buflen = 0;
 }
-
