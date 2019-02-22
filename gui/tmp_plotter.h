@@ -23,7 +23,7 @@ class CPlotter : public QFrame
     Q_OBJECT
 
 public:
-    explicit CPlotter(QWidget *parent = 0);
+    explicit CPlotter(QWidget *parent = nullptr);
     ~CPlotter();
 
     QSize minimumSizeHint() const;
@@ -96,7 +96,7 @@ public:
     /* Determines full bandwidth. */
     void setSampleRate(float rate)
     {
-        if (rate > 0.0)
+        if (rate > 0.0f)
         {
             m_SampleFreq = rate;
             drawOverlay();
@@ -150,7 +150,7 @@ public slots:
     {
         m_Percent2DScreen = percent;
         m_Size = QSize(0,0);
-        resizeEvent(NULL);
+        resizeEvent(nullptr);
     }
 
 protected:

@@ -16,7 +16,7 @@ class DeviceConfigDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DeviceConfigDialog(QWidget *parent = 0);
+    explicit DeviceConfigDialog(QWidget *parent = nullptr);
     ~DeviceConfigDialog();
 
     void    readSettings(const device_config_t * input);

@@ -16,7 +16,7 @@ class ControlPanel : public QWidget
     Q_OBJECT
 
 public:
-    explicit ControlPanel(QWidget *parent = 0);
+    explicit ControlPanel(QWidget *parent = nullptr);
     ~ControlPanel();
 
 signals:

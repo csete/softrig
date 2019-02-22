@@ -27,7 +27,7 @@ class FreqCtrl : public QFrame
     Q_OBJECT
 
 public:
-    explicit FreqCtrl(QWidget *parent = 0);
+    explicit FreqCtrl(QWidget *parent = nullptr);
     ~FreqCtrl();
 
     QSize    minimumSizeHint() const;

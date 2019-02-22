@@ -10,7 +10,7 @@ class SsiWidget : public QFrame
     Q_OBJECT
 
 public:
-    explicit SsiWidget(QWidget *parent = 0);
+    explicit SsiWidget(QWidget *parent = nullptr);
 
     QSize    minimumSizeHint() const;
     QSize    sizeHint() const;

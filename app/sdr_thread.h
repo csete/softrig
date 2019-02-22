@@ -28,7 +28,7 @@ class SdrThread : public QObject
     Q_OBJECT
 
 public:
-    explicit SdrThread(QObject *parent = 0);
+    explicit SdrThread(QObject *parent = nullptr);
     virtual ~SdrThread();
 
     int     start(const app_config_t * conf);

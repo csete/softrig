@@ -50,7 +50,7 @@
 
 AppConfig::AppConfig()
 {
-    settings = NULL;
+    settings = nullptr;
 }
 
 AppConfig::~AppConfig()
@@ -69,7 +69,7 @@ int AppConfig::load(const QString &filename)
     if (!settings)
         return APP_CONFIG_EFILE;
 
-    app_config.version = settings->value(APP_CFG_VER, CONFIG_VERSION).toInt();
+    app_config.version = settings->value(APP_CFG_VER, CONFIG_VERSION).toUInt();
     readDeviceConf();
 
     return APP_CONFIG_OK;
@@ -92,7 +92,7 @@ void AppConfig::close(void)
 
     settings->sync();
     delete settings;
-    settings = NULL;
+    settings = nullptr;
 }
 
 void AppConfig::readDeviceConf(void)

@@ -3,7 +3,7 @@
  *
  * This file is part of softrig, a simple software defined radio transceiver.
  *
- * Copyright 2017 Alexandru Csete OZ9AEC.
+ * Copyright 2017-2019 Alexandru Csete OZ9AEC.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -56,13 +56,13 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     buflen = 0;
     decimation = 0;
 
-    sdr_dev = 0;
-    rx = 0;
-    fft_data_buf = 0;
-    fft_swap_buf = 0;
-    input_samples = 0;
-    output_samples = 0;
-    aout_buffer = 0;
+    sdr_dev = nullptr;
+    rx = nullptr;
+    fft_data_buf = nullptr;
+    fft_swap_buf = nullptr;
+    input_samples = nullptr;
+    output_samples = nullptr;
+    aout_buffer = nullptr;
     resetStats();
 
     audio_out.init();

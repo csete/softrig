@@ -72,8 +72,8 @@ void DeviceConfigDialog::saveSettings(device_config_t * input)
     input->type = ui->sdrTypeCombo->currentData(Qt::UserRole).toString();
 
     // QString.toInt() returns 0 if conversion fails
-    input->rate = ui->inputRateCombo->currentText().toInt();
-    input->decimation = ui->decimCombo->currentText().toInt();
+    input->rate = ui->inputRateCombo->currentText().toUInt();
+    input->decimation = ui->decimCombo->currentText().toUInt();
 }
 
 void DeviceConfigDialog::sdrTypeChanged(int index)

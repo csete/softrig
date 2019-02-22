@@ -10,7 +10,7 @@ class FftWidget : public QFrame
     Q_OBJECT
 
 public:
-    explicit FftWidget(QWidget *parent = 0);
+    explicit FftWidget(QWidget *parent = nullptr);
 
     QSize    minimumSizeHint() const;
     QSize    sizeHint() const;
