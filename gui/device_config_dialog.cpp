@@ -174,13 +174,13 @@ void DeviceConfigDialog::decimationChanged(int index)
     if (!conv_ok)
         return;
 
-    quad_rate = (float)input_rate / (float)decim;
+    quad_rate = float(input_rate) / float(decim);
     if (quad_rate > 1.e6f)
         ui->sampRateString->setText(QString(" %1 Msps").
-                                    arg(quad_rate * 1.e-6f, 0, 'f', 3));
+                                    arg(double(quad_rate * 1.e-6f), 0, 'f', 3));
     else
         ui->sampRateString->setText(QString(" %1 ksps").
-                                    arg(quad_rate * 1.e-3f, 0, 'f', 3));
+                                    arg(double(quad_rate * 1.e-3f), 0, 'f', 3));
 }
 
 // Select SDR type from type string
