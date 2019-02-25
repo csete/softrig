@@ -135,6 +135,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(central_widget);
 
     loadConfig();
+    resize(900, 600);
 }
 
 MainWindow::~MainWindow()
