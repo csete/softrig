@@ -35,11 +35,11 @@
 #include "ssi_widget.h"
 
 // ratio to total control width or height
-#define CTRL_MARGIN         0.07f // left/right margin
-#define CTRL_MAJOR_START    0.3f  // top of major tic line
-#define CTRL_MINOR_START    0.3f  // top of minor tic line
-#define CTRL_XAXIS_HEGHT    0.4f  // vertical position of horizontal axis
-#define CTRL_NEEDLE_TOP     0.4f  // vertical position of top of needle triangle
+#define CTRL_MARGIN         0.07f   // left/right margin
+#define CTRL_MAJOR_START    0.35f   // top of major tic line
+#define CTRL_MINOR_START    0.35f   // top of minor tic line
+#define CTRL_XAXIS_HEGHT    0.45f   // vertical position of horizontal axis
+#define CTRL_NEEDLE_TOP     0.44f   // vertical position of top of needle triangle
 
 #define MIN_DB      -100.0f
 #define MAX_DB         0.0f
@@ -59,8 +59,8 @@ SsiWidget::SsiWidget(QWidget *parent) : QFrame(parent)
     widget_size = QSize(0, 0);
     level_pix = 0;
     level_i = -120;
-    alpha_decay = 0.25f; // FIXME: Should set delta-t and Fs instead
-    alpha_rise = 0.7f;         // FIXME: Should set delta-t and Fs instead
+    alpha_decay = 0.10f;    // FIXME: Should set delta-t and Fs instead
+    alpha_rise = 0.5f;      // FIXME: Should set delta-t and Fs instead
 }
 
 QSize SsiWidget::minimumSizeHint() const
@@ -70,7 +70,7 @@ QSize SsiWidget::minimumSizeHint() const
 
 QSize SsiWidget::sizeHint() const
 {
-    return QSize(200, 50);
+    return QSize(200, 60);
 }
 
 void SsiWidget::resizeEvent(QResizeEvent *)
@@ -102,14 +102,14 @@ void SsiWidget::setLevel(float dbfs)
     float    level = level_i;
     float    alpha = dbfs < level ? alpha_decay : alpha_rise;
     level += alpha * (dbfs - level);
-    level_i = (int) level;
+    level_i = int(level);
 
-    qreal    w = (qreal)main_pixmap.width();
-    w -= 2 * CTRL_MARGIN * w;  // width of meter scale in pixels
+    float    w = main_pixmap.width();
+    w -= 2 * CTRL_MARGIN * w;       // width of meter scale in pixels
 
     // pixels / dB
-    qreal    pixperdb = w / fabsf(MAX_DB - MIN_DB);
-    level_pix = (int) ((level - MIN_DB) * pixperdb);
+    float    pixperdb = w / fabsf(MAX_DB - MIN_DB);
+    level_pix = int((level - MIN_DB) * pixperdb);
 
     draw();
 }
@@ -140,11 +140,11 @@ void SsiWidget::draw(void)
     QPainter    painter(&main_pixmap);
 
     // DrawCurrent position indicator
-    qreal     hline = (qreal) h * CTRL_XAXIS_HEGHT;
-    qreal     marg = (qreal) w * CTRL_MARGIN;
-    qreal     ht = (qreal) h * CTRL_NEEDLE_TOP;
-    qreal     x = marg + level_pix;
-    QPoint    pts[3];
+    int     hline = h * CTRL_XAXIS_HEGHT;
+    int     marg = w * CTRL_MARGIN;
+    int     ht = h * CTRL_NEEDLE_TOP;
+    int     x = int(marg + level_pix);
+    QPoint  pts[3];
     pts[0].setX(x);
     pts[0].setY(ht + 2);
     pts[1].setX(x - 6);
@@ -152,7 +152,7 @@ void SsiWidget::draw(void)
     pts[2].setX(x + 6);
     pts[2].setY(hline + 8);
 
-    painter.setBrush(QBrush(QColor(0, 190, 0, 255)));
+    painter.setBrush(QBrush(QColor(0, 230, 80, 255)));
     painter.setOpacity(1.0);
 
     // Qt 4.8+ has a 1-pixel error (or they fixed line drawing)
@@ -164,16 +164,14 @@ void SsiWidget::draw(void)
 #endif
 
     // create Font to use for scales
-    QFont    Font("Arial");
-    int      y = (h) / 4;
-    Font.setPixelSize(y);
+    QFont    Font("Arial", 10);
     Font.setWeight(QFont::Normal);
     painter.setFont(Font);
 
     painter.setPen(QColor(0xDA, 0xDA, 0xDA, 0xFF));
     painter.setOpacity(1.0);
     level_str.setNum(level_i);
-    painter.drawText(marg, h - 2, level_str + " dBFS");
+    painter.drawText(marg, h - 7, level_str + " dBFS");
 
     update();
 }
@@ -187,7 +185,7 @@ void SsiWidget::drawOverlay(void)
 
     int         w = overlay_pixmap.width();
     int         h = overlay_pixmap.height();
-    int         x, y;
+    int         x;
     QRect       rect;
     QPainter    painter(&overlay_pixmap);
 
@@ -204,7 +202,7 @@ void SsiWidget::drawOverlay(void)
     painter.setPen(QPen(Qt::white, 1, Qt::SolidLine));
     painter.drawLine(QLineF(marg, hline, hstop, hline)); // top line
     painter.drawLine(QLineF(marg, hline + 8, hstop, hline + 8)); // bottom line
-    for (x = 0; x < 11; x++)
+    for (x = 0; x < 13; x++)
     {
         if (x & 1)
             // minor tics
@@ -216,14 +214,11 @@ void SsiWidget::drawOverlay(void)
 
     // draw scale text
     // create Font to use for scales
-    QFont    Font("Arial");
-    y = h / 4;
-    Font.setPixelSize(y);
+    QFont    Font("Arial", 10);
     Font.setWeight(QFont::Normal);
     painter.setFont(Font);
     int    rwidth = (int)((hstop - marg) / 5.0);
-    level_str = "-100";
-    rect.setRect(marg / 2 - 5, 0, rwidth, magstart);
+    rect.setRect(marg / 2 - 8, 0, rwidth, magstart);
 
     for (x = MIN_DB; x <= MAX_DB; x += 20)
     {
