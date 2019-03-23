@@ -70,7 +70,7 @@ QSize SsiWidget::minimumSizeHint() const
 
 QSize SsiWidget::sizeHint() const
 {
-    return QSize(150, 40);
+    return QSize(200, 50);
 }
 
 void SsiWidget::resizeEvent(QResizeEvent *)

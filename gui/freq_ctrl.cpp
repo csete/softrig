@@ -78,7 +78,7 @@ QSize FreqCtrl::minimumSizeHint() const
 
 QSize FreqCtrl::sizeHint() const
 {
-    return QSize(280, 40);
+    return QSize(350, 50);
 }
 
 bool FreqCtrl::inRect(QRect &rect, QPoint &point)
