@@ -768,7 +768,7 @@ void CPlotter::zoomStepX(float step, int x)
     float f_max = fixed_hz + (1.0 - ratio) * new_range;
     float f_min = f_max - new_range;
 
-    // ensure we don't go beyond the rangelimits
+    // ensure we don't go beyond the range limits
     if (f_min < m_CenterFreq - m_SampleFreq / 2.f)
         f_min = m_CenterFreq - m_SampleFreq / 2.f;
 
