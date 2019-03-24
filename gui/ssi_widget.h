@@ -31,7 +31,8 @@ private:
     QPixmap    overlay_pixmap; // pixmap with static elements
     QSize      widget_size;
     QString    level_str;      // SSI level as string (with unit)
-    int        level_i;        // SSI level as int
+    float      level_f;        // SSI level as float
+    float      level_d;        // SSI level displayed
     int        level_pix;      // SSI level in pixels
 
     float      alpha_decay;

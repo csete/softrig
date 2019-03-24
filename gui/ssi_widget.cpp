@@ -58,7 +58,8 @@ SsiWidget::SsiWidget(QWidget *parent) : QFrame(parent)
     overlay_pixmap = QPixmap(0, 0);
     widget_size = QSize(0, 0);
     level_pix = 0;
-    level_i = -120;
+    level_f = -120;
+    level_d = -120;
     alpha_decay = 0.10f;    // FIXME: Should set delta-t and Fs instead
     alpha_rise = 0.5f;      // FIXME: Should set delta-t and Fs instead
 }
@@ -70,7 +71,7 @@ QSize SsiWidget::minimumSizeHint() const
 
 QSize SsiWidget::sizeHint() const
 {
-    return QSize(200, 60);
+    return QSize(200, 50);
 }
 
 void SsiWidget::resizeEvent(QResizeEvent *)
@@ -99,10 +100,10 @@ void SsiWidget::setLevel(float dbfs)
     else if (dbfs > MAX_DB)
         dbfs = MAX_DB;
 
-    float    level = level_i;
+    float    level = level_f;
     float    alpha = dbfs < level ? alpha_decay : alpha_rise;
     level += alpha * (dbfs - level);
-    level_i = int(level);
+    level_f = level;
 
     float    w = main_pixmap.width();
     w -= 2 * CTRL_MARGIN * w;       // width of meter scale in pixels
@@ -170,8 +171,15 @@ void SsiWidget::draw(void)
 
     painter.setPen(QColor(0xDA, 0xDA, 0xDA, 0xFF));
     painter.setOpacity(1.0);
-    level_str.setNum(level_i);
-    painter.drawText(marg, h - 7, level_str + " dBFS");
+
+    float    level = level_d;
+    float    alpha = 0.1f;
+    level += alpha * (level_f - level);
+    level_d = level;
+
+    level_str.setNum(level_d, 'f', 1);
+    level_str.append(" dBFS");
+    painter.drawText(marg, h - 5, level_str);
 
     update();
 }
