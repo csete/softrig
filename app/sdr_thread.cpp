@@ -239,7 +239,7 @@ void SdrThread::thread_finished(void)
     SDR_THREAD_DEBUG("SDR thread finished\n");
 }
 
-void SdrThread::setRxFrequency(qint64 freq)
+void SdrThread::setRxFrequency(quint64 freq)
 {
     if (!is_running)
         return;
