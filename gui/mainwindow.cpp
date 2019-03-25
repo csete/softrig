@@ -342,8 +342,8 @@ void MainWindow::menuActivated(QAction *action)
 
 void MainWindow::newFrequency(qint64 freq)
 {
-    sdr->setRxFrequency(freq);
-    fft_plot->setCenterFreq(freq);
+    sdr->setRxFrequency(quint64(freq));
+    fft_plot->setCenterFreq(quint64(freq));
 }
 
 void MainWindow::newPlotterCenterFreq(qint64 freq)
