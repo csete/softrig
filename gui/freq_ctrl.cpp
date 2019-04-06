@@ -204,7 +204,7 @@ void FreqCtrl::setFrequency(qint64 freq)
 
     for (i = m_NumDigits - 1; i >= m_DigStart; i--)
     {
-        val = (int)(rem / m_DigitInfo[i].weight);
+        val = int(rem / m_DigitInfo[i].weight);
         if (m_DigitInfo[i].val != val)
         {
             m_DigitInfo[i].val = val;
@@ -659,24 +659,24 @@ void FreqCtrl::incDigit()
             {
                 // get the current digit value
                 tmp =
-                    (int)((m_freq / m_DigitInfo[m_ActiveEditDigit].weight) %
+                    int((m_freq / m_DigitInfo[m_ActiveEditDigit].weight) %
                           10);
                 // set the current digit value to zero
                 m_freq -= tmp * m_DigitInfo[m_ActiveEditDigit].weight;
                 tmp++;
                 if (tmp > 9)
                     tmp = 0;
-                m_freq = m_freq + (qint64)tmp *
+                m_freq = m_freq + qint64(tmp) *
                          m_DigitInfo[m_ActiveEditDigit].weight;
             }
             else
             {
                 tmp =
-                    (int)((m_freq / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
+                    int((m_freq / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
                           10);
                 tmpl = m_freq + m_DigitInfo[m_ActiveEditDigit].incval;
                 if (tmp !=
-                    (int)((tmpl / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
+                    int((tmpl / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
                           10))
                 {
                     tmpl -= m_DigitInfo[m_ActiveEditDigit + 1].weight;
@@ -724,25 +724,25 @@ void FreqCtrl::decDigit()
             {
                 // get the current digit value
                 tmp =
-                    (int)((m_freq / m_DigitInfo[m_ActiveEditDigit].weight) %
-                          10);
+                    int((m_freq / m_DigitInfo[m_ActiveEditDigit].weight) %
+                        10);
                 // set the current digit value to zero
                 m_freq -= tmp * m_DigitInfo[m_ActiveEditDigit].weight;
                 tmp--;
                 if (tmp < 0)
                     tmp = 9;
-                m_freq = m_freq + (qint64)tmp *
+                m_freq = m_freq + qint64(tmp) *
                          m_DigitInfo[m_ActiveEditDigit].weight;
             }
             else
             {
                 tmp =
-                    (int)((m_freq / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
-                          10);
+                    int((m_freq / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
+                        10);
                 tmpl = m_freq - m_DigitInfo[m_ActiveEditDigit].incval;
                 if (tmp !=
-                    (int)((tmpl / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
-                          10))
+                    int((tmpl / m_DigitInfo[m_ActiveEditDigit + 1].weight) %
+                        10))
                 {
                     tmpl += m_DigitInfo[m_ActiveEditDigit + 1].weight;
                 }
