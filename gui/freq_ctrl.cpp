@@ -53,6 +53,7 @@ FreqCtrl::FreqCtrl(QWidget *parent) :
     m_BkColor = QColor(0x1F, 0x1D, 0x1D, 0xFF);
     m_DigitColor = QColor(0xFF, 0xFF, 0xFF, 0xFF);
     m_HighlightColor = QColor(0x5A, 0x5A, 0x5A, 0xFF);
+    m_InactiveColor = QColor(0x43, 0x43, 0x43, 0xFF);
     m_UnitsColor = Qt::gray;
     m_freq = 146123456;
     setup(0, 1, 4000000000U, 1, FCTL_UNIT_NONE);
@@ -625,7 +626,7 @@ void FreqCtrl::drawDigits(QPainter &Painter)
                 Painter.fillRect(m_DigitInfo[i].dQRect, m_BkColor);
 
             if (i >= m_LeadZeroPos)
-                Painter.setPen(m_BkColor);
+                Painter.setPen(m_InactiveColor);
             else
                 Painter.setPen(m_DigitColor);
 

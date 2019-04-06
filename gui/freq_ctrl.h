@@ -108,6 +108,7 @@ private:
     QColor      m_BkColor;
     QColor      m_UnitsColor;
     QColor      m_HighlightColor;
+    QColor      m_InactiveColor;
 
     QPixmap     m_Pixmap;
     QSize       m_Size;
