@@ -20,6 +20,8 @@ public:
     ~ControlPanel();
 
 signals:
+    void    rxGainModeChanged(int mode);
+    void    rxGainChanged(int gain);
     void    demodChanged(sdr_demod_t new_demod);
     void    filterChanged(real_t low_cut, real_t high_cut);
     void    cwOffsetChanged(real_t offset);
@@ -29,6 +31,9 @@ private slots:
     void    on_txButton_clicked(bool);
     void    on_fftButton_clicked(bool);
     void    on_recButton_clicked(bool);
+
+    void    on_rxGainMode_activated(int index);
+    void    on_rxGainSlider_valueChanged(int value);
 
     void    on_amButton_clicked(bool);
     void    on_ssbButton_clicked(bool);

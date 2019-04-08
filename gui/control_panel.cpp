@@ -144,6 +144,17 @@ void ControlPanel::on_recButton_clicked(bool checked)
     qDebug() << __func__ << checked;
 }
 
+void ControlPanel::on_rxGainMode_activated(int index)
+{
+    emit rxGainModeChanged(index);
+}
+
+void ControlPanel::on_rxGainSlider_valueChanged(int value)
+{
+    emit rxGainChanged(value);
+}
+
+
 void ControlPanel::on_amButton_clicked(bool checked)
 {
     Q_UNUSED(checked);
