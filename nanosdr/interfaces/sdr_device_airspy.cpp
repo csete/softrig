@@ -639,6 +639,7 @@ int SdrDeviceAirspyBase::set_gain(int value)
             return SDR_DEVICE_ERROR;
     }
     last_gain = value;
+    sdr_device_debug("SdrDeviceAirspyBase::set_gain(%d) -> %d\n", value, gain);
 
     return SDR_DEVICE_OK;
 }

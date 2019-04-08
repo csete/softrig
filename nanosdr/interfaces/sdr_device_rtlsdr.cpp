@@ -553,6 +553,8 @@ int SdrDeviceRtlsdr::set_gain(int value)
         return SDR_DEVICE_ERROR;
 
     last_gain = value;
+    sdr_device_debug("SdrDeviceRtlsdr::set_gain(%d) -> %.1f\n", value,
+                     0.1f * gains[idx]);
 
     return SDR_DEVICE_OK;
 }

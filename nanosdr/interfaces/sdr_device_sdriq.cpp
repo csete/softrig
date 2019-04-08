@@ -267,6 +267,8 @@ int SdrDeviceSdriq::set_gain(int value)
     if (sdriq_set_fixed_rf_gain(sdr, gain))
         return SDR_DEVICE_ERROR;
 
+    sdr_device_debug("SdrDeviceSdriq::set_gain(%d) -> %c\n", value, gain);
+
     return SDR_DEVICE_OK;
 }
 

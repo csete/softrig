@@ -1,5 +1,5 @@
 
-NANOSDR_VERSION = 0.85
+NANOSDR_VERSION = 0.86
 
 message(Building with nanosdr version $${NANOSDR_VERSION})
 
