@@ -198,7 +198,7 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     m_PeakHoldValid = false;
 
     setFftPlotColor(QColor(0xFF,0xFF,0xFF,0xFF));
-    setFftFill(false);
+    setFftFill(true);
 
     // always update waterfall
     tlast_wf_ms = 0;
