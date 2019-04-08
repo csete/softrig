@@ -248,6 +248,24 @@ void SdrThread::setRxFrequency(quint64 freq)
         SDR_THREAD_DEBUG("Error setting frequency\n");
 }
 
+void SdrThread::setRxGainMode(int mode)
+{
+    if (!is_running)
+        return;
+
+    if (sdr_dev->set_gain_mode(mode))
+        SDR_THREAD_DEBUG("Error setting gain mode\n");
+}
+
+void SdrThread::setRxGain(int gain)
+{
+    if (!is_running)
+        return;
+
+    if (sdr_dev->set_gain(gain))
+        SDR_THREAD_DEBUG("Error setting gain\n");
+}
+
 void SdrThread::setDemod(sdr_demod_t demod)
 {
     if (!is_running)           // FIXME
