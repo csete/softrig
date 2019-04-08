@@ -29,6 +29,8 @@ private slots:
     void    menuActivated(QAction *);
     void    newFrequency(qint64 freq);
     void    newPlotterCenterFreq(qint64);
+    void    setRxGainMode(int mode);
+    void    setRxGain(int gain);
     void    setDemod(sdr_demod_t);
     void    setFilter(real_t, real_t);
     void    setCwOffset(real_t);

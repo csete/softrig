@@ -91,6 +91,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Control panel
     cpanel = new ControlPanel(this);
+    connect(cpanel, SIGNAL(rxGainModeChanged(int)),
+            this, SLOT(setRxGainMode(int)));
+    connect(cpanel, SIGNAL(rxGainChanged(int)), this, SLOT(setRxGain(int)));
     connect(cpanel, SIGNAL(demodChanged(sdr_demod_t)),
             this, SLOT(setDemod(sdr_demod_t)));
     connect(cpanel, SIGNAL(filterChanged(float,float)),
@@ -349,6 +352,16 @@ void MainWindow::newFrequency(qint64 freq)
 void MainWindow::newPlotterCenterFreq(qint64 freq)
 {
     fctl->setFrequency(freq);
+}
+
+void MainWindow::setRxGainMode(int mode)
+{
+    sdr->setRxGainMode(mode);
+}
+
+void MainWindow::setRxGain(int gain)
+{
+    sdr->setRxGain(gain);
 }
 
 void MainWindow::setDemod(sdr_demod_t demod)
