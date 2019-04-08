@@ -389,7 +389,7 @@ void MainWindow::fftTimeout(void)
     {
         int i;
         for (i = 0; i < FFT_SIZE; i++)
-            fft_avg[i] += 0.5f * (fft_data[i] - fft_avg[i]);
+            fft_avg[i] += 0.25f * (fft_data[i] - fft_avg[i]);
 
         fft_plot->setNewFttData(fft_avg, fft_data, fft_samples);
     }
