@@ -95,21 +95,25 @@ void SsiWidget::resizeEvent(QResizeEvent *)
 
 void SsiWidget::setLevel(float dbfs)
 {
-    if (dbfs < MIN_DB)
-        dbfs = MIN_DB;
-    else if (dbfs > MAX_DB)
-        dbfs = MAX_DB;
+    float    level;
+    float    alpha;
+    float    width;
+    float    pixperdb;
 
-    float    level = level_f;
-    float    alpha = dbfs < level ? alpha_decay : alpha_rise;
+    level = level_f;
+    alpha = dbfs < level ? alpha_decay : alpha_rise;
     level += alpha * (dbfs - level);
     level_f = level;
 
-    float    w = main_pixmap.width();
-    w -= 2 * CTRL_MARGIN * w;       // width of meter scale in pixels
+    // pixels / dB must be limited to [MIN_DB, MAX_DB]
+    if (level < MIN_DB)
+        level = MIN_DB;
+    else if (level > MAX_DB)
+        level = MAX_DB;
 
-    // pixels / dB
-    float    pixperdb = w / fabsf(MAX_DB - MIN_DB);
+    width = main_pixmap.width();
+    width -= 2 * CTRL_MARGIN * width;       // width of meter scale in pixels
+    pixperdb = width / fabsf(MAX_DB - MIN_DB);
     level_pix = int((level - MIN_DB) * pixperdb);
 
     draw();
