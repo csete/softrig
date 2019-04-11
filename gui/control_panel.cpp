@@ -96,8 +96,8 @@ void ControlPanel::initModeSettings(void)
     mode_settings[CP_MODE_USB].filter_hi = 2800.0;
     mode_settings[CP_MODE_USB].cw_offset = 0.0;
     mode_settings[CP_MODE_CW].demod = SDR_DEMOD_SSB;
-    mode_settings[CP_MODE_CW].filter_lo = -400.0;
-    mode_settings[CP_MODE_CW].filter_hi = 400.0;
+    mode_settings[CP_MODE_CW].filter_lo = -250.0;
+    mode_settings[CP_MODE_CW].filter_hi = 250.0;
     mode_settings[CP_MODE_CW].cw_offset = 700.0;
     mode_settings[CP_MODE_FM].demod = SDR_DEMOD_FM;
     mode_settings[CP_MODE_FM].filter_lo = -10000.0;
