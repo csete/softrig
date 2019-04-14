@@ -47,7 +47,7 @@
 // page indices in stacked widget
 #define PAGE_IDX_RX_OPT     0
 #define PAGE_IDX_TX_OPT     1
-#define PAGE_IDX_FFT_OPT    2
+#define PAGE_IDX_DISP_OPT   2
 
 
 ControlPanel::ControlPanel(QWidget *parent) :
@@ -133,10 +133,10 @@ void ControlPanel::on_txButton_clicked(bool checked)
     ui->stackedWidget->setCurrentIndex(PAGE_IDX_TX_OPT);
 }
 
-void ControlPanel::on_fftButton_clicked(bool checked)
+void ControlPanel::on_dispButton_clicked(bool checked)
 {
     Q_UNUSED(checked);
-    ui->stackedWidget->setCurrentIndex(PAGE_IDX_FFT_OPT);
+    ui->stackedWidget->setCurrentIndex(PAGE_IDX_DISP_OPT);
 }
 
 void ControlPanel::on_recButton_clicked(bool checked)

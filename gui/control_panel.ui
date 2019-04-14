@@ -91,7 +91,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="fftButton">
+      <widget class="QPushButton" name="dispButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -108,7 +108,7 @@
         <string>Panadapter and waterfall settings</string>
        </property>
        <property name="text">
-        <string>FFT</string>
+        <string>DISP</string>
        </property>
       </widget>
      </item>
@@ -487,14 +487,17 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>60</x>
-         <y>30</y>
-         <width>111</width>
+         <x>0</x>
+         <y>40</y>
+         <width>251</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
         <string>TX settings</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>
@@ -502,14 +505,17 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>50</x>
-         <y>20</y>
-         <width>111</width>
+         <x>0</x>
+         <y>40</y>
+         <width>251</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>FFT settings</string>
+        <string>Display settings</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>

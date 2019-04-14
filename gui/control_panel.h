@@ -29,7 +29,7 @@ signals:
 private slots:
     void    on_rxButton_clicked(bool);
     void    on_txButton_clicked(bool);
-    void    on_fftButton_clicked(bool);
+    void    on_dispButton_clicked(bool);
     void    on_recButton_clicked(bool);
 
     void    on_rxGainMode_activated(int index);
