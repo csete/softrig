@@ -48,7 +48,8 @@ private:
     NfmDemod    nfm;
     AmDemod     am;
     SsbDemod    ssb;
-    Translate   bfo;            // used to provide CW offset in single user mode
+    Translate   vfo;
+    Translate   bfo;            // used to generate CW tone
     FractResampler  audio_resampler;
 
     real_t      sql_level;

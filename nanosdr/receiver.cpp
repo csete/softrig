@@ -97,7 +97,7 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
         quad_decim = 2;
 
     quad_decim = decim.init(quad_decim, dyn_range);
-    quad_rate = input_rate / (float) quad_decim;
+    quad_rate = input_rate / quad_decim;
 
     fprintf(stderr,
             "Receiver sample rates:\n"
@@ -123,6 +123,7 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
     real_buf1 = new real_t[buflen];
 
     // initialize DSP blocks
+    vfo.set_sample_rate(input_rate);
     filter.setup(-2800.0, -100.0, 0.0, quad_rate);
     agc.setup(true, false, -80, 0, 2, 500, quad_rate);
     am.setup(quad_rate, 4000);
@@ -136,7 +137,9 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
 
 void Receiver::set_tuning_offset(real_t offset)
 {
-    (void)  offset;
+    /* incoming offset is a delta wrt. to center frequency; however, we need
+     * to translate in the opposite direction */
+    vfo.set_nco_frequency(-offset);
 }
 
 void Receiver::set_agc(int threshold, int slope, int decay)
@@ -182,7 +185,7 @@ int Receiver::process(int input_length, complex_t * input, real_t * output)
     int         quad_samples;
     int         out_samples;
 
-    //xlate->process(input_length, input);
+    vfo.process(input_length, input);
     quad_samples = decim.process(input_length, input);
     if (quad_samples == 0)
         return 0;

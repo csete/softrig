@@ -282,6 +282,14 @@ void SdrThread::setRxFilter(real_t low_cut, real_t high_cut)
     rx->set_filter(low_cut, high_cut);
 }
 
+void SdrThread::setRxTuningOffset(real_t offset)
+{
+    if (!is_running)           // FIXME
+        return;
+
+    rx->set_tuning_offset(offset);
+}
+
 void SdrThread::setRxCwOffset(real_t offset)
 {
     if (!is_running)           // FIXME

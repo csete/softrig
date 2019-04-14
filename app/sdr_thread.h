@@ -47,6 +47,7 @@ public slots:
     void    setRxFrequency(quint64 freq);
     void    setDemod(sdr_demod_t);
     void    setRxFilter(real_t, real_t);
+    void    setRxTuningOffset(real_t offset);
     void    setRxCwOffset(real_t);
 
 private slots:
