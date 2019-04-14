@@ -657,7 +657,6 @@ void CPlotter::mousePressEvent(QMouseEvent * event)
         }
         else
         {
-#if 0
             if (event->buttons() == Qt::LeftButton)
             {
                 int     best = -1;
@@ -679,8 +678,6 @@ void CPlotter::mousePressEvent(QMouseEvent * event)
                 drawOverlay();
             }
             else if (event->buttons() == Qt::MidButton)
-#endif
-            if (event->buttons() == Qt::LeftButton)
             {
                 // set center freq
                 m_CenterFreq = roundFreq(freqFromX(pt.x()), m_ClickResolution);
@@ -849,17 +846,24 @@ void CPlotter::wheelEvent(QWheelEvent * event)
     }
     else
     {
-        // increment / decrement center frequency
-        qint64 new_freq = m_CenterFreq + numSteps * m_ClickResolution;
-        new_freq = roundFreq(new_freq, m_ClickResolution);
-        setCenterFreq(new_freq);
-        emit newCenterFreq(new_freq);
-/*
-        // inc/dec demod frequency
-        m_DemodCenterFreq += (numSteps * m_ClickResolution);
-        m_DemodCenterFreq = roundFreq(m_DemodCenterFreq, m_ClickResolution );
-        emit newDemodFreq(m_DemodCenterFreq, m_DemodCenterFreq-m_CenterFreq);
-*/
+        qint64      delta = numSteps * m_ClickResolution;
+        // tuning
+        if (m_DemodCenterFreq + delta > m_CenterFreq - m_Span / 2.3 &&
+            m_DemodCenterFreq + delta < m_CenterFreq + m_Span / 2.3)
+        {
+            // increment / decrement demod frequency
+            m_DemodCenterFreq += delta;
+            m_DemodCenterFreq = roundFreq(m_DemodCenterFreq, m_ClickResolution);
+            emit newDemodFreq(m_DemodCenterFreq, m_DemodCenterFreq - m_CenterFreq);
+        }
+        else
+        {
+            // increment / decrement center frequency
+            qint64 new_freq = m_CenterFreq + delta;
+            new_freq = roundFreq(new_freq, m_ClickResolution);
+            setCenterFreq(new_freq);
+            emit newCenterFreq(new_freq);
+        }
     }
 
     updateOverlay();
