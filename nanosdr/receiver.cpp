@@ -53,10 +53,10 @@ Receiver::Receiver()
     quad_rate = input_rate / quad_decim;
     output_rate = 48000.0f;
     demod = SDR_DEMOD_SSB;
-    cplx_buf0 = 0;
-    cplx_buf1 = 0;
-    cplx_buf2 = 0;
-    real_buf1 = 0;
+    cplx_buf0 = nullptr;
+    cplx_buf1 = nullptr;
+    cplx_buf2 = nullptr;
+    real_buf1 = nullptr;
 }
 
 Receiver::~Receiver()
@@ -87,7 +87,7 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
     if (in_rate < out_rate)
         fprintf(stderr, "*** WARNING: Input rate is less than output rate, which is currently not supported\n");
 
-    quad_rate = 2.0 * out_rate;
+    quad_rate = 2.f * out_rate;
     if (input_rate < quad_rate)
         quad_rate = input_rate;
 
