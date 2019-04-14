@@ -107,6 +107,8 @@ MainWindow::MainWindow(QWidget *parent) :
     fft_plot->setFftRange(-100.0, 0.0);
     connect(fft_plot, SIGNAL(newCenterFreq(qint64)),
             this, SLOT(newPlotterCenterFreq(qint64)));
+    connect(fft_plot, SIGNAL(newDemodFreq(qint64, qint64)),
+            this, SLOT(newPlotterDemodFreq(qint64, qint64)));
     connect(fft_plot, SIGNAL(pandapterRangeChanged(float,float)),
             fft_plot, SLOT(setWaterfallRange(float,float)));
 
@@ -345,13 +347,22 @@ void MainWindow::menuActivated(QAction *action)
 
 void MainWindow::newFrequency(qint64 freq)
 {
-    sdr->setRxFrequency(quint64(freq));
-    fft_plot->setCenterFreq(quint64(freq));
+    qint64      center_freq;
+
+    center_freq = freq - fft_plot->getFilterOffset();
+    sdr->setRxFrequency(quint64(center_freq));
+    fft_plot->setCenterFreq(quint64(center_freq));
 }
 
 void MainWindow::newPlotterCenterFreq(qint64 freq)
 {
     fctl->setFrequency(freq);
+}
+
+void MainWindow::newPlotterDemodFreq(qint64 freq, qint64 delta)
+{
+    fctl->setFrequency(freq);
+    sdr->setRxTuningOffset(delta);
 }
 
 void MainWindow::setRxGainMode(int mode)
