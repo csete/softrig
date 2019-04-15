@@ -278,7 +278,7 @@ void MainWindow::runButtonClicked(bool checked)
         if (sdr->start(conf) == SDR_THREAD_OK)
         {
             newFrequency(fctl->getFrequency());
-            fft_timer->start(50);
+            fft_timer->start(40);
 
             {
                 int i;
