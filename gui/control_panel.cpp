@@ -61,12 +61,57 @@ ControlPanel::ControlPanel(QWidget *parent) :
     initModeSettings();
 
     ui->rxFilterBox->setEnabled(false);
+
+    {
+        QFont    font;
+        font.setPointSize(14);
+        ui->minLabel->setFont(font);
+        ui->maxLabel->setFont(font);
+        font.setPointSize(16);
+        font.setWeight(QFont::Bold);
+        ui->rmsLabel->setFont(font);
+
+        stats.reset = true;
+    }
 }
 
 ControlPanel::~ControlPanel()
 {
     delete mode_settings;
     delete ui;
+}
+
+void ControlPanel::addSignalData(double rms)
+{
+    if (stats.reset)
+    {
+        stats.min = rms;
+        stats.max = rms;
+        stats.rms = rms;
+        stats.num = 1;
+        stats.reset = false;
+        stats.timer.restart();
+    }
+    else
+    {
+        stats.num++;
+
+        if (rms < stats.min)
+            stats.min = rms;
+
+        if (rms > stats.max)
+            stats.max = rms;
+
+        stats.rms += rms;
+    }
+
+    if (stats.timer.elapsed() >= 1000 * ui->avgSpinBox->value())
+    {
+        ui->minLabel->setText(QString("Min: %1 dB").arg(stats.min, 0, 'f', 1));
+        ui->maxLabel->setText(QString("Max: %1 dB").arg(stats.max, 0, 'f', 1));
+        ui->rmsLabel->setText(QString("RMS: %1 dB").arg(stats.rms / double(stats.num), 0, 'f', 1));
+        stats.reset = true;
+    }
 }
 
 void ControlPanel::initModeSettings(void)

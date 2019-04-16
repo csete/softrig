@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>300</height>
+    <height>446</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -178,7 +178,7 @@
             <x>0</x>
             <y>0</y>
             <width>246</width>
-            <height>253</height>
+            <height>399</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -458,6 +458,66 @@
                 </property>
                 <property name="text">
                  <string>3.6 kHz</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="statBox">
+             <property name="title">
+              <string>Signal statistics</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QLabel" name="avgLabel">
+                  <property name="text">
+                   <string>Averaging time:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="avgSpinBox">
+                  <property name="suffix">
+                   <string> s</string>
+                  </property>
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>5</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="minLabel">
+                <property name="text">
+                 <string>Min:  - dB</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="maxLabel">
+                <property name="text">
+                 <string>Max: - dB</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="rmsLabel">
+                <property name="text">
+                 <string>RMS: - dB</string>
+                </property>
+                <property name="scaledContents">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>

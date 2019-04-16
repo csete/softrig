@@ -3,6 +3,7 @@
  */
 #pragma once
 
+#include <QTime>
 #include <QWidget>
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
@@ -18,6 +19,8 @@ class ControlPanel : public QWidget
 public:
     explicit ControlPanel(QWidget *parent = nullptr);
     ~ControlPanel();
+
+    void    addSignalData(double rms);
 
 signals:
     void    rxGainModeChanged(int mode);
@@ -59,4 +62,15 @@ private:
     };
 
     struct mode_setting   *mode_settings; // latest settings for each mode
+
+    // signal statistics
+    struct {
+        QTime          timer;
+        double         min;
+        double         max;
+        double         rms;
+        quint32        num;
+        bool           reset;
+    } stats;
+
 };

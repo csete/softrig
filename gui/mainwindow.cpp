@@ -406,5 +406,7 @@ void MainWindow::fftTimeout(void)
     }
 
     // FIXME
-    smeter->setLevel(sdr->getSignalStrength());
+    float signal = sdr->getSignalStrength();
+    smeter->setLevel(signal);
+    cpanel->addSignalData(signal);
 }
