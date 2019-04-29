@@ -43,6 +43,7 @@ public:
     void setNewFttData(float *fftData, float *wfData, int size);
 
     void setCenterFreq(quint64 f);
+    quint64 getCenterFreq(void) const { return m_CenterFreq; }
     void setFreqUnits(qint32 unit) { m_FreqUnits = unit; }
 
     void setDemodCenterFreq(quint64 f) { m_DemodCenterFreq = f; }
