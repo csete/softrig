@@ -3,7 +3,7 @@
  *
  * This file is part of softrig, a simple software defined radio transceiver.
  *
- * Copyright 2017-2018 Alexandru Csete OZ9AEC.
+ * Copyright 2017-2019 Alexandru Csete OZ9AEC.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -101,7 +101,7 @@ void AppConfig::readDeviceConf(void)
 
     input->type = settings->value(SDR_INPUT_TYPE, "").toString();
     input->frequency = settings->value(SDR_INPUT_FREQ, 0).toULongLong();
-    input->transverter = settings->value(SDR_INPUT_LNB, 0).toULongLong();
+    input->transverter = settings->value(SDR_INPUT_LNB, 0).toLongLong();
     input->rate = settings->value(SDR_INPUT_RATE, 0).toUInt();
     input->decimation = settings->value(SDR_INPUT_DECIM, 1).toUInt();
     input->bandwidth = settings->value(SDR_INPUT_BW, 0).toUInt();
