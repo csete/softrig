@@ -42,6 +42,7 @@
 #define SDR_INPUT           "sdr_input"
 #define SDR_INPUT_TYPE      SDR_INPUT"/type"
 #define SDR_INPUT_FREQ      SDR_INPUT"/frequency"
+#define SDR_INPUT_NCO       SDR_INPUT"/nco"
 #define SDR_INPUT_LNB       SDR_INPUT"/transverter"
 #define SDR_INPUT_RATE      SDR_INPUT"/sample_rate"
 #define SDR_INPUT_DECIM     SDR_INPUT"/decimation"
@@ -101,6 +102,7 @@ void AppConfig::readDeviceConf(void)
 
     input->type = settings->value(SDR_INPUT_TYPE, "").toString();
     input->frequency = settings->value(SDR_INPUT_FREQ, 0).toULongLong();
+    input->nco = settings->value(SDR_INPUT_NCO, 0).toLongLong();
     input->transverter = settings->value(SDR_INPUT_LNB, 0).toLongLong();
     input->rate = settings->value(SDR_INPUT_RATE, 0).toUInt();
     input->decimation = settings->value(SDR_INPUT_DECIM, 1).toUInt();
@@ -121,6 +123,11 @@ void AppConfig::saveDeviceConf(void)
         settings->setValue(SDR_INPUT_FREQ, input->frequency);
     else
         settings->remove(SDR_INPUT_FREQ);
+
+    if (input->nco)
+        settings->setValue(SDR_INPUT_NCO, input->nco);
+    else
+        settings->remove(SDR_INPUT_NCO);
 
     if (input->transverter)
         settings->setValue(SDR_INPUT_LNB, input->transverter);

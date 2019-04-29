@@ -9,6 +9,7 @@ typedef struct
 {
     QString         type;
     quint64         frequency;
+    qint64          nco;
     qint64          transverter;
     unsigned int    rate;
     unsigned int    decimation;

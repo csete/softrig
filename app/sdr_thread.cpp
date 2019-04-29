@@ -109,9 +109,6 @@ int SdrThread::start(const app_config_t *conf)
         // FIXME: Emit error string
         return SDR_THREAD_EDEV;
     }
-    // set bandwidth
-    // set gain
-    // set frequency correction
 
     decimation = input_cfg.decimation;
     rx_rate = input_cfg.rate;
@@ -126,6 +123,14 @@ int SdrThread::start(const app_config_t *conf)
     rx->init(rx_rate, 48000, 100, buflen);
 
     is_running = true;
+
+    // set frequency and correction
+    setRxFrequency(input_cfg.frequency);
+    // set bandwidth
+    // set gain
+
+    // setup receiver
+    setRxTuningOffset(input_cfg.nco);
 
     resetStats();
     audio_out.start();

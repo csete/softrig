@@ -40,6 +40,7 @@ private slots:
 private:
     void    createButtons(void);
     void    loadConfig(void);
+    void    saveConfig(void);
     void    runDeviceConfig(void);
     void    deviceConfigChanged(const device_config_t * conf);
 

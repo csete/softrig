@@ -148,6 +148,7 @@ MainWindow::~MainWindow()
     // stop SDR
     runButtonClicked(false);
 
+    saveConfig();
     cfg->save();
     cfg->close();
 
@@ -194,6 +195,14 @@ void MainWindow::loadConfig(void)
     }
 }
 
+void MainWindow::saveConfig(void)
+{
+    app_config_t *conf = cfg->getDataPtr();
+
+    conf->input.frequency = fft_plot->getCenterFreq();
+    conf->input.nco = fft_plot->getFilterOffset();
+}
+
 // SDR device configuration changed; update GUI
 void MainWindow::deviceConfigChanged(const device_config_t * conf)
 {
@@ -205,8 +214,9 @@ void MainWindow::deviceConfigChanged(const device_config_t * conf)
 
     fft_plot->setSampleRate(quad_rate);
     fft_plot->setSpanFreq(quad_rate);
-    fft_plot->setCenterFreq(DEFAULT_FREQ);
-    fctl->setFrequency(DEFAULT_FREQ);
+    fft_plot->setCenterFreq(conf->frequency);
+    fft_plot->setFilterOffset(conf->nco);
+    fctl->setFrequency(conf->frequency + conf->nco);
     if (sdr->isRunning())
     {
         runButtonClicked(false);
