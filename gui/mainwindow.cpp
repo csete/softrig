@@ -140,6 +140,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(central_widget);
 
     loadConfig();
+    setWindowTitle(QString("Softrig %1").arg(VERSION));
     resize(900, 600);
 }
 
