@@ -153,8 +153,8 @@ CPlotter::CPlotter(QWidget *parent) : QFrame(parent)
     m_FftCenter = 0;
     m_CenterFreq = 144500000;
     m_DemodCenterFreq = 144500000;
-    m_DemodHiCutFreq = -2800;
-    m_DemodLowCutFreq = -100;
+    m_DemodHiCutFreq = -250;
+    m_DemodLowCutFreq = 250;
 
     m_FLowCmin = -25000;
     m_FLowCmax = -1000;

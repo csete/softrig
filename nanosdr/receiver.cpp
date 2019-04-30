@@ -124,11 +124,12 @@ void Receiver::init(real_t in_rate, real_t out_rate, real_t dyn_range,
 
     // initialize DSP blocks
     vfo.set_sample_rate(input_rate);
-    filter.setup(-2800.0, -100.0, 0.0, quad_rate);
+    filter.setup(-250.0, 250.0, 0.0, quad_rate);
     agc.setup(true, false, -80, 0, 2, 500, quad_rate);
     am.setup(quad_rate, 4000);
     nfm.set_sample_rate(quad_rate);
     bfo.set_sample_rate(quad_rate);
+    bfo.set_cw_offset(700.f);
 
     audio_rr = quad_rate / output_rate;
     audio_resampler.init(frame_length);
