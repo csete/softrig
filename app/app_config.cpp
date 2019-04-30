@@ -51,6 +51,9 @@
 #define SDR_INPUT_GAIN_MODE SDR_INPUT"/gain_mode"
 #define SDR_INPUT_GAIN      SDR_INPUT"/gain"
 
+#define DEFAULT_FREQ 145500000
+#define DEFAULT_GAIN 50
+
 AppConfig::AppConfig()
 {
     settings = nullptr;
@@ -103,7 +106,7 @@ void AppConfig::readDeviceConf(void)
     device_config_t     *input = &app_config.input;
 
     input->type = settings->value(SDR_INPUT_TYPE, "").toString();
-    input->frequency = settings->value(SDR_INPUT_FREQ, 145e6).toULongLong();
+    input->frequency = settings->value(SDR_INPUT_FREQ, DEFAULT_FREQ).toULongLong();
     input->nco = settings->value(SDR_INPUT_NCO, 0).toLongLong();
     input->transverter = settings->value(SDR_INPUT_LNB, 0).toLongLong();
     input->rate = settings->value(SDR_INPUT_RATE, 0).toUInt();
@@ -111,7 +114,7 @@ void AppConfig::readDeviceConf(void)
     input->bandwidth = settings->value(SDR_INPUT_BW, 0).toUInt();
     input->freq_corr_ppb = settings->value(SDR_INPUT_CORR, 0).toInt();
     input->gain_mode = settings->value(SDR_INPUT_GAIN_MODE, 0).toInt();
-    input->gain = settings->value(SDR_INPUT_GAIN, 50).toInt();
+    input->gain = settings->value(SDR_INPUT_GAIN, DEFAULT_GAIN).toInt();
 }
 
 void AppConfig::saveDeviceConf(void)
@@ -123,7 +126,7 @@ void AppConfig::saveDeviceConf(void)
     else
         settings->setValue(SDR_INPUT_TYPE, input->type);
 
-    if (input->frequency)
+    if (input->frequency != DEFAULT_FREQ)
         settings->setValue(SDR_INPUT_FREQ, input->frequency);
     else
         settings->remove(SDR_INPUT_FREQ);
@@ -163,7 +166,7 @@ void AppConfig::saveDeviceConf(void)
     else
         settings->remove(SDR_INPUT_GAIN_MODE);
 
-    if (input->gain)
+    if (input->gain != DEFAULT_GAIN)
         settings->setValue(SDR_INPUT_GAIN, input->gain);
     else
         settings->remove(SDR_INPUT_GAIN);
