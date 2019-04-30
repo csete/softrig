@@ -5,6 +5,8 @@
 
 #include <QTime>
 #include <QWidget>
+
+#include "app/app_config.h"
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
 
@@ -19,6 +21,9 @@ class ControlPanel : public QWidget
 public:
     explicit ControlPanel(QWidget *parent = nullptr);
     ~ControlPanel();
+
+    void    readSettings(const app_config_t &conf);
+    void    saveSettings(app_config_t &conf);
 
     void    addSignalData(double rms);
 

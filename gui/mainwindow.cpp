@@ -188,6 +188,8 @@ void MainWindow::loadConfig(void)
             runDeviceConfig();
         else
             deviceConfigChanged(&conf->input);
+
+        cpanel->readSettings(*conf);
     }
     else
     {
@@ -202,6 +204,7 @@ void MainWindow::saveConfig(void)
 
     conf->input.frequency = fft_plot->getCenterFreq();
     conf->input.nco = fft_plot->getFilterOffset();
+    cpanel->saveSettings(*conf);
 }
 
 // SDR device configuration changed; update GUI

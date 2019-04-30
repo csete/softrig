@@ -128,6 +128,8 @@ int SdrThread::start(const app_config_t *conf)
     setRxFrequency(input_cfg.frequency);
     // set bandwidth
     // set gain
+    setRxGainMode(input_cfg.gain_mode);
+    setRxGain(input_cfg.gain);
 
     // setup receiver
     setRxTuningOffset(input_cfg.nco);

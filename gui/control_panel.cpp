@@ -81,6 +81,19 @@ ControlPanel::~ControlPanel()
     delete ui;
 }
 
+void ControlPanel::readSettings(const app_config_t &conf)
+{
+    ui->rxGainMode->setCurrentIndex(conf.input.gain_mode);
+    ui->rxGainSlider->setValue(conf.input.gain);
+}
+
+void ControlPanel::saveSettings(app_config_t &conf)
+{
+    conf.input.gain_mode = ui->rxGainMode->currentIndex();
+    conf.input.gain = ui->rxGainSlider->value();
+}
+
+
 void ControlPanel::addSignalData(double rms)
 {
     if (stats.reset)
