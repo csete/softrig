@@ -13,6 +13,11 @@ TARGET = softrig
 TEMPLATE = app
 CONFIG += c++11
 
+SOFTRIG_VERSION = $$system(./git-version-gen .tarball-version)
+message(Configuring softrig version $${SOFTRIG_VERSION})
+SOFTRIG_VERSION_STR = '\\"$${SOFTRIG_VERSION}\\"'
+DEFINES += VERSION=\"$${SOFTRIG_VERSION_STR}\"
+
 # emit warnings when using deprecated features
 DEFINES += QT_DEPRECATED_WARNINGS
 
