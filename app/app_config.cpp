@@ -103,7 +103,7 @@ void AppConfig::readDeviceConf(void)
     device_config_t     *input = &app_config.input;
 
     input->type = settings->value(SDR_INPUT_TYPE, "").toString();
-    input->frequency = settings->value(SDR_INPUT_FREQ, 0).toULongLong();
+    input->frequency = settings->value(SDR_INPUT_FREQ, 145e6).toULongLong();
     input->nco = settings->value(SDR_INPUT_NCO, 0).toLongLong();
     input->transverter = settings->value(SDR_INPUT_LNB, 0).toLongLong();
     input->rate = settings->value(SDR_INPUT_RATE, 0).toUInt();
