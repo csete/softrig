@@ -72,7 +72,7 @@ static int (*rtlsdr_reset_buffer)(void *dev);
 static int (*rtlsdr_read_async)(void *dev, rtlsdr_read_async_cb_t cb, void *ctx,
                                 uint32_t buf_num, uint32_t buf_len);
 
-class SdrDeviceRtlsdr : public SdrDevice
+class SdrDeviceRtlsdr : public SdrDeviceNs
 {
   public:
     SdrDeviceRtlsdr(void);
@@ -121,7 +121,7 @@ class SdrDeviceRtlsdr : public SdrDevice
     bool             has_set_bw;
 };
 
-SdrDevice *sdr_device_create_rtlsdr()
+SdrDeviceNs *sdr_device_create_rtlsdr_ns()
 {
     return new SdrDeviceRtlsdr();
 }

@@ -46,7 +46,7 @@
  *  - Currently only complex S16LE format is supported.
  *  - Add open/close methods?
  */
-class SdrDeviceStdin : public SdrDevice
+class SdrDeviceStdin : public SdrDeviceNs
 {
   public:
     SdrDeviceStdin(void);
@@ -102,7 +102,7 @@ class SdrDeviceStdin : public SdrDevice
     void free_memory(void);
 };
 
-SdrDevice *sdr_device_create_stdin()
+SdrDeviceNs *sdr_device_create_stdin_ns()
 {
     return new SdrDeviceStdin();
 }

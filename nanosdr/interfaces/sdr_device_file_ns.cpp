@@ -58,7 +58,7 @@
  *  - Currently only complex S16LE format is supported.
  *  - Add open/close methods?
  */
-class SdrDeviceFile : public SdrDevice
+class SdrDeviceFile : public SdrDeviceNs
 {
   public:
     SdrDeviceFile(void);
@@ -117,7 +117,7 @@ class SdrDeviceFile : public SdrDevice
     int          process_ctl_get_range(sdr_ctl_t *ctl);
 };
 
-SdrDevice *sdr_device_create_file()
+SdrDeviceNs *sdr_device_create_file_ns()
 {
     return new SdrDeviceFile();
 }

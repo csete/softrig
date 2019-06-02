@@ -37,7 +37,7 @@
 #include "sdr_device.h"
 #include "sdriq/sdriq.h"
 
-class SdrDeviceSdriq : public SdrDevice
+class SdrDeviceSdriq : public SdrDeviceNs
 {
   public:
     SdrDeviceSdriq(void);
@@ -83,7 +83,7 @@ class SdrDeviceSdriq : public SdrDevice
     bool     initialized;
 };
 
-SdrDevice *sdr_device_create_sdriq()
+SdrDeviceNs *sdr_device_create_sdriq_ns()
 {
     return new SdrDeviceSdriq();
 }

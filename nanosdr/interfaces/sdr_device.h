@@ -44,11 +44,11 @@
 #define SDR_DEVICE_GAIN_DEFAULT SDR_DEVICE_GAIN_LIN
 /* clang-format on */
 
-class SdrDevice
+class SdrDeviceNs
 {
 
   public:
-    virtual ~SdrDevice(){};
+    virtual ~SdrDeviceNs(){};
 
     /*
      * Initialize SDR device.
@@ -244,28 +244,28 @@ class SdrDevice
     };
 };
 
-SdrDevice *sdr_device_create_rtlsdr(void);
-SdrDevice *sdr_device_create_airspy(void);
-SdrDevice *sdr_device_create_airspymini(void);
-SdrDevice *sdr_device_create_sdriq(void);
-SdrDevice *sdr_device_create_stdin(void);
-SdrDevice *sdr_device_create_file(void);
+SdrDeviceNs *sdr_device_create_rtlsdr_ns(void);
+SdrDeviceNs *sdr_device_create_airspy_ns(void);
+SdrDeviceNs *sdr_device_create_airspymini_ns(void);
+SdrDeviceNs *sdr_device_create_sdriq_ns(void);
+SdrDeviceNs *sdr_device_create_stdin_ns(void);
+SdrDeviceNs *sdr_device_create_file_ns(void);
 
-inline SdrDevice *sdr_device_create(const char *type)
+inline SdrDeviceNs *sdr_device_create_ns(const char *type)
 {
     if (strcasecmp("rtlsdr", type) == 0)
-        return sdr_device_create_rtlsdr();
+        return sdr_device_create_rtlsdr_ns();
     else if (strcasecmp("airspy", type) == 0)
-        return sdr_device_create_airspy();
+        return sdr_device_create_airspy_ns();
     else if (strcasecmp("airspymini", type) == 0)
-        return sdr_device_create_airspymini();
+        return sdr_device_create_airspymini_ns();
     else if (strcasecmp("sdriq", type) == 0)
-        return sdr_device_create_sdriq();
+        return sdr_device_create_sdriq_ns();
     else if (strcasecmp("stdin", type) == 0)
-        return sdr_device_create_stdin();
+        return sdr_device_create_stdin_ns();
     else if (strstr(type, ".wav") != 0 || strstr(type, ".raw") != 0 ||
              strstr(type, ".iq"))
-        return sdr_device_create_file();
+        return sdr_device_create_file_ns();
 
     return NULL;
 }

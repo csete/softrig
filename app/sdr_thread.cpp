@@ -100,7 +100,7 @@ int SdrThread::start(const app_config_t *conf)
     if (input_cfg.type.isEmpty())
         return SDR_THREAD_EDEV;
 
-    sdr_dev = sdr_device_create(input_cfg.type.toLatin1().data());
+    sdr_dev = sdr_device_create_ns(input_cfg.type.toLatin1().data());
     if (!sdr_dev)
         return SDR_THREAD_EDEV;
 

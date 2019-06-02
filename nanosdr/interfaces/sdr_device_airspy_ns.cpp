@@ -108,7 +108,7 @@ static void (*airspy_lib_version)(airspy_lib_version_t *lib_version);
 static char *(*airspy_error_name)(enum airspy_error errcode);
 // end of Airspy API defs
 
-class SdrDeviceAirspyBase : public SdrDevice
+class SdrDeviceAirspyBase : public SdrDeviceNs
 {
   public:
     SdrDeviceAirspyBase(bool mini);
@@ -183,12 +183,12 @@ class SdrDeviceAirspyMini : public SdrDeviceAirspyBase
     }
 };
 
-SdrDevice *sdr_device_create_airspy()
+SdrDeviceNs *sdr_device_create_airspy_ns()
 {
     return new SdrDeviceAirspy();
 }
 
-SdrDevice *sdr_device_create_airspymini()
+SdrDeviceNs *sdr_device_create_airspymini_ns()
 {
     return new SdrDeviceAirspyMini();
 }

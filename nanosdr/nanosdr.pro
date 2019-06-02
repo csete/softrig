@@ -74,12 +74,12 @@ SOURCES += \
     $${NANODSP_SOURCES} \
 #    nanosdr/interfaces/nanosdr_protocol.c \
 #    nanosdr/interfaces/sdr_ctl_queue.cpp \
-    nanosdr/interfaces/sdr_device_airspy.cpp \
-    nanosdr/interfaces/sdr_device_file.cpp \
-    nanosdr/interfaces/sdr_device_rtlsdr.cpp \
-    nanosdr/interfaces/sdr_device_rtlsdr_reader.c \
-    nanosdr/interfaces/sdr_device_sdriq.cpp \
-    nanosdr/interfaces/sdr_device_stdin.cpp \
+    nanosdr/interfaces/sdr_device_airspy_ns.cpp \
+    nanosdr/interfaces/sdr_device_file_ns.cpp \
+    nanosdr/interfaces/sdr_device_rtlsdr_ns.cpp \
+    nanosdr/interfaces/sdr_device_rtlsdr_reader_ns.c \
+    nanosdr/interfaces/sdr_device_sdriq_ns.cpp \
+    nanosdr/interfaces/sdr_device_stdin_ns.cpp \
     nanosdr/fft_thread.cpp \
     nanosdr/receiver.cpp \
     nanosdr/sdriq/sdriq.c

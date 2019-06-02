@@ -59,7 +59,7 @@ private:
 
 private:
     QThread       *thread;
-    SdrDevice     *sdr_dev;
+    SdrDeviceNs   *sdr_dev;
     FftThread     *fft;
     Receiver      *rx;
     Decimator      input_decim;
