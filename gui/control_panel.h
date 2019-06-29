@@ -25,6 +25,7 @@ public:
     void    readSettings(const app_config_t &conf);
     void    saveSettings(app_config_t &conf);
 
+    void    addRxControls(QWidget *controls);
     void    addSignalData(double rms);
 
 signals:
@@ -39,9 +40,6 @@ private slots:
     void    on_txButton_clicked(bool);
     void    on_dispButton_clicked(bool);
     void    on_recButton_clicked(bool);
-
-    void    on_rxGainMode_activated(int index);
-    void    on_rxGainSlider_valueChanged(int value);
 
     void    on_amButton_clicked(bool);
     void    on_ssbButton_clicked(bool);

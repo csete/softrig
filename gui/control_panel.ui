@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
-    <height>446</height>
+    <width>296</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,7 +27,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
    <property name="spacing">
-    <number>5</number>
+    <number>10</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -147,7 +147,7 @@
      <widget class="QWidget" name="rxPage">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
-        <number>5</number>
+        <number>10</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -177,88 +177,61 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>246</width>
-            <height>399</height>
+            <width>292</width>
+            <height>504</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <property name="spacing">
-            <number>5</number>
-           </property>
-           <property name="leftMargin">
-            <number>5</number>
-           </property>
-           <property name="topMargin">
-            <number>5</number>
-           </property>
-           <property name="rightMargin">
-            <number>5</number>
-           </property>
-           <property name="bottomMargin">
-            <number>5</number>
+            <number>10</number>
            </property>
            <item>
-            <widget class="QGroupBox" name="rxGainBox">
-             <property name="title">
-              <string>Gain</string>
-             </property>
+            <widget class="QWidget" name="rxDeviceContainer" native="true">
              <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>10</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <layout class="QHBoxLayout" name="rxDeviceHlayout">
                 <property name="spacing">
                  <number>10</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="gainModeLabel">
+                 <widget class="QToolButton" name="rxDeviceButton">
                   <property name="text">
-                   <string>Gain mode:</string>
+                   <string>...</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="rxGainMode">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                 <widget class="QLabel" name="rxDeviceLabel">
+                  <property name="text">
+                   <string>← Select device</string>
                   </property>
-                  <item>
-                   <property name="text">
-                    <string>Linearity</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Sensitivity</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Auto</string>
-                   </property>
-                  </item>
                  </widget>
                 </item>
                </layout>
               </item>
-              <item>
-               <widget class="QSlider" name="rxGainSlider">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-                <property name="value">
-                 <number>50</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::NoTicks</enum>
-                </property>
-               </widget>
-              </item>
              </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
             </widget>
            </item>
            <item>
@@ -282,6 +255,13 @@
               <property name="bottomMargin">
                <number>5</number>
               </property>
+              <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
               <item>
                <widget class="QPushButton" name="amButton">
                 <property name="sizePolicy">

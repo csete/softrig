@@ -10,6 +10,8 @@
 #include "gui/control_panel.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
+#include "interfaces/sdr/sdr_device.h"
+
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
 
@@ -45,8 +47,11 @@ private:
     void    deviceConfigChanged(const device_config_t * conf);
 
 private:
-    AppConfig        *cfg;
+    SdrDevice        *device;
     SdrThread        *sdr;
+
+private:
+    AppConfig        *cfg;
     QTimer           *fft_timer;
     real_t           *fft_data;
     real_t           *fft_avg;

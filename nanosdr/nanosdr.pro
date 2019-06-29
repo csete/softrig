@@ -62,9 +62,9 @@ HEADERS += \
 #    nanosdr/interfaces/nanosdr_protocol.h \
 #    nanosdr/interfaces/sdr_ctl.h \
 #    nanosdr/interfaces/sdr_ctl_queue.h \
-    nanosdr/interfaces/sdr_device.h \
-    nanosdr/interfaces/sdr_device_airspy_fir.h \
-    nanosdr/interfaces/sdr_device_rtlsdr_reader.h \
+#    nanosdr/interfaces/sdr_device.h \
+#    nanosdr/interfaces/sdr_device_airspy_fir.h \
+#    nanosdr/interfaces/sdr_device_rtlsdr_reader.h \
     nanosdr/fft_thread.h \
     nanosdr/receiver.h \
     nanosdr/sdriq/sdriq.h \
@@ -74,12 +74,12 @@ SOURCES += \
     $${NANODSP_SOURCES} \
 #    nanosdr/interfaces/nanosdr_protocol.c \
 #    nanosdr/interfaces/sdr_ctl_queue.cpp \
-    nanosdr/interfaces/sdr_device_airspy_ns.cpp \
-    nanosdr/interfaces/sdr_device_file_ns.cpp \
-    nanosdr/interfaces/sdr_device_rtlsdr_ns.cpp \
-    nanosdr/interfaces/sdr_device_rtlsdr_reader_ns.c \
-    nanosdr/interfaces/sdr_device_sdriq_ns.cpp \
-    nanosdr/interfaces/sdr_device_stdin_ns.cpp \
+#    nanosdr/interfaces/sdr_device_airspy_ns.cpp \
+#    nanosdr/interfaces/sdr_device_file_ns.cpp \
+#    nanosdr/interfaces/sdr_device_rtlsdr_ns.cpp \
+#    nanosdr/interfaces/sdr_device_rtlsdr_reader_ns.c \
+#    nanosdr/interfaces/sdr_device_sdriq_ns.cpp \
+#    nanosdr/interfaces/sdr_device_stdin_ns.cpp \
     nanosdr/fft_thread.cpp \
     nanosdr/receiver.cpp \
     nanosdr/sdriq/sdriq.c

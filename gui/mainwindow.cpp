@@ -32,11 +32,11 @@
 #include <QMessageBox>
 
 #include "app/app_config.h"
-#include "app/sdr_thread.h"
 #include "gui/control_panel.h"
 #include "gui/device_config_dialog.h"
 #include "gui/freq_ctrl.h"
 #include "gui/ssi_widget.h"
+#include "interfaces/sdr/sdr_device.h"
 
 #include "mainwindow.h"
 
@@ -47,6 +47,7 @@
 #define MENU_ID_AUDIO       1
 #define MENU_ID_GUI         2
 
+#define FFT_SIZE 2*8192
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -58,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     cfg = nullptr;
+    device = nullptr;
 
     sdr = new SdrThread();
 
@@ -209,6 +211,22 @@ void MainWindow::saveConfig(void)
 void MainWindow::deviceConfigChanged(const device_config_t * conf)
 {
     float   quad_rate;
+    bool    running = sdr->isRunning();
+
+    if (running)
+        runButtonClicked(false);
+
+    if (!conf->type.isEmpty())
+    {
+        if (device)
+            delete device;
+        device = sdr_device_create(conf->type);
+        if (!device)
+            QMessageBox::critical(this, tr("Configuration error"),
+                                  tr("Error creating SDR device"));
+        else
+            cpanel->addRxControls(device->getRxControls());
+    }
 
     quad_rate = conf->rate;
     if (conf->decimation > 1)
@@ -219,11 +237,9 @@ void MainWindow::deviceConfigChanged(const device_config_t * conf)
     fft_plot->setCenterFreq(conf->frequency);
     fft_plot->setFilterOffset(conf->nco);
     fctl->setFrequency(conf->frequency + conf->nco);
-    if (sdr->isRunning())
-    {
-        runButtonClicked(false);
+
+    if (running)
         runButtonClicked(true);
-    }
 }
 
 void MainWindow::createButtons(void)
@@ -275,10 +291,10 @@ void MainWindow::runButtonClicked(bool checked)
     {
         app_config_t *conf = cfg->getDataPtr();
 
-        if (conf->input.type.isEmpty())
+        if (!device)
             runDeviceConfig();
 
-        if (conf->input.type.isEmpty())
+        if (!device)
         {
             // still no SDR configuration
             (void)QMessageBox::critical(this, tr("SDR device error"),
@@ -287,11 +303,20 @@ void MainWindow::runButtonClicked(bool checked)
             return;
         }
 
-        if (sdr->start(conf) == SDR_THREAD_OK)
+        if (device->open(nullptr) != SDR_DEVICE_OK)
         {
+            // FIXME: Error code
+            (void)QMessageBox::critical(this, tr("SDR device error"),
+                                        tr("Failed to open SDR device"));
+            run_button->setChecked(false);
+            return;
+        }
+
+        if (sdr->start(conf, device) == SDR_THREAD_OK)
+        {
+            device->startRx();
             newFrequency(fctl->getFrequency());
             fft_timer->start(40);
-
             {
                 int i;
                 for (i = 0; i < FFT_SIZE; i++)
@@ -302,6 +327,8 @@ void MainWindow::runButtonClicked(bool checked)
     }
     else
     {
+        device->stopRx();
+        device->close();
         fft_timer->stop();
         sdr->stop();
     }
@@ -362,8 +389,9 @@ void MainWindow::newFrequency(qint64 freq)
     qint64      center_freq;
 
     center_freq = freq - fft_plot->getFilterOffset();
-    sdr->setRxFrequency(quint64(center_freq));
     fft_plot->setCenterFreq(quint64(center_freq));
+    if (device)
+        device->setRxFrequency(quint64(center_freq));
 }
 
 void MainWindow::newPlotterCenterFreq(qint64 freq)

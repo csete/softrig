@@ -27,17 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <QThread>
 
-#include "app_config.h"
-#include "interfaces/audio_output.h"
-#include "nanosdr/common/datatypes.h"
-#include "nanosdr/common/sdr_data.h"
-#include "nanosdr/common/time.h"
-#include "nanosdr/interfaces/sdr_device.h"
-#include "nanosdr/fft_thread.h"
-#include "nanosdr/nanodsp/filter/decimator.h"
-#include "nanosdr/receiver.h"
 #include "sdr_thread.h"
 
 #if 1
@@ -56,7 +46,7 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     buflen = 0;
     decimation = 0;
 
-    sdr_dev = nullptr;
+    device = nullptr;
     rx = nullptr;
     fft_data_buf = nullptr;
     fft_swap_buf = nullptr;
@@ -86,7 +76,7 @@ SdrThread::~SdrThread()
     delete fft;
 }
 
-int SdrThread::start(const app_config_t *conf)
+int SdrThread::start(const app_config_t *conf, SdrDevice * dev)
 {
     device_config_t     input_cfg;
     float               rx_rate;
@@ -100,22 +90,23 @@ int SdrThread::start(const app_config_t *conf)
     if (input_cfg.type.isEmpty())
         return SDR_THREAD_EDEV;
 
-    sdr_dev = sdr_device_create_ns(input_cfg.type.toLatin1().data());
-    if (!sdr_dev)
+//    device = sdr_device_create(input_cfg.type);
+    device = dev;
+    if (!device)
         return SDR_THREAD_EDEV;
 
-    if (sdr_dev->init(input_cfg.rate, "") != SDR_DEVICE_OK)
-    {
+//    if (sdr_dev->open(nullptr) != SDR_DEVICE_OK)
+//    {
         // FIXME: Emit error string
-        return SDR_THREAD_EDEV;
-    }
+//        return SDR_THREAD_EDEV;
+//    }
 
     decimation = input_cfg.decimation;
     rx_rate = input_cfg.rate;
     if (decimation > 1)
     {
-        decimation = input_decim.init(decimation, sdr_dev->get_dynamic_range());
-        rx_rate /= (float)decimation;
+        decimation = input_decim.init(decimation, 100);
+        rx_rate /= float(decimation);
     }
 
     buflen = buflen_ms * 1.e-3f * rx_rate;
@@ -137,7 +128,7 @@ int SdrThread::start(const app_config_t *conf)
     resetStats();
     audio_out.start();
     fft->start();
-    sdr_dev->start();
+//    sdr_dev->startRx();
     thread->start();
 
     return SDR_THREAD_OK;
@@ -167,11 +158,13 @@ void SdrThread::stop(void)
                      (1000 * stats.samples_out) / (stats.tstop - stats.tstart));
     /* *INDENT-ON* */
     is_running = false;
-    sdr_dev->stop();
+//    sdr_dev->stopRx();
+//    sdr_dev->close();
     fft->stop();
     audio_out.stop();
 
-    delete sdr_dev;
+//    delete sdr_dev;
+    device = nullptr;
     delete rx;
 }
 
@@ -197,13 +190,7 @@ void SdrThread::process(void)
             continue;
         }
 
-        if (sdr_dev->get_num_samples() < samples_in)
-        {
-            QThread::usleep(2000);
-            continue;
-        }
-
-        samples_read = sdr_dev->read_samples(input_samples, samples_in);
+        samples_read = device->getRxSamples(input_samples, samples_in);
         if (samples_read == 0)
         {
             QThread::usleep(2000);
@@ -211,7 +198,6 @@ void SdrThread::process(void)
         }
         stats.samples_in += samples_read;
 
-        // TODO: Decimate
         if (decimation > 1)
             samples_read = input_decim.process(samples_read, input_samples);
 
@@ -251,8 +237,8 @@ void SdrThread::setRxFrequency(quint64 freq)
     if (!is_running)
         return;
 
-    if (sdr_dev->set_freq(freq))
-        SDR_THREAD_DEBUG("Error setting frequency\n");
+//    if (sdr_dev->setRxFrequency(freq))
+//        SDR_THREAD_DEBUG("Error setting frequency\n");
 }
 
 void SdrThread::setRxGainMode(int mode)
@@ -260,8 +246,8 @@ void SdrThread::setRxGainMode(int mode)
     if (!is_running)
         return;
 
-    if (sdr_dev->set_gain_mode(mode))
-        SDR_THREAD_DEBUG("Error setting gain mode\n");
+//    if (sdr_dev->set_gain_mode(mode))
+//        SDR_THREAD_DEBUG("Error setting gain mode\n");
 }
 
 void SdrThread::setRxGain(int gain)
@@ -269,8 +255,8 @@ void SdrThread::setRxGain(int gain)
     if (!is_running)
         return;
 
-    if (sdr_dev->set_gain(gain))
-        SDR_THREAD_DEBUG("Error setting gain\n");
+//    if (sdr_dev->set_gain(gain))
+//        SDR_THREAD_DEBUG("Error setting gain\n");
 }
 
 void SdrThread::setDemod(sdr_demod_t demod)

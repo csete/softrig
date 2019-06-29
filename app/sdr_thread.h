@@ -8,13 +8,14 @@
 
 #include "app_config.h"
 #include "interfaces/audio_output.h"
+#include "interfaces/sdr/sdr_device.h"
 #include "nanosdr/common/datatypes.h"
 #include "nanosdr/common/sdr_data.h"
 #include "nanosdr/common/time.h"
-#include "nanosdr/interfaces/sdr_device.h"
 #include "nanosdr/fft_thread.h"
 #include "nanosdr/nanodsp/filter/decimator.h"
 #include "nanosdr/receiver.h"
+
 
 // error codes
 #define SDR_THREAD_OK       0
@@ -31,7 +32,7 @@ public:
     explicit SdrThread(QObject *parent = nullptr);
     virtual ~SdrThread();
 
-    int     start(const app_config_t * conf);
+    int     start(const app_config_t * conf, SdrDevice *dev);
     void    stop(void);
     bool    isRunning(void) const
     {
@@ -59,22 +60,22 @@ private:
 
 private:
     QThread       *thread;
-    SdrDeviceNs   *sdr_dev;
+    SdrDevice     *device;
     FftThread     *fft;
     Receiver      *rx;
     Decimator      input_decim;
     AudioOutput    audio_out;
 
     bool           is_running;
-    quint32        buflen;      // buffer size in samples
-    unsigned int   buflen_ms;   // buffer size in milliseconds
+    quint32        buflen;          // buffer size in samples
+    unsigned int   buflen_ms;       // buffer size in milliseconds
     unsigned int   decimation;
 
-    complex_t     *fft_data_buf; // FFT samples from FFT thread
-    complex_t     *fft_swap_buf; // Buffer for swapping FFT
-    complex_t     *input_samples;  // sample buffer for IQ input
-    real_t        *output_samples; // sample buffer for audio output
-    qint16        *aout_buffer; // audio output buffer
+    complex_t     *fft_data_buf;    // FFT samples from FFT thread
+    complex_t     *fft_swap_buf;    // Buffer for swapping FFT
+    complex_t     *input_samples;   // sample buffer for IQ input
+    real_t        *output_samples;  // sample buffer for audio output
+    qint16        *aout_buffer;     // audio output buffer
 
     struct {
         uint64_t    tstart;

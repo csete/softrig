@@ -83,14 +83,10 @@ ControlPanel::~ControlPanel()
 
 void ControlPanel::readSettings(const app_config_t &conf)
 {
-    ui->rxGainMode->setCurrentIndex(conf.input.gain_mode);
-    ui->rxGainSlider->setValue(conf.input.gain);
 }
 
 void ControlPanel::saveSettings(app_config_t &conf)
 {
-    conf.input.gain_mode = ui->rxGainMode->currentIndex();
-    conf.input.gain = ui->rxGainSlider->value();
 }
 
 
@@ -125,6 +121,13 @@ void ControlPanel::addSignalData(double rms)
         ui->rmsLabel->setText(QString("RMS: %1 dB").arg(stats.rms / double(stats.num), 0, 'f', 1));
         stats.reset = true;
     }
+}
+
+void ControlPanel::addRxControls(QWidget *controls)
+{
+    //controls->setParent(ui->rxDeviceContainer);
+    ui->rxDeviceContainer->layout()->addWidget(controls);
+    //ui->scrollAreaWidgetContents->layout()->addWidget(controls);
 }
 
 void ControlPanel::initModeSettings(void)
@@ -201,17 +204,6 @@ void ControlPanel::on_recButton_clicked(bool checked)
 {
     qDebug() << __func__ << checked;
 }
-
-void ControlPanel::on_rxGainMode_activated(int index)
-{
-    emit rxGainModeChanged(index);
-}
-
-void ControlPanel::on_rxGainSlider_valueChanged(int value)
-{
-    emit rxGainChanged(value);
-}
-
 
 void ControlPanel::on_amButton_clicked(bool checked)
 {

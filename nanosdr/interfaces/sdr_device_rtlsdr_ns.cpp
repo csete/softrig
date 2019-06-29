@@ -72,11 +72,11 @@ static int (*rtlsdr_reset_buffer)(void *dev);
 static int (*rtlsdr_read_async)(void *dev, rtlsdr_read_async_cb_t cb, void *ctx,
                                 uint32_t buf_num, uint32_t buf_len);
 
-class SdrDeviceRtlsdr : public SdrDeviceNs
+class SdrDeviceRtlsdrNs : public SdrDeviceNs
 {
   public:
-    SdrDeviceRtlsdr(void);
-    virtual ~SdrDeviceRtlsdr();
+    SdrDeviceRtlsdrNs(void);
+    virtual ~SdrDeviceRtlsdrNs();
 
     // Virtual function implementations
     int   init(float samprate, const char *options);
@@ -123,10 +123,10 @@ class SdrDeviceRtlsdr : public SdrDeviceNs
 
 SdrDeviceNs *sdr_device_create_rtlsdr_ns()
 {
-    return new SdrDeviceRtlsdr();
+    return new SdrDeviceRtlsdrNs();
 }
 
-SdrDeviceRtlsdr::SdrDeviceRtlsdr(void)
+SdrDeviceRtlsdrNs::SdrDeviceRtlsdrNs(void)
 {
     reader = 0;
     is_loaded = false;
@@ -135,7 +135,7 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(void)
     num_gains = 0;
 }
 
-SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
+SdrDeviceRtlsdrNs::~SdrDeviceRtlsdrNs()
 {
     int ret;
 
@@ -152,7 +152,7 @@ SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
         close_library(lib);
 }
 
-int SdrDeviceRtlsdr::load_librtlsdr()
+int SdrDeviceRtlsdrNs::load_librtlsdr()
 {
     if (is_loaded)
         return SDR_DEVICE_OK;
@@ -342,7 +342,7 @@ int SdrDeviceRtlsdr::load_librtlsdr()
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::init(float samprate, const char *options)
+int SdrDeviceRtlsdrNs::init(float samprate, const char *options)
 {
     (void)options;
     int ret;
@@ -412,7 +412,7 @@ int SdrDeviceRtlsdr::init(float samprate, const char *options)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::set_sample_rate(float new_rate)
+int SdrDeviceRtlsdrNs::set_sample_rate(float new_rate)
 {
     if (rtlsdr_set_sample_rate(dev, new_rate))
         return SDR_DEVICE_EINVAL;
@@ -420,7 +420,7 @@ int SdrDeviceRtlsdr::set_sample_rate(float new_rate)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::get_sample_rates(float *rates) const
+int SdrDeviceRtlsdrNs::get_sample_rates(float *rates) const
 {
     if (rates == 0)
         return 12;
@@ -442,12 +442,12 @@ int SdrDeviceRtlsdr::get_sample_rates(float *rates) const
     return 12;
 }
 
-float SdrDeviceRtlsdr::get_sample_rate(void) const
+float SdrDeviceRtlsdrNs::get_sample_rate(void) const
 {
     return rtlsdr_get_sample_rate(dev);
 }
 
-int SdrDeviceRtlsdr::set_bandwidth(uint32_t bw)
+int SdrDeviceRtlsdrNs::set_bandwidth(uint32_t bw)
 {
     if (!has_set_bw)
         return SDR_DEVICE_EINVAL;
@@ -458,18 +458,18 @@ int SdrDeviceRtlsdr::set_bandwidth(uint32_t bw)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::set_freq(uint64_t freq)
+int SdrDeviceRtlsdrNs::set_freq(uint64_t freq)
 {
     int result;
 
     if (rtlsdr_set_center_freq(dev, freq))
     {
-        fprintf(stderr, "SdrDeviceRtlsdr::set_freq(%" PRIu64 ") failed\n",
+        fprintf(stderr, "SdrDeviceRtlsdrNs::set_freq(%" PRIu64 ") failed\n",
                 freq);
         return SDR_DEVICE_ERANGE;
     }
 
-    sdr_device_debug("SdrDeviceRtlsdr::set_freq(%" PRIu64 ")\n", freq);
+    sdr_device_debug("SdrDeviceRtlsdrNs::set_freq(%" PRIu64 ")\n", freq);
     if (freq < 24e6 && !rtlsdr_get_direct_sampling(dev))
     {
         if ((result = rtlsdr_set_direct_sampling(dev, 2)))
@@ -486,17 +486,17 @@ int SdrDeviceRtlsdr::set_freq(uint64_t freq)
     return SDR_DEVICE_OK;
 }
 
-uint64_t SdrDeviceRtlsdr::get_freq(void) const
+uint64_t SdrDeviceRtlsdrNs::get_freq(void) const
 {
     return rtlsdr_get_center_freq(dev);
 }
 
-int SdrDeviceRtlsdr::get_freq_range(freq_range_t *range) const
+int SdrDeviceRtlsdrNs::get_freq_range(freq_range_t *range) const
 {
     range->step = 1;
 
     fputs(
-        "*** FIXME: SdrDeviceRtlsdr::get_freq_range ignores direct sampling\n",
+        "*** FIXME: SdrDeviceRtlsdrNs::get_freq_range ignores direct sampling\n",
         stderr);
 
     switch (rtlsdr_get_tuner_type(dev))
@@ -535,13 +535,13 @@ int SdrDeviceRtlsdr::get_freq_range(freq_range_t *range) const
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::set_freq_corr(float ppm)
+int SdrDeviceRtlsdrNs::set_freq_corr(float ppm)
 {
     return rtlsdr_set_freq_correction(dev, ppm) ? SDR_DEVICE_ERROR
                                                 : SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::set_gain(int value)
+int SdrDeviceRtlsdrNs::set_gain(int value)
 {
     int idx;
 
@@ -553,13 +553,13 @@ int SdrDeviceRtlsdr::set_gain(int value)
         return SDR_DEVICE_ERROR;
 
     last_gain = value;
-    sdr_device_debug("SdrDeviceRtlsdr::set_gain(%d) -> %.1f\n", value,
+    sdr_device_debug("SdrDeviceRtlsdrNs::set_gain(%d) -> %.1f\n", value,
                      0.1f * gains[idx]);
 
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::set_gain_mode(int gain_mode)
+int SdrDeviceRtlsdrNs::set_gain_mode(int gain_mode)
 {
     int ret;
 
@@ -570,33 +570,33 @@ int SdrDeviceRtlsdr::set_gain_mode(int gain_mode)
     return ret;
 }
 
-int SdrDeviceRtlsdr::start(void)
+int SdrDeviceRtlsdrNs::start(void)
 {
     return rtlsdr_reader_start(reader) ? SDR_DEVICE_ERROR : SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::stop(void)
+int SdrDeviceRtlsdrNs::stop(void)
 {
     return rtlsdr_reader_stop(reader) ? SDR_DEVICE_ERROR : SDR_DEVICE_OK;
 }
 
-uint32_t SdrDeviceRtlsdr::get_num_bytes(void) const
+uint32_t SdrDeviceRtlsdrNs::get_num_bytes(void) const
 {
     return rtlsdr_reader_get_num_bytes(reader);
 }
 
-uint32_t SdrDeviceRtlsdr::get_num_samples(void) const
+uint32_t SdrDeviceRtlsdrNs::get_num_samples(void) const
 {
     // internal buffer holds u8 I/Q samples
     return rtlsdr_reader_get_num_bytes(reader) / 2;
 }
 
-uint32_t SdrDeviceRtlsdr::read_bytes(void *buffer, uint32_t bytes)
+uint32_t SdrDeviceRtlsdrNs::read_bytes(void *buffer, uint32_t bytes)
 {
     return rtlsdr_reader_read_bytes(reader, buffer, bytes);
 }
 
-uint32_t SdrDeviceRtlsdr::read_samples(complex_t *buffer, uint32_t samples)
+uint32_t SdrDeviceRtlsdrNs::read_samples(complex_t *buffer, uint32_t samples)
 {
     uint8_t buf[480000];
     real_t *workbuf = (real_t *)buffer;
@@ -614,7 +614,7 @@ uint32_t SdrDeviceRtlsdr::read_samples(complex_t *buffer, uint32_t samples)
     return bytes_read / 2;
 }
 
-void SdrDeviceRtlsdr::free_memory(void)
+void SdrDeviceRtlsdrNs::free_memory(void)
 {
     if (num_gains > 0)
     {
