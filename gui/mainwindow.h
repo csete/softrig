@@ -71,7 +71,7 @@ private:
     CPlotter         *fft_plot;
 
     // layout containers
-    QHBoxLayout      *win_layout;
+    QVBoxLayout      *win_layout;
     QHBoxLayout      *top_layout;
-    QVBoxLayout      *main_layout;
+    QHBoxLayout      *main_layout;
 };

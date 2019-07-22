@@ -124,16 +124,16 @@ MainWindow::MainWindow(QWidget *parent) :
     top_layout->addWidget(cfg_button, 0);
 
     // main layout with FFT and control panel
-    main_layout = new QVBoxLayout();
-    main_layout->addLayout(top_layout, 0);
-    main_layout->addWidget(fft_plot, 1);
+    main_layout = new QHBoxLayout();
+    main_layout->addWidget(fft_plot, 15);
+    main_layout->addWidget(cpanel, 2);
 
     // top level window layout
-    win_layout = new QHBoxLayout();
+    win_layout = new QVBoxLayout();
     win_layout->setContentsMargins(0, 4, 0, 0);
-    win_layout->setSpacing(2);
-    win_layout->addLayout(main_layout, 12);
-    win_layout->addWidget(cpanel, 2);
+    win_layout->setSpacing(5);
+    win_layout->addLayout(top_layout, 0);
+    win_layout->addLayout(main_layout, 1);
 
     central_widget = new QFrame(this);
     central_widget->setLayout(win_layout);
