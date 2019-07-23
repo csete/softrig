@@ -35,6 +35,11 @@ public:
 
     int type(void) const override;
 
+private slots:
+    void    setRxGain(int gain);
+    void    setBias(bool bias_on);
+    void    setAgc(bool agc_on);
+
 private:
     int     loadDriver(void);
     void    readerThread(void);
@@ -42,6 +47,8 @@ private:
     void    stopReaderThread(void);
 
     static void readerCallback(unsigned char *buf, uint32_t len, void *data);
+
+    void    setupTunerGains(void);
 
     QLibrary    driver;
     void       *device;

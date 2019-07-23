@@ -27,6 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <new>      // std::nothrow
 #include <QDebug>
 
 #include "sdr_device_rtlsdr.h"
@@ -50,6 +51,10 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
 
     reader_buffer = ring_buffer_create();
     ring_buffer_init(reader_buffer, 16384);
+
+    connect(&rx_ctl, SIGNAL(gainChanged(int)), this, SLOT(setRxGain(int)));
+    connect(&rx_ctl, SIGNAL(biasToggled(bool)), this, SLOT(setBias(bool)));
+    connect(&rx_ctl, SIGNAL(agcToggled(bool)), this, SLOT(setAgc(bool)));
 }
 
 SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
@@ -88,6 +93,8 @@ int SdrDeviceRtlsdr::open(QSettings *settings)
         qCritical() << "rtlsdr_open() returned" << ret;
         return SDR_DEVICE_EOPEN;
     }
+
+    setupTunerGains();
 
     sample_rate = 2400000;
     rtlsdr_set_sample_rate(device, sample_rate);
@@ -204,6 +211,22 @@ int SdrDeviceRtlsdr::type(void) const
     return SDR_DEVICE_RTLSDR;
 }
 
+void SdrDeviceRtlsdr::setRxGain(int gain)
+{
+    rtlsdr_set_tuner_gain(device, gain);
+}
+
+void SdrDeviceRtlsdr::setBias(bool bias_on)
+{
+    rtlsdr_set_bias_tee(device, bias_on);
+}
+
+void SdrDeviceRtlsdr::setAgc(bool agc_on)
+{
+    rtlsdr_set_agc_mode(device, agc_on ? 1 : 0);
+    rtlsdr_set_tuner_gain_mode(device, agc_on ? 0 : 1);
+}
+
 void SdrDeviceRtlsdr::readerCallback(unsigned char *buf, uint32_t count, void *ctx)
 {
     SdrDeviceRtlsdr *this_backend = reinterpret_cast<SdrDeviceRtlsdr *>(ctx);
@@ -259,6 +282,31 @@ void SdrDeviceRtlsdr::stopReaderThread(void)
         reader_thread->join();
         delete reader_thread;
         reader_thread = nullptr;
+    }
+}
+
+void SdrDeviceRtlsdr::setupTunerGains(void)
+{
+    int    *gains;
+    int     count;
+
+    count = rtlsdr_get_tuner_gains(device, nullptr);
+    if (count > 0)
+    {
+        gains = new(std::nothrow) int[count];
+        if (!gains)
+            return;
+
+        if (rtlsdr_get_tuner_gains(device, gains) != count)
+        {
+            qCritical() << "rtlsdr_get_tuner_gains() returned different counts on consecutive calls";
+        }
+        else
+        {
+            rx_ctl.setTunerGains(gains, count);
+        }
+
+        delete[] gains;
     }
 }
 
@@ -377,6 +425,13 @@ int SdrDeviceRtlsdr::loadDriver(void)
     if (rtlsdr_get_direct_sampling == nullptr)
     {
         qCritical() << SYMBOL_EMSG << "rtlsdr_get_direct_sampling";
+        return 1;
+    }
+
+    rtlsdr_set_bias_tee = reinterpret_cast<int (*)(void *, int)>(driver.resolve("rtlsdr_set_bias_tee"));
+    if (rtlsdr_set_direct_sampling == nullptr)
+    {
+        qCritical() << SYMBOL_EMSG << "rtlsdr_set_bias_tee";
         return 1;
     }
 

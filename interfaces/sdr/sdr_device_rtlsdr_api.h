@@ -33,6 +33,7 @@ static int (*rtlsdr_set_tuner_gain_mode)(void *dev, int manual);
 static int (*rtlsdr_get_tuner_gains)(void *dev, int *gains);
 static int (*rtlsdr_set_direct_sampling)(void *dev, int on);
 static int (*rtlsdr_get_direct_sampling)(void *dev);
+static int (*rtlsdr_set_bias_tee)(void *dev, int on);
 static int (*rtlsdr_cancel_async)(void *dev);
 static int (*rtlsdr_reset_buffer)(void *dev);
 static int (*rtlsdr_read_async)(void *dev, rtlsdr_read_async_cb_t cb, void *ctx,
