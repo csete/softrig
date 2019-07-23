@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>296</width>
-    <height>556</height>
+    <height>678</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,7 +33,7 @@
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
@@ -178,53 +178,15 @@
             <x>0</x>
             <y>0</y>
             <width>292</width>
-            <height>504</height>
+            <height>616</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
-           <property name="spacing">
-            <number>10</number>
-           </property>
            <item>
-            <widget class="QWidget" name="rxDeviceContainer" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <property name="spacing">
-               <number>10</number>
-              </property>
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" name="rxDeviceHlayout">
-                <property name="spacing">
-                 <number>10</number>
-                </property>
-                <item>
-                 <widget class="QToolButton" name="rxDeviceButton">
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="rxDeviceLabel">
-                  <property name="text">
-                   <string>← Select device</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+            <widget class="QGroupBox" name="rxDeviceBox">
+             <property name="title">
+              <string>Device not configured</string>
+             </property>
             </widget>
            </item>
            <item>
