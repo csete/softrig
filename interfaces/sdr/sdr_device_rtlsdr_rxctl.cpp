@@ -6,6 +6,7 @@ SdrDeviceRtlsdrRxCtl::SdrDeviceRtlsdrRxCtl(QWidget *parent) :
     ui(new Ui::SdrDeviceRtlsdrRxCtl)
 {
     ui->setupUi(this);
+    setProperty("desc", QString("RTL-SDR"));
 }
 
 SdrDeviceRtlsdrRxCtl::~SdrDeviceRtlsdrRxCtl()

@@ -27,8 +27,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <new>
+#include <new>      // new(std::nothrow)
 #include <QDebug>
+#include <QVariant>
 
 #include "control_panel.h"
 #include "nanosdr/common/sdr_data.h"
@@ -58,6 +59,8 @@ ControlPanel::ControlPanel(QWidget *parent) :
     last_ssb_mode = CP_MODE_USB;
 
     ui->setupUi(this);
+    ui->rxDeviceBox->setLayout(new QVBoxLayout());
+
     initModeSettings();
 
     ui->rxFilterBox->setEnabled(false);
@@ -125,9 +128,19 @@ void ControlPanel::addSignalData(double rms)
 
 void ControlPanel::addRxControls(QWidget *controls)
 {
-    //controls->setParent(ui->rxDeviceContainer);
-    ui->rxDeviceContainer->layout()->addWidget(controls);
-    //ui->scrollAreaWidgetContents->layout()->addWidget(controls);
+    if (!controls)
+    {
+        ui->rxDeviceBox->setTitle(tr("Device not configured"));
+        return;
+    }
+
+    QVariant desc = controls->property("desc");
+    if (desc.isValid())
+        ui->rxDeviceBox->setTitle(desc.toString());
+    else
+        ui->rxDeviceBox->setTitle(tr("Unknown SDR device"));
+
+    ui->rxDeviceBox->layout()->addWidget(controls);
 }
 
 void ControlPanel::initModeSettings(void)
