@@ -122,6 +122,7 @@ MainWindow::MainWindow(QWidget *parent) :
     top_layout->addWidget(spacer3, 1);
     top_layout->addWidget(run_button, 0);
     top_layout->addWidget(cfg_button, 0);
+    top_layout->addWidget(hide_button, 0);
 
     // main layout with FFT and control panel
     main_layout = new QHBoxLayout();
@@ -160,6 +161,7 @@ MainWindow::~MainWindow()
 
     delete cfg_menu;
     delete cfg_button;
+    delete hide_button;
     delete run_button;
     delete ptt_button;
 
@@ -265,7 +267,7 @@ void MainWindow::createButtons(void)
     }
 
     run_button = new QToolButton(this);
-    run_button->setText("RUN");
+    run_button->setText("Run");
     run_button->setCheckable(true);
     run_button->setMinimumSize(36, 36);
     run_button->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -274,7 +276,7 @@ void MainWindow::createButtons(void)
             this, SLOT(runButtonClicked(bool)));
 
     cfg_button = new QToolButton(this);
-    cfg_button->setText("C");
+    cfg_button->setText("Conf");
     cfg_button->setMinimumSize(36, 36);
     cfg_button->setMenu(cfg_menu);
     cfg_button->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -283,6 +285,14 @@ void MainWindow::createButtons(void)
             this, SLOT(menuActivated(QAction *)));
     connect(cfg_button, SIGNAL(clicked(bool)),
             this, SLOT(cfgButtonClicked(bool)));
+
+    hide_button = new QToolButton(this);
+    hide_button->setText("Panel");
+    hide_button->setMinimumSize(36, 36);
+    hide_button->setSizePolicy(QSizePolicy::MinimumExpanding,
+                              QSizePolicy::MinimumExpanding);
+    connect(hide_button, SIGNAL(clicked(bool)),
+            this, SLOT(hideButtonClicked(bool)));
 }
 
 void MainWindow::runButtonClicked(bool checked)
@@ -334,10 +344,16 @@ void MainWindow::runButtonClicked(bool checked)
     }
 }
 
-void MainWindow::cfgButtonClicked(bool checked)
+void MainWindow::hideButtonClicked(bool checked)
 {
     Q_UNUSED(checked);
     cpanel->setVisible(!cpanel->isVisible());
+}
+
+void MainWindow::cfgButtonClicked(bool checked)
+{
+    Q_UNUSED(checked);
+    runDeviceConfig();
 }
 
 void MainWindow::runDeviceConfig(void)

@@ -28,6 +28,7 @@ public:
 private slots:
     void    runButtonClicked(bool);
     void    cfgButtonClicked(bool);
+    void    hideButtonClicked(bool);
     void    menuActivated(QAction *);
     void    newFrequency(qint64 freq);
     void    newPlotterCenterFreq(qint64);
@@ -66,6 +67,7 @@ private:
     QToolButton      *run_button;
     QToolButton      *cfg_button;
     QMenu            *cfg_menu;
+    QToolButton      *hide_button;
 
     // FFT plot
     CPlotter         *fft_plot;
