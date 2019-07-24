@@ -15,6 +15,12 @@ enum rtlsdr_tuner {
     RTLSDR_TUNER_R828D
 };
 
+enum ds_channel {
+    DS_CHANNEL_NONE = 0,
+    DS_CHANNEL_I = 1,
+    DS_CHANNEL_Q = 2
+};
+
 typedef void (*rtlsdr_read_async_cb_t)(unsigned char *buf, uint32_t len,
                                        void *ctx);
 

@@ -115,33 +115,8 @@
         <string>Select direct sampling mode</string>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>-1</number>
        </property>
-       <item>
-        <property name="text">
-         <string>Off</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Auto Q</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Auto I</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>I</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Q</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item>

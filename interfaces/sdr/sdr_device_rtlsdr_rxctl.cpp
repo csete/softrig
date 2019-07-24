@@ -29,9 +29,15 @@
  */
 #include <new>
 #include <QDebug>
+#include <QString>
 
 #include "sdr_device_rtlsdr_rxctl.h"
 #include "ui_sdr_device_rtlsdr_rxctl.h"
+
+
+static const char *DS_COMBO_STR[] = {
+    "Auto Q", "Auto I", "On Q", "On I", "Off"
+};
 
 SdrDeviceRtlsdrRxCtl::SdrDeviceRtlsdrRxCtl(QWidget *parent) :
     QWidget(parent),
@@ -39,6 +45,9 @@ SdrDeviceRtlsdrRxCtl::SdrDeviceRtlsdrRxCtl(QWidget *parent) :
 {
     ui->setupUi(this);
     setProperty("desc", QString("RTL-SDR"));
+
+    for (int i = 0; i < RXCTL_DS_MODE_NUM; i++)
+        ui->dsCombo->addItem(QString(tr(DS_COMBO_STR[i])));
 }
 
 SdrDeviceRtlsdrRxCtl::~SdrDeviceRtlsdrRxCtl()
@@ -87,4 +96,9 @@ void SdrDeviceRtlsdrRxCtl::on_agcButton_toggled(bool agc_on)
     // ensure manual gain is restored when AGC is disabled
     if (!agc_on)
         on_gainSlider_valueChanged(ui->gainSlider->value());
+}
+
+void SdrDeviceRtlsdrRxCtl::on_dsCombo_currentIndexChanged(int index)
+{
+    emit dsModeChanged(index);
 }

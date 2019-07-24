@@ -44,7 +44,9 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
     rx_ctl(nullptr),
     reader_thread(nullptr),
     reader_running(false),
-    has_set_bw(false)
+    has_set_bw(false),
+    ds_mode_auto(true),
+    ds_channel(DS_CHANNEL_Q)
 {
     clearStatus(status);
     clearStats(stats);
@@ -55,6 +57,7 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
     connect(&rx_ctl, SIGNAL(gainChanged(int)), this, SLOT(setRxGain(int)));
     connect(&rx_ctl, SIGNAL(biasToggled(bool)), this, SLOT(setBias(bool)));
     connect(&rx_ctl, SIGNAL(agcToggled(bool)), this, SLOT(setAgc(bool)));
+    connect(&rx_ctl, SIGNAL(dsModeChanged(int)), this, SLOT(setDsMode(int)));
 }
 
 SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
@@ -99,7 +102,7 @@ int SdrDeviceRtlsdr::open(QSettings *settings)
     sample_rate = 2400000;
     rtlsdr_set_sample_rate(device, sample_rate);
     rtlsdr_set_direct_sampling(device, 2);
-    rtlsdr_set_center_freq(device, 7000000);
+    setRxFrequency(7000000);
     rtlsdr_set_tuner_gain_mode(device, 1);
     rtlsdr_set_tuner_gain(device, 40);
 
@@ -186,21 +189,23 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
     if (!status.is_open)
         return SDR_DEVICE_EOPEN;
 
+    if (freq < 24e6 && ds_mode_auto &&
+            rtlsdr_get_direct_sampling(device) != ds_channel)
+    {
+        if ((result = rtlsdr_set_direct_sampling(device, ds_channel)))
+            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
+    }
+    else if (freq >= 24e6 && ds_mode_auto &&
+             rtlsdr_get_direct_sampling(device) != ds_channel)
+    {
+        if ((result = rtlsdr_set_direct_sampling(device, DS_CHANNEL_NONE)))
+            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
+    }
+
     if (rtlsdr_set_center_freq(device, uint32_t(freq)))
     {
         qInfo() << "Failed to set RTL-SDR frequency to" << freq;
         return SDR_DEVICE_ERANGE;
-    }
-
-    if (freq < 24e6 && !rtlsdr_get_direct_sampling(device))
-    {
-        if ((result = rtlsdr_set_direct_sampling(device, 2)))
-            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
-    }
-    else if (freq >= 24e6 && rtlsdr_get_direct_sampling(device))
-    {
-        if ((result = rtlsdr_set_direct_sampling(device, 0)))
-            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
     }
 
     return SDR_DEVICE_OK;
@@ -225,6 +230,40 @@ void SdrDeviceRtlsdr::setAgc(bool agc_on)
 {
     rtlsdr_set_agc_mode(device, agc_on ? 1 : 0);
     rtlsdr_set_tuner_gain_mode(device, agc_on ? 0 : 1);
+}
+
+void SdrDeviceRtlsdr::setDsMode(int mode)
+{
+    switch (mode) {
+    default:
+    case RXCTL_DS_MODE_AUTO_Q:
+        ds_mode_auto = true;
+        ds_channel = DS_CHANNEL_Q;
+        break;
+    case RXCTL_DS_MODE_AUTO_I:
+        ds_mode_auto = true;
+        ds_channel = DS_CHANNEL_I;
+        break;
+    case RXCTL_DS_MODE_Q:
+        ds_mode_auto = false;
+        ds_channel = DS_CHANNEL_Q;
+        break;
+    case RXCTL_DS_MODE_I:
+        ds_mode_auto = false;
+        ds_channel = DS_CHANNEL_I;
+        break;
+    case RXCTL_DS_MODE_OFF:
+        ds_mode_auto = false;
+        ds_channel = DS_CHANNEL_NONE;
+        break;
+    }
+
+    if (!ds_mode_auto)
+        rtlsdr_set_direct_sampling(device, ds_channel);
+
+    // reset frequency to ensure settings are applied
+    quint32 freq = rtlsdr_get_center_freq(device);
+    setRxFrequency(freq);
 }
 
 void SdrDeviceRtlsdr::readerCallback(unsigned char *buf, uint32_t count, void *ctx)

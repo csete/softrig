@@ -39,6 +39,7 @@ private slots:
     void    setRxGain(int gain);
     void    setBias(bool bias_on);
     void    setAgc(bool agc_on);
+    void    setDsMode(int mode);
 
 private:
     int     loadDriver(void);
@@ -64,6 +65,10 @@ private:
     sdr_device_stats_t      stats;
 
     bool        has_set_bw;
+
+    // direct sampling
+    bool        ds_mode_auto;
+    int         ds_channel;
 
     quint32     sample_rate;
 };
