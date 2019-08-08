@@ -189,17 +189,18 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
     if (!status.is_open)
         return SDR_DEVICE_EOPEN;
 
-    if (freq < 24e6 && ds_mode_auto &&
-            rtlsdr_get_direct_sampling(device) != ds_channel)
+    if (ds_mode_auto)
     {
-        if ((result = rtlsdr_set_direct_sampling(device, ds_channel)))
-            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
-    }
-    else if (freq >= 24e6 && ds_mode_auto &&
-             rtlsdr_get_direct_sampling(device) != ds_channel)
-    {
-        if ((result = rtlsdr_set_direct_sampling(device, DS_CHANNEL_NONE)))
-            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
+        if (freq < 24e6 && rtlsdr_get_direct_sampling(device) != ds_channel)
+        {
+            if ((result = rtlsdr_set_direct_sampling(device, ds_channel)))
+                qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
+        }
+        else if (freq >= 24e6 && rtlsdr_get_direct_sampling(device) != DS_CHANNEL_NONE)
+        {
+            if ((result = rtlsdr_set_direct_sampling(device, DS_CHANNEL_NONE)))
+                qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
+        }
     }
 
     if (rtlsdr_set_center_freq(device, uint32_t(freq)))
