@@ -48,8 +48,6 @@
 #define SDR_INPUT_DECIM     SDR_INPUT"/decimation"
 #define SDR_INPUT_BW        SDR_INPUT"/bandwidth"
 #define SDR_INPUT_CORR      SDR_INPUT"/frequency_correction"
-#define SDR_INPUT_GAIN_MODE SDR_INPUT"/gain_mode"
-#define SDR_INPUT_GAIN      SDR_INPUT"/gain"
 
 #define DEFAULT_FREQ 145500000
 #define DEFAULT_GAIN 50
@@ -113,8 +111,6 @@ void AppConfig::readDeviceConf(void)
     input->decimation = settings->value(SDR_INPUT_DECIM, 1).toUInt();
     input->bandwidth = settings->value(SDR_INPUT_BW, 0).toUInt();
     input->freq_corr_ppb = settings->value(SDR_INPUT_CORR, 0).toInt();
-    input->gain_mode = settings->value(SDR_INPUT_GAIN_MODE, 0).toInt();
-    input->gain = settings->value(SDR_INPUT_GAIN, DEFAULT_GAIN).toInt();
 }
 
 void AppConfig::saveDeviceConf(void)
@@ -160,15 +156,5 @@ void AppConfig::saveDeviceConf(void)
         settings->setValue(SDR_INPUT_CORR, input->freq_corr_ppb);
     else
         settings->remove(SDR_INPUT_CORR);
-
-    if (input->gain_mode)
-        settings->setValue(SDR_INPUT_GAIN_MODE, input->gain_mode);
-    else
-        settings->remove(SDR_INPUT_GAIN_MODE);
-
-    if (input->gain != DEFAULT_GAIN)
-        settings->setValue(SDR_INPUT_GAIN, input->gain);
-    else
-        settings->remove(SDR_INPUT_GAIN);
 }
 

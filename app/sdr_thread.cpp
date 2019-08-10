@@ -118,9 +118,6 @@ int SdrThread::start(const app_config_t *conf, SdrDevice * dev)
     // set frequency and correction
     setRxFrequency(input_cfg.frequency);
     // set bandwidth
-    // set gain
-    setRxGainMode(input_cfg.gain_mode);
-    setRxGain(input_cfg.gain);
 
     // setup receiver
     setRxTuningOffset(input_cfg.nco);
@@ -239,24 +236,6 @@ void SdrThread::setRxFrequency(quint64 freq)
 
 //    if (sdr_dev->setRxFrequency(freq))
 //        SDR_THREAD_DEBUG("Error setting frequency\n");
-}
-
-void SdrThread::setRxGainMode(int mode)
-{
-    if (!is_running)
-        return;
-
-//    if (sdr_dev->set_gain_mode(mode))
-//        SDR_THREAD_DEBUG("Error setting gain mode\n");
-}
-
-void SdrThread::setRxGain(int gain)
-{
-    if (!is_running)
-        return;
-
-//    if (sdr_dev->set_gain(gain))
-//        SDR_THREAD_DEBUG("Error setting gain\n");
 }
 
 void SdrThread::setDemod(sdr_demod_t demod)

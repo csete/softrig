@@ -43,8 +43,6 @@ public:
     float   getSignalStrength(void);
 
 public slots:
-    void    setRxGainMode(int mode);
-    void    setRxGain(int gain);
     void    setRxFrequency(quint64 freq);
     void    setDemod(sdr_demod_t);
     void    setRxFilter(real_t, real_t);

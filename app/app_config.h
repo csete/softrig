@@ -15,8 +15,6 @@ typedef struct
     unsigned int    decimation;
     unsigned int    bandwidth;
     int             freq_corr_ppb;
-    int             gain_mode;
-    int             gain;
 } device_config_t;
 
 typedef struct
