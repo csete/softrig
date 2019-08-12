@@ -64,6 +64,7 @@ void SdrDeviceRtlsdrRxCtl::setTunerGains(int * values, int count)
         return;
 
     ui->gainSlider->setRange(0, count - 1);
+    gains.clear();
     for (i = 0; i < count; i++)
     {
         gain = 0.1f * float(values[i]);
