@@ -74,10 +74,9 @@ SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
     ring_buffer_delete(reader_buffer);
 }
 
-int SdrDeviceRtlsdr::open(QSettings *settings)
+int SdrDeviceRtlsdr::open()
 {
     int     ret;
-    (void) settings;
 
     if (status.is_running || status.is_open)
         return SDR_DEVICE_EBUSY;
@@ -125,6 +124,16 @@ int SdrDeviceRtlsdr::close(void)
 
     status.is_open = false;
 
+    return SDR_DEVICE_OK;
+}
+
+int SdrDeviceRtlsdr::readSettings(const QSettings &settings)
+{
+    return SDR_DEVICE_OK;
+}
+
+int SdrDeviceRtlsdr::saveSettings(QSettings &settings)
+{
     return SDR_DEVICE_OK;
 }
 

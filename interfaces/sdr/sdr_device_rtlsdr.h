@@ -23,9 +23,10 @@ public:
     explicit SdrDeviceRtlsdr(QObject *parent = nullptr);
     ~SdrDeviceRtlsdr() override;
 
-    int open(QSettings *settings) override;
-    int close(void) override;
-
+    int         open(void) override;
+    int         close(void) override;
+    int         readSettings(const QSettings &settings) override;
+    int         saveSettings(QSettings &settings) override;
     int         startRx(void) override;
     int         stopRx(void) override;
     quint32     getRxSamples(complex_t * buffer, quint32 count) override;

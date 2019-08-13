@@ -310,7 +310,7 @@ void MainWindow::runButtonClicked(bool checked)
             return;
         }
 
-        if (device->open(nullptr) != SDR_DEVICE_OK)
+        if (device->open() != SDR_DEVICE_OK)
         {
             // FIXME: Error code
             (void)QMessageBox::critical(this, tr("SDR device error"),
