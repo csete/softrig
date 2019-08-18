@@ -7,14 +7,14 @@
 
 typedef struct
 {
-    QString         type;
-    quint64         frequency;
-    qint64          nco;
-    qint64          transverter;
-    unsigned int    rate;
-    unsigned int    decimation;
-    unsigned int    bandwidth;
-    int             freq_corr_ppb;
+    QString     type;
+    quint64     frequency;
+    qint64      nco;
+    qint64      transverter;
+    quint32     rate;
+    quint32     decimation;
+    quint32     bandwidth;
+    qint32      freq_corr_ppb;
 } device_config_t;
 
 typedef struct
