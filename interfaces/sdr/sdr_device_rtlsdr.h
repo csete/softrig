@@ -33,6 +33,7 @@ public:
     QWidget    *getRxControls(void) override;
 
     int         setRxFrequency(quint64 freq) override;
+    int         setRxSampleRate(quint32 rate) override;
 
     int type(void) const override;
 

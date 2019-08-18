@@ -221,6 +221,20 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
     return SDR_DEVICE_OK;
 }
 
+int SdrDeviceRtlsdr::setRxSampleRate(quint32 rate)
+{
+    if (!status.is_open)
+        return SDR_DEVICE_EOPEN;
+
+    if (rtlsdr_set_sample_rate(device, rate))
+    {
+        qInfo() << "Failed to set RTL-SDR sample rate to" << rate;
+        return SDR_DEVICE_ERANGE;
+    }
+
+    return SDR_DEVICE_OK;
+}
+
 int SdrDeviceRtlsdr::type(void) const
 {
     return SDR_DEVICE_RTLSDR;

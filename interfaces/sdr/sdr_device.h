@@ -57,6 +57,7 @@ public:
     virtual QWidget    *getRxControls(void);
 
     virtual int         setRxFrequency(quint64 freq);
+    virtual int         setRxSampleRate(quint32 rate);
 
     /* Returns SDR_DEVICE_XYZ */
     virtual int type(void) const;

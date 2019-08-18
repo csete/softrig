@@ -80,6 +80,12 @@ int SdrDevice::setRxFrequency(quint64 freq)
     return SDR_DEVICE_ENOTAVAIL;
 }
 
+int SdrDevice::setRxSampleRate(quint32 rate)
+{
+    Q_UNUSED(rate);
+    return SDR_DEVICE_ENOTAVAIL;
+}
+
 int SdrDevice::type(void) const
 {
     return SDR_DEVICE_NONE;
