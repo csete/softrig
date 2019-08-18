@@ -34,6 +34,7 @@ public:
 
     int         setRxFrequency(quint64 freq) override;
     int         setRxSampleRate(quint32 rate) override;
+    int         setRxBandwidth(quint32 bw) override;
 
     int type(void) const override;
 

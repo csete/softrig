@@ -235,6 +235,23 @@ int SdrDeviceRtlsdr::setRxSampleRate(quint32 rate)
     return SDR_DEVICE_OK;
 }
 
+int SdrDeviceRtlsdr::setRxBandwidth(quint32 bw)
+{
+    if (!status.is_open)
+        return SDR_DEVICE_EOPEN;
+
+    if (!has_set_bw)
+        return SDR_DEVICE_ENOTAVAIL;
+
+    if (rtlsdr_set_tuner_bandwidth(device, bw))
+    {
+        qInfo() << "Failed to set RTL-SDR bandwidth to" << bw;
+        return SDR_DEVICE_ERANGE;
+    }
+
+    return SDR_DEVICE_OK;
+}
+
 int SdrDeviceRtlsdr::type(void) const
 {
     return SDR_DEVICE_RTLSDR;

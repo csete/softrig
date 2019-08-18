@@ -58,6 +58,7 @@ public:
 
     virtual int         setRxFrequency(quint64 freq);
     virtual int         setRxSampleRate(quint32 rate);
+    virtual int         setRxBandwidth(quint32 bw);
 
     /* Returns SDR_DEVICE_XYZ */
     virtual int type(void) const;

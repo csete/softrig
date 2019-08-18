@@ -86,6 +86,12 @@ int SdrDevice::setRxSampleRate(quint32 rate)
     return SDR_DEVICE_ENOTAVAIL;
 }
 
+int SdrDevice::setRxBandwidth(quint32 bw)
+{
+    Q_UNUSED(bw);
+    return SDR_DEVICE_ENOTAVAIL;
+}
+
 int SdrDevice::type(void) const
 {
     return SDR_DEVICE_NONE;
