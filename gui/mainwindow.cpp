@@ -237,7 +237,7 @@ void MainWindow::deviceConfigChanged(const device_config_t * conf)
     fft_plot->setFilterOffset(conf->nco);
     fctl->setFrequency(conf->frequency + conf->nco);
 
-    if (running)
+    if (running && device)
         runButtonClicked(true);
 }
 
