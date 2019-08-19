@@ -31,6 +31,7 @@ private:
     void    selectSdrType(const QString &);
     void    selectSampleRate(unsigned int);
     void    selectDecimation(unsigned int);
+    void    setBandwidth(quint32 bw);
 
 private:
     Ui::DeviceConfigDialog *ui;

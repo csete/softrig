@@ -65,6 +65,7 @@ void DeviceConfigDialog::readSettings(const device_config_t * input)
     selectSdrType(input->type);
     selectSampleRate(input->rate);
     selectDecimation(input->decimation);
+    setBandwidth(input->bandwidth);
 }
 
 void DeviceConfigDialog::saveSettings(device_config_t * input)
@@ -74,6 +75,7 @@ void DeviceConfigDialog::saveSettings(device_config_t * input)
     // QString.toInt() returns 0 if conversion fails
     input->rate = ui->inputRateCombo->currentText().toUInt();
     input->decimation = ui->decimCombo->currentText().toUInt();
+    input->bandwidth = quint32(ui->bwSpinBox->value() * 1000.0);
 }
 
 void DeviceConfigDialog::sdrTypeChanged(int index)
@@ -221,4 +223,9 @@ static int decim2index(unsigned int decim)
 void DeviceConfigDialog::selectDecimation(unsigned int decimation)
 {
     ui->decimCombo->setCurrentIndex(decim2index(decimation));
+}
+
+void DeviceConfigDialog::setBandwidth(quint32 bw)
+{
+    ui->bwSpinBox->setValue(double(bw) * 1.e-3);
 }

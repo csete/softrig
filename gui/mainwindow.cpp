@@ -321,6 +321,7 @@ void MainWindow::runButtonClicked(bool checked)
 
         // FIXME: should be in deviceConfigChanged()
         device->setRxSampleRate(conf->input.rate);
+        device->setRxBandwidth(conf->input.bandwidth);
 
         if (sdr->start(conf, device) == SDR_THREAD_OK)
         {
