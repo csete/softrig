@@ -20,6 +20,16 @@ enum _ds_mode {
     RXCTL_DS_MODE_NUM = 5
 };
 
+typedef struct {
+    quint64     frequency;
+    quint32     sample_rate;
+    quint32     bandwidth;
+    int         gain;
+    int         ds_mode;
+    bool        agc_on;
+    bool        bias_on;
+} rtlsdr_settings_t;
+
 class SdrDeviceRtlsdrRxCtl : public QWidget
 {
     Q_OBJECT
@@ -29,6 +39,7 @@ public:
     ~SdrDeviceRtlsdrRxCtl();
 
     void    setTunerGains(int *values, int count);
+    void    readSettings(rtlsdr_settings_t &settings);
 
 signals:
     void    gainChanged(int gain);
@@ -43,6 +54,8 @@ private slots:
     void    on_dsCombo_currentIndexChanged(int index);
 
 private:
+    void    setGain(int gain);
+
     Ui::SdrDeviceRtlsdrRxCtl *ui;
 
     QVector<float>    gains;

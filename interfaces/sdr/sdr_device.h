@@ -49,8 +49,8 @@ public:
 
     virtual int         open(void) = 0;
     virtual int         close(void) = 0;
-    virtual int         readSettings(const QSettings &settings) = 0;
-    virtual int         saveSettings(QSettings &settings) = 0;
+    virtual int         readSettings(const QSettings &s) = 0;
+    virtual int         saveSettings(QSettings &s) = 0;
     virtual int         startRx(void);
     virtual int         stopRx(void);
     virtual quint32     getRxSamples(complex_t * buffer, quint32 count);

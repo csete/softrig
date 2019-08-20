@@ -72,6 +72,14 @@ void SdrDeviceRtlsdrRxCtl::setTunerGains(int * values, int count)
     }
 }
 
+void SdrDeviceRtlsdrRxCtl::readSettings(rtlsdr_settings_t &settings)
+{
+    setGain(settings.gain);
+    ui->dsCombo->setCurrentIndex(settings.ds_mode);
+    ui->biasButton->setChecked(settings.bias_on);
+    ui->agcButton->setChecked(settings.agc_on);
+}
+
 void SdrDeviceRtlsdrRxCtl::on_gainSlider_valueChanged(int index)
 {
     float   gain;
@@ -102,4 +110,11 @@ void SdrDeviceRtlsdrRxCtl::on_agcButton_toggled(bool agc_on)
 void SdrDeviceRtlsdrRxCtl::on_dsCombo_currentIndexChanged(int index)
 {
     emit dsModeChanged(index);
+}
+
+void SdrDeviceRtlsdrRxCtl::setGain(int gain)
+{
+    int index = gains.indexOf(0.1f * float(gain));
+    if (index >= 0)
+        ui->gainSlider->setValue(index);
 }

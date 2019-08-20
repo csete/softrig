@@ -33,6 +33,12 @@
 #include "sdr_device_rtlsdr.h"
 #include "sdr_device_rtlsdr_api.h"
 
+
+#define DEFAULT_GAIN    297
+#define DEFAULT_DS_MODE RXCTL_DS_MODE_AUTO_Q
+#define DEFAULT_AGC     false
+#define DEFAULT_BIAS    false
+
 SdrDevice *sdr_device_create_rtlsdr()
 {
     return new SdrDeviceRtlsdr();
@@ -44,9 +50,7 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
     rx_ctl(nullptr),
     reader_thread(nullptr),
     reader_running(false),
-    has_set_bw(false),
-    ds_mode_auto(true),
-    ds_channel(DS_CHANNEL_Q)
+    has_set_bw(false)
 {
     clearStatus(status);
     clearStats(stats);
@@ -54,10 +58,19 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
     reader_buffer = ring_buffer_create();
     ring_buffer_init(reader_buffer, 16384);
 
+    settings.frequency = 100e6;
+    settings.sample_rate = 2400000;
+    settings.bandwidth = 0;
+    settings.gain = DEFAULT_GAIN;
+    settings.ds_mode = DEFAULT_DS_MODE;
+    settings.agc_on = DEFAULT_AGC;
+    settings.bias_on = DEFAULT_BIAS;
+
     connect(&rx_ctl, SIGNAL(gainChanged(int)), this, SLOT(setRxGain(int)));
     connect(&rx_ctl, SIGNAL(biasToggled(bool)), this, SLOT(setBias(bool)));
     connect(&rx_ctl, SIGNAL(agcToggled(bool)), this, SLOT(setAgc(bool)));
     connect(&rx_ctl, SIGNAL(dsModeChanged(int)), this, SLOT(setDsMode(int)));
+    rx_ctl.setEnabled(false);
 }
 
 SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
@@ -96,16 +109,11 @@ int SdrDeviceRtlsdr::open()
         return SDR_DEVICE_EOPEN;
     }
 
-    setupTunerGains();
-
-    sample_rate = 2400000;
-    rtlsdr_set_sample_rate(device, sample_rate);
-    rtlsdr_set_direct_sampling(device, 2);
-    setRxFrequency(7000000);
-    rtlsdr_set_tuner_gain_mode(device, 1);
-    rtlsdr_set_tuner_gain(device, 40);
-
     status.is_open = true;
+    rx_ctl.setEnabled(true);
+
+    setupTunerGains();
+    applySettings();
 
     return SDR_DEVICE_OK;
 }
@@ -123,17 +131,55 @@ int SdrDeviceRtlsdr::close(void)
         qCritical() << "rtlsdr_close() returned" << ret;
 
     status.is_open = false;
+    rx_ctl.setEnabled(false);
 
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::readSettings(const QSettings &settings)
+int SdrDeviceRtlsdr::readSettings(const QSettings &s)
 {
+    bool    conv_ok;
+    int     int_val;
+
+    int_val = s.value("rtlsdr/manual_gain", DEFAULT_GAIN).toInt(&conv_ok);
+    if (conv_ok)
+        settings.gain = int_val;
+
+    int_val = s.value("rtlsdr/ds_mode", DEFAULT_DS_MODE).toInt(&conv_ok);
+    if (conv_ok)
+        settings.ds_mode = int_val;
+
+    settings.agc_on = s.value("rtlsdr/agc_enabled", DEFAULT_AGC).toBool();
+    settings.bias_on = s.value("rtlsdr/bias_enabled", DEFAULT_BIAS).toBool();
+
+    if (status.is_open)
+        applySettings();
+
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::saveSettings(QSettings &settings)
+int SdrDeviceRtlsdr::saveSettings(QSettings &s)
 {
+    if (settings.gain == DEFAULT_GAIN)
+        s.remove("rtlsdr/manual_gain");
+    else
+        s.setValue("rtlsdr/manual_gain", settings.gain);
+
+    if (settings.ds_mode == DEFAULT_DS_MODE)
+        s.remove("rtlsdr/ds_mode");
+    else
+        s.setValue("rtlsdr/ds_mode", settings.ds_mode);
+
+    if (settings.agc_on == DEFAULT_AGC)
+        s.remove("rtlsdr/agc_enabled");
+    else
+        s.setValue("rtlsdr/agc_enabled", settings.agc_on);
+
+    if (settings.bias_on == DEFAULT_BIAS)
+        s.remove("rtlsdr/bias_enabled");
+    else
+        s.setValue("rtlsdr/bias_enabled", settings.bias_on);
+
     return SDR_DEVICE_OK;
 }
 
@@ -196,7 +242,10 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
     int result;
 
     if (!status.is_open)
-        return SDR_DEVICE_EOPEN;
+    {
+        settings.frequency = freq;
+        return SDR_DEVICE_OK;
+    }
 
     if (ds_mode_auto)
     {
@@ -215,8 +264,10 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
     if (rtlsdr_set_center_freq(device, uint32_t(freq)))
     {
         qInfo() << "Failed to set RTL-SDR frequency to" << freq;
+        settings.frequency = rtlsdr_get_center_freq(device);
         return SDR_DEVICE_ERANGE;
     }
+    settings.frequency = freq;
 
     return SDR_DEVICE_OK;
 }
@@ -224,30 +275,40 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
 int SdrDeviceRtlsdr::setRxSampleRate(quint32 rate)
 {
     if (!status.is_open)
-        return SDR_DEVICE_EOPEN;
+    {
+        settings.sample_rate = rate;
+        return SDR_DEVICE_OK;
+    }
 
     if (rtlsdr_set_sample_rate(device, rate))
     {
         qInfo() << "Failed to set RTL-SDR sample rate to" << rate;
+        settings.sample_rate = rtlsdr_get_sample_rate(device);
         return SDR_DEVICE_ERANGE;
     }
+    settings.sample_rate = rate;
 
     return SDR_DEVICE_OK;
 }
 
 int SdrDeviceRtlsdr::setRxBandwidth(quint32 bw)
 {
-    if (!status.is_open)
-        return SDR_DEVICE_EOPEN;
-
     if (!has_set_bw)
         return SDR_DEVICE_ENOTAVAIL;
+
+    if (!status.is_open)
+    {
+        settings.bandwidth = bw;
+        return SDR_DEVICE_OK;
+    }
 
     if (rtlsdr_set_tuner_bandwidth(device, bw))
     {
         qInfo() << "Failed to set RTL-SDR bandwidth to" << bw;
+        settings.bandwidth = 0;
         return SDR_DEVICE_ERANGE;
     }
+    settings.bandwidth = bw;
 
     return SDR_DEVICE_OK;
 }
@@ -259,22 +320,26 @@ int SdrDeviceRtlsdr::type(void) const
 
 void SdrDeviceRtlsdr::setRxGain(int gain)
 {
+    settings.gain = gain;
     rtlsdr_set_tuner_gain(device, gain);
 }
 
 void SdrDeviceRtlsdr::setBias(bool bias_on)
 {
+    settings.bias_on = bias_on;
     rtlsdr_set_bias_tee(device, bias_on);
 }
 
 void SdrDeviceRtlsdr::setAgc(bool agc_on)
 {
+    settings.agc_on = agc_on;
     rtlsdr_set_agc_mode(device, agc_on ? 1 : 0);
     rtlsdr_set_tuner_gain_mode(device, agc_on ? 0 : 1);
 }
 
 void SdrDeviceRtlsdr::setDsMode(int mode)
 {
+    settings.ds_mode = mode;
     switch (mode) {
     default:
     case RXCTL_DS_MODE_AUTO_Q:
@@ -388,6 +453,14 @@ void SdrDeviceRtlsdr::setupTunerGains(void)
 
         delete[] gains;
     }
+}
+
+/* used to apply cached settings after device is opened */
+void SdrDeviceRtlsdr::applySettings(void)
+{
+    setRxSampleRate(settings.sample_rate);
+    setRxFrequency(settings.frequency);
+    rx_ctl.readSettings(settings);
 }
 
 #define SYMBOL_EMSG "Error loading symbol address for"

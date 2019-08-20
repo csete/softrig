@@ -25,8 +25,8 @@ public:
 
     int         open(void) override;
     int         close(void) override;
-    int         readSettings(const QSettings &settings) override;
-    int         saveSettings(QSettings &settings) override;
+    int         readSettings(const QSettings &s) override;
+    int         saveSettings(QSettings &s) override;
     int         startRx(void) override;
     int         stopRx(void) override;
     quint32     getRxSamples(complex_t * buffer, quint32 count) override;
@@ -53,6 +53,7 @@ private:
     static void readerCallback(unsigned char *buf, uint32_t len, void *data);
 
     void    setupTunerGains(void);
+    void    applySettings(void);
 
     QLibrary    driver;
     void       *device;
@@ -66,12 +67,11 @@ private:
 
     sdr_device_status_t     status;
     sdr_device_stats_t      stats;
+    rtlsdr_settings_t       settings;
+
+    int         ds_channel;
+    bool        ds_mode_auto;
 
     bool        has_set_bw;
 
-    // direct sampling
-    bool        ds_mode_auto;
-    int         ds_channel;
-
-    quint32     sample_rate;
 };

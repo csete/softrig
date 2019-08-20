@@ -219,6 +219,9 @@ void MainWindow::saveConfig(void)
     cpanel->saveSettings(*conf);
 
     cfg->save(*settings);
+    if (device)
+        device->saveSettings(*settings);
+
     settings->sync();
 }
 
@@ -237,10 +240,15 @@ void MainWindow::deviceConfigChanged(const device_config_t * conf)
             delete device;
         device = sdr_device_create(conf->type);
         if (!device)
+        {
             QMessageBox::critical(this, tr("Configuration error"),
                                   tr("Error creating SDR device"));
+        }
         else
+        {
             cpanel->addRxControls(device->getRxControls());
+            device->readSettings(*settings);
+        }
     }
 
     quad_rate = conf->rate;
