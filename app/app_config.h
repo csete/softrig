@@ -3,6 +3,7 @@
  */
 #pragma once
 
+#include <QSettings>
 #include <QtCore>
 
 typedef struct
@@ -41,19 +42,17 @@ public:
     explicit    AppConfig();
     virtual    ~AppConfig();
 
-    int     load(const QString &filename);
-    void    save(void);
-    void    close(void);
+    int     load(const QSettings &settings);
+    void    save(QSettings &settings);
 
     app_config_t    *getDataPtr(void) {
         return &app_config;
     }
 
 private:
-    void    readDeviceConf(void);
-    void    saveDeviceConf(void);
+    void    readDeviceConf(const QSettings &settings);
+    void    saveDeviceConf(QSettings &settings);
 
 private:
-    QSettings          *settings;
     app_config_t        app_config;
 };

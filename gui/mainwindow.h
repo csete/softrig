@@ -3,6 +3,7 @@
  */
 #pragma once
 
+#include <QSettings>
 #include <QtWidgets>
 
 #include "app/app_config.h"
@@ -50,6 +51,7 @@ private:
     SdrThread        *sdr;
 
 private:
+    QSettings        *settings;
     AppConfig        *cfg;
     QTimer           *fft_timer;
     real_t           *fft_data;

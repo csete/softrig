@@ -28,9 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <new>          // std::nothrow
 #include <QDebug>
-#include <QSettings>
 
 #include "app_config.h"
 
@@ -54,107 +52,83 @@
 
 AppConfig::AppConfig()
 {
-    settings = nullptr;
 }
 
 AppConfig::~AppConfig()
 {
-    close();
 }
 
-int AppConfig::load(const QString &filename)
+int AppConfig::load(const QSettings &settings)
 {
-    if (filename.isEmpty()) // FIXME: check that it is a correct path
-        return APP_CONFIG_EINVAL;
-
-    close();
-
-    settings = new (std::nothrow) QSettings(filename, QSettings::IniFormat);
-    if (!settings)
-        return APP_CONFIG_EFILE;
-
-    app_config.version = settings->value(APP_CFG_VER, CONFIG_VERSION).toUInt();
-    readDeviceConf();
+    app_config.version = settings.value(APP_CFG_VER, CONFIG_VERSION).toUInt();
+    readDeviceConf(settings);
 
     return APP_CONFIG_OK;
 }
 
-void AppConfig::save(void)
+void AppConfig::save(QSettings &settings)
 {
-    if (!settings)
-        return;
-
-    settings->setValue(APP_CFG_VER, app_config.version);
-    saveDeviceConf();
-    settings->sync();
+    settings.setValue(APP_CFG_VER, app_config.version);
+    saveDeviceConf(settings);
+    settings.sync();
 }
 
-void AppConfig::close(void)
-{
-    if (!settings)
-        return;
-
-    settings->sync();
-    delete settings;
-    settings = nullptr;
-}
-
-void AppConfig::readDeviceConf(void)
+void AppConfig::readDeviceConf(const QSettings &settings)
 {
     device_config_t     *input = &app_config.input;
 
-    input->type = settings->value(SDR_INPUT_TYPE, "").toString();
-    input->frequency = settings->value(SDR_INPUT_FREQ, DEFAULT_FREQ).toULongLong();
-    input->nco = settings->value(SDR_INPUT_NCO, 0).toLongLong();
-    input->transverter = settings->value(SDR_INPUT_LNB, 0).toLongLong();
-    input->rate = settings->value(SDR_INPUT_RATE, 0).toUInt();
-    input->decimation = settings->value(SDR_INPUT_DECIM, 1).toUInt();
-    input->bandwidth = settings->value(SDR_INPUT_BW, 0).toUInt();
-    input->freq_corr_ppb = settings->value(SDR_INPUT_CORR, 0).toInt();
+    input->type = settings.value(SDR_INPUT_TYPE, "").toString();
+    input->frequency = settings.value(SDR_INPUT_FREQ, DEFAULT_FREQ).toULongLong();
+    input->nco = settings.value(SDR_INPUT_NCO, 0).toLongLong();
+    input->transverter = settings.value(SDR_INPUT_LNB, 0).toLongLong();
+    input->rate = settings.value(SDR_INPUT_RATE, 0).toUInt();
+    input->decimation = settings.value(SDR_INPUT_DECIM, 1).toUInt();
+    input->bandwidth = settings.value(SDR_INPUT_BW, 0).toUInt();
+    input->freq_corr_ppb = settings.value(SDR_INPUT_CORR, 0).toInt();
 }
 
-void AppConfig::saveDeviceConf(void)
+void AppConfig::saveDeviceConf(QSettings &settings)
 {
     device_config_t     *input = &app_config.input;
 
     if (input->type.isEmpty())
-        settings->remove(SDR_INPUT_TYPE);
+        settings.remove(SDR_INPUT_TYPE);
     else
-        settings->setValue(SDR_INPUT_TYPE, input->type);
+        settings.setValue(SDR_INPUT_TYPE, input->type);
 
     if (input->frequency != DEFAULT_FREQ)
-        settings->setValue(SDR_INPUT_FREQ, input->frequency);
+        settings.setValue(SDR_INPUT_FREQ, input->frequency);
     else
-        settings->remove(SDR_INPUT_FREQ);
+        settings.remove(SDR_INPUT_FREQ);
 
     if (input->nco)
-        settings->setValue(SDR_INPUT_NCO, input->nco);
+        settings.setValue(SDR_INPUT_NCO, input->nco);
     else
-        settings->remove(SDR_INPUT_NCO);
+        settings.remove(SDR_INPUT_NCO);
 
     if (input->transverter)
-        settings->setValue(SDR_INPUT_LNB, input->transverter);
+        settings.setValue(SDR_INPUT_LNB, input->transverter);
     else
-        settings->remove(SDR_INPUT_LNB);
+        settings.remove(SDR_INPUT_LNB);
 
     if (input->rate)
-        settings->setValue(SDR_INPUT_RATE, input->rate);
+        settings.setValue(SDR_INPUT_RATE, input->rate);
     else
-        settings->remove(SDR_INPUT_RATE);
+        settings.remove(SDR_INPUT_RATE);
 
     if (input->decimation < 2)
-        settings->remove(SDR_INPUT_DECIM);
+        settings.remove(SDR_INPUT_DECIM);
     else
-        settings->setValue(SDR_INPUT_DECIM, input->decimation);
+        settings.setValue(SDR_INPUT_DECIM, input->decimation);
 
     if (input->bandwidth)
-        settings->setValue(SDR_INPUT_BW, input->bandwidth);
+        settings.setValue(SDR_INPUT_BW, input->bandwidth);
     else
-        settings->remove(SDR_INPUT_BW);
+        settings.remove(SDR_INPUT_BW);
 
     if (input->freq_corr_ppb)
-        settings->setValue(SDR_INPUT_CORR, input->freq_corr_ppb);
+        settings.setValue(SDR_INPUT_CORR, input->freq_corr_ppb);
     else
-        settings->remove(SDR_INPUT_CORR);
+        settings.remove(SDR_INPUT_CORR);
 }
 

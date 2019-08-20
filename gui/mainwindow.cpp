@@ -27,6 +27,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include <new>          // std::nothrow
+
 #include <QDebug>
 #include <QtWidgets>
 #include <QMessageBox>
@@ -50,16 +53,16 @@
 #define FFT_SIZE 2*8192
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+    QMainWindow(parent),
+    device(nullptr),
+    settings(nullptr),
+    cfg(nullptr)
 {
     QFrame    *central_widget;
     QWidget   *spacer1;
     QWidget   *spacer2;
     QWidget   *spacer3;
 
-
-    cfg = nullptr;
-    device = nullptr;
 
     sdr = new SdrThread();
 
@@ -148,8 +151,7 @@ MainWindow::~MainWindow()
     runButtonClicked(false);
 
     saveConfig();
-    cfg->save();
-    cfg->close();
+    delete settings;
 
     delete cfg;
     delete sdr;
@@ -175,12 +177,23 @@ void MainWindow::loadConfig(void)
 {
     app_config_t *conf;
 
-    if (cfg)
-        cfg->close();
-    else
+    if (settings)
+    {
+        saveConfig();
+        delete settings;
+    }
+    settings = new (std::nothrow) QSettings("./softrig.conf", QSettings::IniFormat);
+    if (!settings)
+    {
+        QMessageBox::critical(this, tr("Configuration error"),
+                              tr("Error opening configuration file"));
+        return;
+    }
+
+    if (!cfg)
         cfg = new AppConfig();
 
-    if (cfg->load("./softrig.conf") == APP_CONFIG_OK)
+    if (cfg->load(*settings) == APP_CONFIG_OK)
     {
         conf = cfg->getDataPtr();
         if (conf->input.type.isEmpty())
@@ -193,7 +206,7 @@ void MainWindow::loadConfig(void)
     else
     {
         QMessageBox::critical(this, tr("Configuration error"),
-                              tr("Error loading configuration file"));
+                              tr("Error reading configuration file"));
     }
 }
 
@@ -204,6 +217,9 @@ void MainWindow::saveConfig(void)
     conf->input.frequency = fft_plot->getCenterFreq();
     conf->input.nco = fft_plot->getFilterOffset();
     cpanel->saveSettings(*conf);
+
+    cfg->save(*settings);
+    settings->sync();
 }
 
 // SDR device configuration changed; update GUI
