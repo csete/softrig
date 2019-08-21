@@ -386,6 +386,10 @@ void MainWindow::runDeviceConfig(void)
     DeviceConfigDialog    conf_dialog(this);
     device_config_t      *input_settings = &cfg->getDataPtr()->input;
 
+    // ensure settings are saved before we run device configurator
+    if (settings)
+        saveConfig();
+
     // FIXME: setInteractive()
     conf_dialog.readSettings(input_settings);
     if (conf_dialog.exec() == QDialog::Accepted)
