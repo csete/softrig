@@ -54,12 +54,12 @@ HEADERS += \
     gui/ssi_widget.h \
     gui/tmp_bookmarks.h \
     gui/tmp_plotter.h \
-    interfaces/sdr/sdr_device_rtlsdr_rxctl.h \
     util/qthread_wrapper.h \
     interfaces/audio_output.h \
     interfaces/sdr/sdr_device.h \
     interfaces/sdr/sdr_device_rtlsdr.h \
-    interfaces/sdr/sdr_device_rtlsdr_api.h
+    interfaces/sdr/sdr_device_rtlsdr_api.h \
+    interfaces/sdr/sdr_device_rtlsdr_rxctl.h
 
 FORMS += \
     gui/control_panel.ui \
