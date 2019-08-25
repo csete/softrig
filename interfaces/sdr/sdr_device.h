@@ -27,6 +27,7 @@
 #define SDR_DEVICE_NONE         0
 #define SDR_DEVICE_RTLSDR       1
 #define SDR_DEVICE_AIRSPY       2
+#define SDR_DEVICE_AIRSPYMINI   3
 /* clang-format on */
 
 typedef struct {

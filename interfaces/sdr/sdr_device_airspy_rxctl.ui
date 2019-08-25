@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SdrDeviceAirspyRxctl</class>
+ <widget class="QWidget" name="SdrDeviceAirspyRxctl">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>263</width>
+    <height>305</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Gain mode</string>
+       </property>
+       <property name="buddy">
+        <cstring>gainModeCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="gainModeCombo">
+       <property name="toolTip">
+        <string>Gain mode</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Linearity</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Sensitivity</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Manual</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Auto</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="3,12,2">
+     <property name="topMargin">
+      <number>5</number>
+     </property>
+     <property name="bottomMargin">
+      <number>5</number>
+     </property>
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item row="0" column="2">
+      <widget class="QLabel" name="linGainLabel">
+       <property name="toolTip">
+        <string>Linearity gain value</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="sensGainLabel">
+       <property name="toolTip">
+        <string>Sensitivity gain value</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lnaLabel">
+       <property name="toolTip">
+        <string>LNA gain</string>
+       </property>
+       <property name="text">
+        <string>LNA</string>
+       </property>
+       <property name="buddy">
+        <cstring>lnaGainSlider</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSlider" name="lnaGainSlider">
+       <property name="toolTip">
+        <string>LNA gain</string>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::NoTicks</enum>
+       </property>
+       <property name="tickInterval">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="lnaGainLabel">
+       <property name="toolTip">
+        <string>LNA gain value</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="mixLabel">
+       <property name="toolTip">
+        <string>Mixer gain</string>
+       </property>
+       <property name="text">
+        <string>Mixer</string>
+       </property>
+       <property name="buddy">
+        <cstring>mixGainSlider</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QSlider" name="mixGainSlider">
+       <property name="toolTip">
+        <string>Mixer gain</string>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLabel" name="mixGainLabel">
+       <property name="toolTip">
+        <string>Mixer gain value</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="vgaLabel">
+       <property name="toolTip">
+        <string>VGA gain</string>
+       </property>
+       <property name="text">
+        <string>VGA</string>
+       </property>
+       <property name="buddy">
+        <cstring>vgaGainSlider</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QSlider" name="vgaGainSlider">
+       <property name="toolTip">
+        <string>VGA gain</string>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QLabel" name="vgaGainLabel">
+       <property name="toolTip">
+        <string>VGA gain value</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSlider" name="sensGainSlider">
+       <property name="toolTip">
+        <string>Sensitivity gain</string>
+       </property>
+       <property name="maximum">
+        <number>21</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="linGainSlider">
+       <property name="toolTip">
+        <string>Linearity gain</string>
+       </property>
+       <property name="maximum">
+        <number>21</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="sensLabel">
+       <property name="toolTip">
+        <string>Sensitivity gain</string>
+       </property>
+       <property name="text">
+        <string>Gain</string>
+       </property>
+       <property name="buddy">
+        <cstring>sensGainSlider</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="linLabel">
+       <property name="toolTip">
+        <string>Linearity gain</string>
+       </property>
+       <property name="text">
+        <string>Gain</string>
+       </property>
+       <property name="buddy">
+        <cstring>linGainSlider</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="biasCheckBox">
+     <property name="toolTip">
+      <string>Toggle 4.5 volt bias on RF connector</string>
+     </property>
+     <property name="text">
+      <string>Bias T</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
