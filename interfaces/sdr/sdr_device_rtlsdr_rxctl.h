@@ -39,7 +39,7 @@ public:
     ~SdrDeviceRtlsdrRxCtl();
 
     void    setTunerGains(int *values, int count);
-    void    readSettings(rtlsdr_settings_t &settings);
+    void    readSettings(const rtlsdr_settings_t &settings);
 
 signals:
     void    gainChanged(int gain);

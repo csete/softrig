@@ -72,7 +72,7 @@ void SdrDeviceRtlsdrRxCtl::setTunerGains(int * values, int count)
     }
 }
 
-void SdrDeviceRtlsdrRxCtl::readSettings(rtlsdr_settings_t &settings)
+void SdrDeviceRtlsdrRxCtl::readSettings(const rtlsdr_settings_t &settings)
 {
     setGain(settings.gain);
     ui->dsCombo->setCurrentIndex(settings.ds_mode);
