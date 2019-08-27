@@ -248,6 +248,8 @@ void MainWindow::deviceConfigChanged(const device_config_t * conf)
         {
             cpanel->addRxControls(device->getRxControls());
             device->readSettings(*settings);
+            device->setRxSampleRate(conf->rate);
+            device->setRxBandwidth(conf->bandwidth);
         }
     }
 
@@ -342,10 +344,6 @@ void MainWindow::runButtonClicked(bool checked)
             run_button->setChecked(false);
             return;
         }
-
-        // FIXME: should be in deviceConfigChanged()
-        device->setRxSampleRate(conf->input.rate);
-        device->setRxBandwidth(conf->input.bandwidth);
 
         if (sdr->start(conf, device) == SDR_THREAD_OK)
         {
