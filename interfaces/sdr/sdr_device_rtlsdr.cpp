@@ -39,6 +39,11 @@
 #define DEFAULT_AGC     false
 #define DEFAULT_BIAS    false
 
+#define CFG_KEY_MANUAL_GAIN     "rtlsdr/manual_gain"
+#define CFG_KEY_DS_MODE         "rtlsdr/ds_mode"
+#define CFG_KEY_AGC_ENABLED     "rtlsdr/agc_enabled"
+#define CFG_KEY_BIAS_ENABLED    "rtlsdr/bias_enabled"
+
 SdrDevice *sdr_device_create_rtlsdr()
 {
     return new SdrDeviceRtlsdr();
@@ -141,16 +146,16 @@ int SdrDeviceRtlsdr::readSettings(const QSettings &s)
     bool    conv_ok;
     int     int_val;
 
-    int_val = s.value("rtlsdr/manual_gain", DEFAULT_GAIN).toInt(&conv_ok);
+    int_val = s.value(CFG_KEY_MANUAL_GAIN, DEFAULT_GAIN).toInt(&conv_ok);
     if (conv_ok)
         settings.gain = int_val;
 
-    int_val = s.value("rtlsdr/ds_mode", DEFAULT_DS_MODE).toInt(&conv_ok);
+    int_val = s.value(CFG_KEY_DS_MODE, DEFAULT_DS_MODE).toInt(&conv_ok);
     if (conv_ok)
         settings.ds_mode = int_val;
 
-    settings.agc_on = s.value("rtlsdr/agc_enabled", DEFAULT_AGC).toBool();
-    settings.bias_on = s.value("rtlsdr/bias_enabled", DEFAULT_BIAS).toBool();
+    settings.agc_on = s.value(CFG_KEY_AGC_ENABLED, DEFAULT_AGC).toBool();
+    settings.bias_on = s.value(CFG_KEY_BIAS_ENABLED, DEFAULT_BIAS).toBool();
 
     if (status.is_open)
         applySettings();
@@ -161,24 +166,24 @@ int SdrDeviceRtlsdr::readSettings(const QSettings &s)
 int SdrDeviceRtlsdr::saveSettings(QSettings &s)
 {
     if (settings.gain == DEFAULT_GAIN)
-        s.remove("rtlsdr/manual_gain");
+        s.remove(CFG_KEY_MANUAL_GAIN);
     else
-        s.setValue("rtlsdr/manual_gain", settings.gain);
+        s.setValue(CFG_KEY_MANUAL_GAIN, settings.gain);
 
     if (settings.ds_mode == DEFAULT_DS_MODE)
-        s.remove("rtlsdr/ds_mode");
+        s.remove(CFG_KEY_DS_MODE);
     else
-        s.setValue("rtlsdr/ds_mode", settings.ds_mode);
+        s.setValue(CFG_KEY_DS_MODE, settings.ds_mode);
 
     if (settings.agc_on == DEFAULT_AGC)
-        s.remove("rtlsdr/agc_enabled");
+        s.remove(CFG_KEY_AGC_ENABLED);
     else
-        s.setValue("rtlsdr/agc_enabled", settings.agc_on);
+        s.setValue(CFG_KEY_AGC_ENABLED, settings.agc_on);
 
     if (settings.bias_on == DEFAULT_BIAS)
-        s.remove("rtlsdr/bias_enabled");
+        s.remove(CFG_KEY_BIAS_ENABLED);
     else
-        s.setValue("rtlsdr/bias_enabled", settings.bias_on);
+        s.setValue(CFG_KEY_BIAS_ENABLED, settings.bias_on);
 
     return SDR_DEVICE_OK;
 }
