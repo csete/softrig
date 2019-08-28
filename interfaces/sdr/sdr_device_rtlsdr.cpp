@@ -464,7 +464,7 @@ void SdrDeviceRtlsdr::setupTunerGains(void)
 void SdrDeviceRtlsdr::applySettings(void)
 {
     setRxSampleRate(settings.sample_rate);
-    setRxFrequency(settings.frequency);
+    setDsMode(settings.ds_mode);
     rx_ctl.readSettings(settings);
 }
 
