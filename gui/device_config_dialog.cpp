@@ -109,6 +109,7 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
     {
         ui->inputRateCombo->addItem("3000000");
         ui->inputRateCombo->addItem("6000000");
+        ui->inputRateCombo->addItem("10000000");
         ui->inputRateCombo->setCurrentIndex(1);
     }
     else if (sdr_type == "sdriq")
