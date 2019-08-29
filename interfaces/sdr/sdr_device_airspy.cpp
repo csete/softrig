@@ -99,7 +99,7 @@ SdrDeviceAirspyBase::SdrDeviceAirspyBase(bool mini, QObject *parent) :
     clearStats(stats);
 
     sample_buffer = ring_buffer_cplx_create();
-    ring_buffer_init(sample_buffer, 1000000);
+    ring_buffer_cplx_init(sample_buffer, 1000000);
 
     // initialize settings
     settings.frequency = 100e6;
