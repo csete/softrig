@@ -40,6 +40,8 @@ private slots:
     void    fftTimeout(void);
 
 private:
+    void    saveWindowState(void);
+    void    restoreWindowState(void);
     void    createButtons(void);
     void    loadConfig(void);
     void    saveConfig(void);

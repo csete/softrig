@@ -35,6 +35,7 @@
 #include <QMessageBox>
 
 #include "app/app_config.h"
+#include "app/config_keys.h"
 #include "gui/control_panel.h"
 #include "gui/device_config_dialog.h"
 #include "gui/freq_ctrl.h"
@@ -142,7 +143,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     loadConfig();
     setWindowTitle(QString("Softrig %1").arg(VERSION));
-    resize(900, 600);
 }
 
 MainWindow::~MainWindow()
@@ -173,6 +173,29 @@ MainWindow::~MainWindow()
     delete win_layout;
 }
 
+void MainWindow::saveWindowState(void)
+{
+    if (!settings)
+        return;
+
+    settings->setValue(CFG_KEY_WINDOW_GEOMETRY, saveGeometry());
+    settings->setValue(CFG_KEY_WINDOW_STATE, saveState());
+}
+
+void MainWindow::restoreWindowState(void)
+{
+    if (!settings)
+        return;
+
+    if (settings->contains(CFG_KEY_WINDOW_GEOMETRY))
+        restoreGeometry(settings->value(CFG_KEY_WINDOW_GEOMETRY, saveGeometry()).toByteArray());
+    else
+        resize(900, 600);
+
+    if (settings->contains(CFG_KEY_WINDOW_STATE))
+        restoreState(settings->value(CFG_KEY_WINDOW_STATE, saveState()).toByteArray());
+}
+
 void MainWindow::loadConfig(void)
 {
     app_config_t *conf;
@@ -189,6 +212,8 @@ void MainWindow::loadConfig(void)
                               tr("Error opening configuration file"));
         return;
     }
+
+    restoreWindowState();
 
     if (!cfg)
         cfg = new AppConfig();
@@ -213,6 +238,8 @@ void MainWindow::loadConfig(void)
 void MainWindow::saveConfig(void)
 {
     app_config_t *conf = cfg->getDataPtr();
+
+    saveWindowState();
 
     conf->input.frequency = fft_plot->getCenterFreq();
     conf->input.nco = fft_plot->getFilterOffset();
