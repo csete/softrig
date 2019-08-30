@@ -15,7 +15,6 @@ DEFINES += LINUX
 NANODSP_HEADERS += \
     nanosdr/nanodsp/agc.h \
     nanosdr/nanodsp/amdemod.h \
-#    nanosdr/nanodsp/apt_demod.h \
     nanosdr/nanodsp/cute_fft.h \
     nanosdr/nanodsp/fastfir.h \
     nanosdr/nanodsp/fft.h \
@@ -23,7 +22,6 @@ NANODSP_HEADERS += \
     nanosdr/nanodsp/filter/filtercoef_hbf_70.h \
     nanosdr/nanodsp/filter/filtercoef_hbf_100.h \
     nanosdr/nanodsp/filter/filtercoef_hbf_140.h \
-#    nanosdr/nanodsp/filtercoef.h \
     nanosdr/nanodsp/fir.h \
     nanosdr/nanodsp/fract_resampler.h \
     nanosdr/nanodsp/kiss_fft.h \
@@ -36,7 +34,6 @@ NANODSP_HEADERS += \
 NANODSP_SOURCES += \
     nanosdr/nanodsp/agc.cpp \
     nanosdr/nanodsp/amdemod.cpp \
-#    nanosdr/nanodsp/apt_demod.cpp \
     nanosdr/nanodsp/cute_fft.cpp \
     nanosdr/nanodsp/fastfir.cpp \
     nanosdr/nanodsp/fft.cpp \
@@ -59,27 +56,10 @@ HEADERS += \
     nanosdr/common/thread_class.h \
     nanosdr/common/time.h \
     nanosdr/common/util.h \
-#    nanosdr/interfaces/nanosdr_protocol.h \
-#    nanosdr/interfaces/sdr_ctl.h \
-#    nanosdr/interfaces/sdr_ctl_queue.h \
-#    nanosdr/interfaces/sdr_device.h \
-#    nanosdr/interfaces/sdr_device_airspy_fir.h \
-#    nanosdr/interfaces/sdr_device_rtlsdr_reader.h \
     nanosdr/fft_thread.h \
-    nanosdr/receiver.h \
-    nanosdr/sdriq/sdriq.h \
-    nanosdr/sdriq/sdriq_parser.h
+    nanosdr/receiver.h
 
 SOURCES += \
     $${NANODSP_SOURCES} \
-#    nanosdr/interfaces/nanosdr_protocol.c \
-#    nanosdr/interfaces/sdr_ctl_queue.cpp \
-#    nanosdr/interfaces/sdr_device_airspy_ns.cpp \
-#    nanosdr/interfaces/sdr_device_file_ns.cpp \
-#    nanosdr/interfaces/sdr_device_rtlsdr_ns.cpp \
-#    nanosdr/interfaces/sdr_device_rtlsdr_reader_ns.c \
-#    nanosdr/interfaces/sdr_device_sdriq_ns.cpp \
-#    nanosdr/interfaces/sdr_device_stdin_ns.cpp \
     nanosdr/fft_thread.cpp \
-    nanosdr/receiver.cpp \
-    nanosdr/sdriq/sdriq.c
+    nanosdr/receiver.cpp
