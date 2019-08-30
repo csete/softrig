@@ -572,6 +572,13 @@ int SdrDeviceRtlsdr::loadDriver(void)
         return 1;
     }
 
+    rtlsdr_get_tuner_gain = reinterpret_cast<int (*)(void *)>(driver.resolve("rtlsdr_get_tuner_gain"));
+    if (rtlsdr_get_tuner_gain == nullptr)
+    {
+        qCritical() << SYMBOL_EMSG << "rtlsdr_get_tuner_gain";
+        return 1;
+    }
+
     rtlsdr_set_direct_sampling = reinterpret_cast<int (*)(void *, int)>(driver.resolve("rtlsdr_set_direct_sampling"));
     if (rtlsdr_set_direct_sampling == nullptr)
     {
