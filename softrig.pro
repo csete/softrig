@@ -47,6 +47,7 @@ SOURCES += \
 
 HEADERS += \
     app/app_config.h \
+    app/config_keys.h \
     app/sdr_thread.h \
     gui/control_panel.h \
     gui/device_config_dialog.h \
