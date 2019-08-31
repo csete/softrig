@@ -127,13 +127,13 @@ SdrDeviceAirspyBase::SdrDeviceAirspyBase(bool mini, QObject *parent) :
 
 SdrDeviceAirspyBase::~SdrDeviceAirspyBase()
 {
-    if (status.is_running)
+    if (status.rx_is_running)
         stopRx();
 
-    if (status.is_open)
+    if (status.device_is_open)
         close();
 
-    if (status.is_loaded)
+    if (status.driver_is_loaded)
         driver.unload();
 
     ring_buffer_cplx_delete(sample_buffer);
@@ -143,14 +143,14 @@ int SdrDeviceAirspyBase::open()
 {
     int     result;
 
-    if (status.is_running || status.is_open)
+    if (status.rx_is_running || status.device_is_open)
         return SDR_DEVICE_EBUSY;
 
-    if (!status.is_loaded)
+    if (!status.driver_is_loaded)
     {
         if (loadDriver())
             return SDR_DEVICE_ELIB;
-        status.is_loaded = true;
+        status.driver_is_loaded = true;
     }
 
     qDebug() << "Opening Airspy device";
@@ -162,7 +162,7 @@ int SdrDeviceAirspyBase::open()
         return SDR_DEVICE_EOPEN;
     }
 
-    status.is_open = true;
+    status.device_is_open = true;
     rx_ctl.setEnabled(true);
 
     applySettings();
@@ -174,7 +174,7 @@ int SdrDeviceAirspyBase::close(void)
 {
     int     ret;
 
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_ERROR;
 
     qDebug() << "Closing Airspy device";
@@ -182,7 +182,7 @@ int SdrDeviceAirspyBase::close(void)
     if (ret)
         qCritical() << "airspy_close() returned" << ret;
 
-    status.is_open = false;
+    status.device_is_open = false;
     rx_ctl.setEnabled(false);
 
     return SDR_DEVICE_OK;
@@ -217,7 +217,7 @@ int SdrDeviceAirspyBase::readSettings(const QSettings &s)
 
     settings.bias_on = s.value(CFG_KEY_BIAS, DEFAULT_BIAS).toBool();
 
-    if (status.is_open)
+    if (status.device_is_open)
         applySettings();
 
     return SDR_DEVICE_OK;
@@ -267,15 +267,15 @@ int SdrDeviceAirspyBase::startRx(void)
 {
     int result;
 
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_ERROR;
 
-    if (status.is_running)
+    if (status.rx_is_running)
         return SDR_DEVICE_OK;
 
     qDebug() << "Starting Airspy...";
 
-    status.is_running = true;
+    status.rx_is_running = true;
 
     result = airspy_start_rx(device, airspy_rx_callback, this);
     if (result != AIRSPY_SUCCESS)
@@ -292,12 +292,12 @@ int SdrDeviceAirspyBase::stopRx(void)
 {
     int result;
 
-    if (!status.is_running)
+    if (!status.rx_is_running)
         return SDR_DEVICE_OK;
 
     qDebug() << "Stopping Airspy...";
 
-    status.is_running = false;
+    status.rx_is_running = false;
 
     result = airspy_stop_rx(device);
     if (result != AIRSPY_SUCCESS)
@@ -338,7 +338,7 @@ int SdrDeviceAirspyBase::setRxFrequency(quint64 freq)
         return SDR_DEVICE_ERANGE;
 
     settings.frequency = freq;
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_OK;
 
     result = airspy_set_freq(device, uint32_t(freq));
@@ -367,7 +367,7 @@ int SdrDeviceAirspyBase::setRxSampleRate(quint32 rate)
         return SDR_DEVICE_ERANGE;
 
     settings.sample_rate = rate;
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_OK;
 
     result = airspy_set_samplerate(device, rate);
@@ -392,7 +392,7 @@ int SdrDeviceAirspyBase::setRxBandwidth(quint32 bw)
     qInfo() << __func__ << bw;
 
     settings.bandwidth = bw;
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_OK;
 
     decim = bw ? settings.sample_rate / bw : 1;

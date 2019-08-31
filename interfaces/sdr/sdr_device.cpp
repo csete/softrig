@@ -99,9 +99,9 @@ int SdrDevice::type(void) const
 
 void SdrDevice::clearStatus(sdr_device_status_t &status)
 {
-    status.is_loaded = false;
-    status.is_open = false;
-    status.is_running = false;
+    status.driver_is_loaded = false;
+    status.device_is_open = false;
+    status.rx_is_running = false;
 }
 
 void SdrDevice::clearStats(sdr_device_stats_t &stats)

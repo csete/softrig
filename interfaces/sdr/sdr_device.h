@@ -31,9 +31,9 @@
 /* clang-format on */
 
 typedef struct {
-    bool    is_loaded;
-    bool    is_open;
-    bool    is_running;
+    bool    driver_is_loaded;
+    bool    device_is_open;
+    bool    rx_is_running;
 } sdr_device_status_t;
 
 typedef struct {

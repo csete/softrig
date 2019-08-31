@@ -80,13 +80,13 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
 
 SdrDeviceRtlsdr::~SdrDeviceRtlsdr()
 {
-    if (status.is_running)
+    if (status.rx_is_running)
         stopRx();
 
-    if (status.is_open)
+    if (status.device_is_open)
         close();
 
-    if (status.is_loaded)
+    if (status.driver_is_loaded)
         driver.unload();
 
     ring_buffer_delete(reader_buffer);
@@ -96,14 +96,14 @@ int SdrDeviceRtlsdr::open()
 {
     int     ret;
 
-    if (status.is_running || status.is_open)
+    if (status.rx_is_running || status.device_is_open)
         return SDR_DEVICE_EBUSY;
 
-    if (!status.is_loaded)
+    if (!status.driver_is_loaded)
     {
         if (loadDriver())
             return SDR_DEVICE_ELIB;
-        status.is_loaded = true;
+        status.driver_is_loaded = true;
     }
 
     qDebug() << "Opening RTL-SDR device";
@@ -114,7 +114,7 @@ int SdrDeviceRtlsdr::open()
         return SDR_DEVICE_EOPEN;
     }
 
-    status.is_open = true;
+    status.device_is_open = true;
     rx_ctl.setEnabled(true);
 
     setupTunerGains();
@@ -127,7 +127,7 @@ int SdrDeviceRtlsdr::close(void)
 {
     int     ret;
 
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_ERROR;
 
     qDebug() << "Closing RTL-SDR device";
@@ -135,7 +135,7 @@ int SdrDeviceRtlsdr::close(void)
     if (ret)
         qCritical() << "rtlsdr_close() returned" << ret;
 
-    status.is_open = false;
+    status.device_is_open = false;
     rx_ctl.setEnabled(false);
 
     return SDR_DEVICE_OK;
@@ -157,7 +157,7 @@ int SdrDeviceRtlsdr::readSettings(const QSettings &s)
     settings.agc_on = s.value(CFG_KEY_AGC_ENABLED, DEFAULT_AGC).toBool();
     settings.bias_on = s.value(CFG_KEY_BIAS_ENABLED, DEFAULT_BIAS).toBool();
 
-    if (status.is_open)
+    if (status.device_is_open)
         applySettings();
 
     return SDR_DEVICE_OK;
@@ -190,13 +190,13 @@ int SdrDeviceRtlsdr::saveSettings(QSettings &s)
 
 int SdrDeviceRtlsdr::startRx(void)
 {
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_ERROR;
 
-    if (status.is_running)
+    if (status.rx_is_running)
         return SDR_DEVICE_OK;
 
-    status.is_running = true;
+    status.rx_is_running = true;
     startReaderThread();
 
     return SDR_DEVICE_OK;
@@ -204,10 +204,10 @@ int SdrDeviceRtlsdr::startRx(void)
 
 int SdrDeviceRtlsdr::stopRx(void)
 {
-    if (!status.is_running)
+    if (!status.rx_is_running)
         return SDR_DEVICE_OK;
 
-    status.is_running = false;
+    status.rx_is_running = false;
     stopReaderThread();
 
     return SDR_DEVICE_OK;
@@ -246,7 +246,7 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
     int result;
 
     settings.frequency = freq;
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_OK;
 
     if (ds_mode_auto)
@@ -279,7 +279,7 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
 int SdrDeviceRtlsdr::setRxSampleRate(quint32 rate)
 {
     settings.sample_rate = rate;
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_OK;
 
     if (rtlsdr_set_sample_rate(device, rate))
@@ -298,7 +298,7 @@ int SdrDeviceRtlsdr::setRxBandwidth(quint32 bw)
         return SDR_DEVICE_ENOTAVAIL;
 
     settings.bandwidth = bw;
-    if (!status.is_open)
+    if (!status.device_is_open)
         return SDR_DEVICE_OK;
 
     if (rtlsdr_set_tuner_bandwidth(device, bw))
