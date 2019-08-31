@@ -40,10 +40,10 @@ SOURCES += \
     gui/tmp_plotter.cpp \
     interfaces/audio_output.cpp \
     interfaces/sdr/sdr_device.cpp \
-    interfaces/sdr/sdr_device_airspy.cpp \
-    interfaces/sdr/sdr_device_airspy_rxctl.cpp \
-    interfaces/sdr/sdr_device_rtlsdr.cpp \
-    interfaces/sdr/sdr_device_rtlsdr_rxctl.cpp
+    interfaces/sdr/airspy/sdr_device_airspy.cpp \
+    interfaces/sdr/airspy/sdr_device_airspy_rxctl.cpp \
+    interfaces/sdr/rtlsdr/sdr_device_rtlsdr.cpp \
+    interfaces/sdr/rtlsdr/sdr_device_rtlsdr_rxctl.cpp
 
 HEADERS += \
     app/app_config.h \
@@ -60,19 +60,19 @@ HEADERS += \
     util/qthread_wrapper.h \
     interfaces/audio_output.h \
     interfaces/sdr/sdr_device.h \
-    interfaces/sdr/sdr_device_airspy.h \
-    interfaces/sdr/sdr_device_airspy_api.h \
-    interfaces/sdr/sdr_device_airspy_fir.h \
-    interfaces/sdr/sdr_device_airspy_rxctl.h \
-    interfaces/sdr/sdr_device_rtlsdr.h \
-    interfaces/sdr/sdr_device_rtlsdr_api.h \
-    interfaces/sdr/sdr_device_rtlsdr_rxctl.h
+    interfaces/sdr/airspy/sdr_device_airspy.h \
+    interfaces/sdr/airspy/sdr_device_airspy_api.h \
+    interfaces/sdr/airspy/sdr_device_airspy_fir.h \
+    interfaces/sdr/airspy/sdr_device_airspy_rxctl.h \
+    interfaces/sdr/rtlsdr/sdr_device_rtlsdr.h \
+    interfaces/sdr/rtlsdr/sdr_device_rtlsdr_api.h \
+    interfaces/sdr/rtlsdr/sdr_device_rtlsdr_rxctl.h
 
 FORMS += \
     gui/control_panel.ui \
     gui/device_config_dialog.ui \
-    interfaces/sdr/sdr_device_airspy_rxctl.ui \
-    interfaces/sdr/sdr_device_rtlsdr_rxctl.ui
+    interfaces/sdr/airspy/sdr_device_airspy_rxctl.ui \
+    interfaces/sdr/rtlsdr/sdr_device_rtlsdr_rxctl.ui
 
 # make clean target
 QMAKE_CLEAN += softrig

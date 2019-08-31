@@ -11,7 +11,7 @@
 #include <mutex>
 
 #include "nanosdr/common/ring_buffer.h"
-#include "sdr_device.h"
+#include "interfaces/sdr/sdr_device.h"
 #include "sdr_device_airspy_api.h"
 #include "sdr_device_airspy_rxctl.h"
 
