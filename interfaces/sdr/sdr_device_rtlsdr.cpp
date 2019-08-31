@@ -222,7 +222,6 @@ quint32 SdrDeviceRtlsdr::getRxSamples(complex_t * buffer, quint32 count)
 
     std::lock_guard<std::mutex> lock(reader_lock);
 
-
     if (!buffer || count == 0)
         return 0;
 
@@ -263,6 +262,9 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
         {
             if ((result = rtlsdr_set_direct_sampling(device, DS_CHANNEL_NONE)))
                 qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
+
+            // tuner has been reset so we need to set gain again
+            setRxGain(settings.gain);
         }
     }
 
@@ -326,20 +328,25 @@ int SdrDeviceRtlsdr::type(void) const
 void SdrDeviceRtlsdr::setRxGain(int gain)
 {
     settings.gain = gain;
-    rtlsdr_set_tuner_gain(device, gain);
+    if (rtlsdr_set_tuner_gain(device, gain))
+        qInfo() << "Error setting RTL-SDR tuner gain to" << gain;
 }
 
 void SdrDeviceRtlsdr::setBias(bool bias_on)
 {
     settings.bias_on = bias_on;
-    rtlsdr_set_bias_tee(device, bias_on);
+    if (rtlsdr_set_bias_tee(device, bias_on))
+        qInfo() << "Error setting RTL-SDR bias tee to" << (bias_on ? "ON" : "OFF");
 }
 
 void SdrDeviceRtlsdr::setAgc(bool agc_on)
 {
     settings.agc_on = agc_on;
-    rtlsdr_set_agc_mode(device, agc_on ? 1 : 0);
-    rtlsdr_set_tuner_gain_mode(device, agc_on ? 0 : 1);
+    if (rtlsdr_set_tuner_gain_mode(device, agc_on ? 0 : 1) ||
+        rtlsdr_set_agc_mode(device, agc_on ? 1 : 0))
+    {
+        qInfo() << "Error setting RTL-SDR AGC to" << (agc_on ? "ON" : "OFF");
+    }
 }
 
 void SdrDeviceRtlsdr::setDsMode(int mode)
@@ -369,12 +376,22 @@ void SdrDeviceRtlsdr::setDsMode(int mode)
         break;
     }
 
-    if (!ds_mode_auto)
-        rtlsdr_set_direct_sampling(device, ds_channel);
+    if (ds_mode_auto)
+    {
+        // reset frequency to ensure settings are applied
+        quint32 freq = rtlsdr_get_center_freq(device);
+        setRxFrequency(freq);
+    }
+    else
+    {
+        int result = rtlsdr_set_direct_sampling(device, ds_channel);
+        if (result)
+            qInfo() << "Note: rtlsdr_set_direct_sampling returned" << result;
 
-    // reset frequency to ensure settings are applied
-    quint32 freq = rtlsdr_get_center_freq(device);
-    setRxFrequency(freq);
+        if (ds_channel == DS_CHANNEL_NONE)
+            // tuner has been reset so we need to set gain again
+            setRxGain(settings.gain);
+    }
 }
 
 void SdrDeviceRtlsdr::readerCallback(unsigned char *buf, uint32_t count, void *ctx)
@@ -463,7 +480,11 @@ void SdrDeviceRtlsdr::setupTunerGains(void)
 /* used to apply cached settings after device is opened */
 void SdrDeviceRtlsdr::applySettings(void)
 {
+    setRxFrequency(settings.frequency);
     setRxSampleRate(settings.sample_rate);
+    setAgc(settings.agc_on);
+    setBias(settings.bias_on);
+    setRxGain(settings.gain);
     setDsMode(settings.ds_mode);
     rx_ctl.readSettings(settings);
 }
