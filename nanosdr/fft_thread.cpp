@@ -115,8 +115,10 @@ uint32_t FftThread::get_fft_output(complex_t * output_data)
         return 0;
     }
 
+    buffer_mutex.lock();
     // FIXME: size is constant
     memcpy(output_data, fft_out, settings.fft_size * sizeof(complex_t));
+    buffer_mutex.unlock();
     stats.samples_out += settings.fft_size;
     have_fft_out = false;
 
@@ -140,6 +142,7 @@ void FftThread::print_stats()
 void FftThread::thread_func()
 {
     uint_fast64_t       tnow_ms, tprev_ms;
+    uint32_t            num_samples;
 
     tprev_ms = 0;
 
@@ -153,7 +156,10 @@ void FftThread::thread_func()
             continue;
 
         // are there enough samples?
-        if (fft.get_output_samples(fft_out) == 0)
+        buffer_mutex.lock();
+        num_samples = fft.get_output_samples(fft_out);
+        buffer_mutex.unlock();
+        if (num_samples == 0)
             continue;
 
         have_fft_out = true;

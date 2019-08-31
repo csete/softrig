@@ -3,6 +3,7 @@
  */
 #pragma once
 
+#include <mutex>
 #include <stdint.h>
 
 #include "common/datatypes.h"
@@ -54,6 +55,8 @@ private:
 
     struct fft_settings     settings;
     struct fft_stats        stats;
+
+    std::mutex      buffer_mutex;
 
     uint_fast64_t   delta_t_ms;
     complex_t      *fft_out;
