@@ -337,11 +337,9 @@ int SdrDeviceAirspyBase::setRxFrequency(quint64 freq)
     if (freq < 24e6 || freq > 1750e6)
         return SDR_DEVICE_ERANGE;
 
+    settings.frequency = freq;
     if (!status.is_open)
-    {
-        settings.frequency = freq;
         return SDR_DEVICE_OK;
-    }
 
     result = airspy_set_freq(device, uint32_t(freq));
     if (result != AIRSPY_SUCCESS)
@@ -350,7 +348,6 @@ int SdrDeviceAirspyBase::setRxFrequency(quint64 freq)
                     << airspy_error_name((enum airspy_error)result);
         return SDR_DEVICE_ERROR;
     }
-    settings.frequency = freq;
 
     return SDR_DEVICE_OK;
 }
@@ -369,11 +366,9 @@ int SdrDeviceAirspyBase::setRxSampleRate(quint32 rate)
     else if (rate != 2.5e6 && rate != 10.0e6)
         return SDR_DEVICE_ERANGE;
 
+    settings.sample_rate = rate;
     if (!status.is_open)
-    {
-        settings.sample_rate = rate;
         return SDR_DEVICE_OK;
-    }
 
     result = airspy_set_samplerate(device, rate);
     if (result != AIRSPY_SUCCESS)
@@ -382,7 +377,6 @@ int SdrDeviceAirspyBase::setRxSampleRate(quint32 rate)
                     << airspy_error_name((enum airspy_error)result);
         return SDR_DEVICE_ERROR;
     }
-    settings.sample_rate = rate;
     setRxBandwidth(settings.bandwidth);
 
     return SDR_DEVICE_OK;
@@ -397,11 +391,9 @@ int SdrDeviceAirspyBase::setRxBandwidth(quint32 bw)
 
     qInfo() << __func__ << bw;
 
+    settings.bandwidth = bw;
     if (!status.is_open)
-    {
-        settings.bandwidth = bw;
         return SDR_DEVICE_OK;
-    }
 
     decim = bw ? settings.sample_rate / bw : 1;
 
@@ -434,7 +426,6 @@ int SdrDeviceAirspyBase::setRxBandwidth(quint32 bw)
                 << airspy_error_name((enum airspy_error)result);
         return SDR_DEVICE_ERROR;
     }
-    settings.bandwidth = bw;
 
     return SDR_DEVICE_OK;
 }
