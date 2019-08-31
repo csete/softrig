@@ -245,11 +245,9 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
 {
     int result;
 
+    settings.frequency = freq;
     if (!status.is_open)
-    {
-        settings.frequency = freq;
         return SDR_DEVICE_OK;
-    }
 
     if (ds_mode_auto)
     {
@@ -274,18 +272,15 @@ int SdrDeviceRtlsdr::setRxFrequency(quint64 freq)
         settings.frequency = rtlsdr_get_center_freq(device);
         return SDR_DEVICE_ERANGE;
     }
-    settings.frequency = freq;
 
     return SDR_DEVICE_OK;
 }
 
 int SdrDeviceRtlsdr::setRxSampleRate(quint32 rate)
 {
+    settings.sample_rate = rate;
     if (!status.is_open)
-    {
-        settings.sample_rate = rate;
         return SDR_DEVICE_OK;
-    }
 
     if (rtlsdr_set_sample_rate(device, rate))
     {
@@ -293,7 +288,6 @@ int SdrDeviceRtlsdr::setRxSampleRate(quint32 rate)
         settings.sample_rate = rtlsdr_get_sample_rate(device);
         return SDR_DEVICE_ERANGE;
     }
-    settings.sample_rate = rate;
 
     return SDR_DEVICE_OK;
 }
@@ -303,11 +297,9 @@ int SdrDeviceRtlsdr::setRxBandwidth(quint32 bw)
     if (!has_set_bw)
         return SDR_DEVICE_ENOTAVAIL;
 
+    settings.bandwidth = bw;
     if (!status.is_open)
-    {
-        settings.bandwidth = bw;
         return SDR_DEVICE_OK;
-    }
 
     if (rtlsdr_set_tuner_bandwidth(device, bw))
     {
@@ -315,7 +307,6 @@ int SdrDeviceRtlsdr::setRxBandwidth(quint32 bw)
         settings.bandwidth = 0;
         return SDR_DEVICE_ERANGE;
     }
-    settings.bandwidth = bw;
 
     return SDR_DEVICE_OK;
 }
