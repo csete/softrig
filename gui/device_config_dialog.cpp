@@ -85,7 +85,20 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
     QString     sdr_type(ui->sdrTypeCombo->currentData(Qt::UserRole).toString());
 
     ui->inputRateCombo->clear();
-    if (sdr_type == "rtlsdr")
+    if (sdr_type == "airspy")
+    {
+        ui->inputRateCombo->addItem("2500000");
+        ui->inputRateCombo->addItem("10000000");
+        ui->inputRateCombo->setCurrentIndex(1);
+    }
+    else if (sdr_type == "airspymini")
+    {
+        ui->inputRateCombo->addItem("3000000");
+        ui->inputRateCombo->addItem("6000000");
+        ui->inputRateCombo->addItem("10000000");
+        ui->inputRateCombo->setCurrentIndex(1);
+    }
+    else if (sdr_type == "rtlsdr")
     {
         ui->inputRateCombo->addItem("240000");
         ui->inputRateCombo->addItem("300000");
@@ -98,19 +111,6 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("2400000");
         ui->inputRateCombo->addItem("3200000");
         ui->inputRateCombo->setCurrentIndex(8);
-    }
-    else if (sdr_type == "airspy")
-    {
-        ui->inputRateCombo->addItem("2500000");
-        ui->inputRateCombo->addItem("10000000");
-        ui->inputRateCombo->setCurrentIndex(1);
-    }
-    else if (sdr_type == "airspymini")
-    {
-        ui->inputRateCombo->addItem("3000000");
-        ui->inputRateCombo->addItem("6000000");
-        ui->inputRateCombo->addItem("10000000");
-        ui->inputRateCombo->setCurrentIndex(1);
     }
     else if (sdr_type == "sdriq")
     {
