@@ -51,6 +51,7 @@ DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     // The item data is the string that can be passed to the backend
     ui->sdrTypeCombo->addItem(tr("Airspy Mini"), "airspymini");
     ui->sdrTypeCombo->addItem(tr("Airspy R2"), "airspy");
+    ui->sdrTypeCombo->addItem(tr("LimeSDR"), "limesdr");
 //    ui->sdrTypeCombo->addItem(tr("RFSpace SDR-IQ"), "sdriq");
     ui->sdrTypeCombo->addItem(tr("RTL-SDR"), "rtlsdr");
 }
@@ -97,6 +98,18 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("6000000");
         ui->inputRateCombo->addItem("10000000");
         ui->inputRateCombo->setCurrentIndex(1);
+    }
+    else if (sdr_type == "limesdr")
+    {
+        ui->inputRateCombo->addItem("240000");
+        ui->inputRateCombo->addItem("480000");
+        ui->inputRateCombo->addItem("960000");
+        ui->inputRateCombo->addItem("1920000");
+        ui->inputRateCombo->addItem("3840000");
+        ui->inputRateCombo->addItem("7680000");
+        ui->inputRateCombo->addItem("15360000");
+        ui->inputRateCombo->addItem("30720000");
+        ui->inputRateCombo->addItem("61440000");
     }
     else if (sdr_type == "rtlsdr")
     {

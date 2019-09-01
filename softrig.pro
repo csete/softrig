@@ -42,6 +42,8 @@ SOURCES += \
     interfaces/sdr/sdr_device.cpp \
     interfaces/sdr/airspy/sdr_device_airspy.cpp \
     interfaces/sdr/airspy/sdr_device_airspy_rxctl.cpp \
+    interfaces/sdr/limesdr/sdr_device_limesdr.cpp \
+    interfaces/sdr/limesdr/sdr_device_limesdr_rxctl.cpp \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr.cpp \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr_rxctl.cpp
 
@@ -65,6 +67,10 @@ HEADERS += \
     interfaces/sdr/airspy/sdr_device_airspy_api_defs.h \
     interfaces/sdr/airspy/sdr_device_airspy_fir.h \
     interfaces/sdr/airspy/sdr_device_airspy_rxctl.h \
+    interfaces/sdr/limesdr/sdr_device_limesdr.h \
+    interfaces/sdr/limesdr/sdr_device_limesdr_api.h \
+    interfaces/sdr/limesdr/sdr_device_limesdr_api_defs.h \
+    interfaces/sdr/limesdr/sdr_device_limesdr_rxctl.h \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr.h \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr_api.h \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr_rxctl.h
@@ -73,6 +79,7 @@ FORMS += \
     gui/control_panel.ui \
     gui/device_config_dialog.ui \
     interfaces/sdr/airspy/sdr_device_airspy_rxctl.ui \
+    interfaces/sdr/limesdr/sdr_device_limesdr_rxctl.ui \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr_rxctl.ui
 
 # make clean target

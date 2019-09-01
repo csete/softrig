@@ -34,6 +34,7 @@
 SdrDevice *sdr_device_create_rtlsdr(void);
 SdrDevice *sdr_device_create_airspy(void);
 SdrDevice *sdr_device_create_airspymini(void);
+SdrDevice *sdr_device_create_limesdr(void);
 
 SdrDevice *sdr_device_create(const QString &device_type)
 {
@@ -43,6 +44,8 @@ SdrDevice *sdr_device_create(const QString &device_type)
         return sdr_device_create_airspy();
     else if (QString::compare(device_type, "airspymini", Qt::CaseInsensitive) == 0)
         return sdr_device_create_airspymini();
+    else if (QString::compare(device_type, "limesdr", Qt::CaseInsensitive) == 0)
+        return sdr_device_create_limesdr();
 
     return nullptr;
 }
