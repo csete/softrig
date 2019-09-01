@@ -36,11 +36,6 @@ public:
     int         setRxSampleRate(quint32 rate) override;
     int         setRxBandwidth(quint32 bw) override;
 
-    int type(void) const override
-    {
-        return is_mini ? SDR_DEVICE_AIRSPYMINI : SDR_DEVICE_AIRSPY;
-    }
-
 private slots:
     void    saveGainMode(const QString &mode);
     void    setLinearityGain(int gain);

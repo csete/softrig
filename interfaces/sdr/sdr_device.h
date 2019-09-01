@@ -22,12 +22,6 @@
 #define SDR_DEVICE_EOPEN       -6   // Other error while trying to open device
 #define SDR_DEVICE_ENOTAVAIL   -7   // Function not available for this device
 #define SDR_DEVICE_ERANGE      -8   // Parameter out of range
-
-// IDs for supported devices
-#define SDR_DEVICE_NONE         0
-#define SDR_DEVICE_RTLSDR       1
-#define SDR_DEVICE_AIRSPY       2
-#define SDR_DEVICE_AIRSPYMINI   3
 /* clang-format on */
 
 typedef struct {
@@ -60,9 +54,6 @@ public:
     virtual int         setRxFrequency(quint64 freq);
     virtual int         setRxSampleRate(quint32 rate);
     virtual int         setRxBandwidth(quint32 bw);
-
-    /* Returns SDR_DEVICE_XYZ */
-    virtual int type(void) const;
 
 protected:
     void    clearStatus(sdr_device_status_t &status);

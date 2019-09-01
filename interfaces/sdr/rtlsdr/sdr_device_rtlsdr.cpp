@@ -311,11 +311,6 @@ int SdrDeviceRtlsdr::setRxBandwidth(quint32 bw)
     return SDR_DEVICE_OK;
 }
 
-int SdrDeviceRtlsdr::type(void) const
-{
-    return SDR_DEVICE_RTLSDR;
-}
-
 void SdrDeviceRtlsdr::setRxGain(int gain)
 {
     settings.gain = gain;

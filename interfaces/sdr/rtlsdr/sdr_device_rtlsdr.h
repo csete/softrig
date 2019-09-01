@@ -36,8 +36,6 @@ public:
     int         setRxSampleRate(quint32 rate) override;
     int         setRxBandwidth(quint32 bw) override;
 
-    int type(void) const override;
-
 private slots:
     void    setRxGain(int gain);
     void    setBias(bool bias_on);

@@ -92,11 +92,6 @@ int SdrDevice::setRxBandwidth(quint32 bw)
     return SDR_DEVICE_ENOTAVAIL;
 }
 
-int SdrDevice::type(void) const
-{
-    return SDR_DEVICE_NONE;
-}
-
 void SdrDevice::clearStatus(sdr_device_status_t &status)
 {
     status.driver_is_loaded = false;
