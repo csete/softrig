@@ -20,8 +20,9 @@
 #define SDR_DEVICE_EBUSY       -4   // Device is busy
 #define SDR_DEVICE_EPERM       -5   // Insuficcient permissions to open device
 #define SDR_DEVICE_EOPEN       -6   // Other error while trying to open device
-#define SDR_DEVICE_ENOTAVAIL   -7   // Function not available for this device
-#define SDR_DEVICE_ERANGE      -8   // Parameter out of range
+#define SDR_DEVICE_EINIT       -7   // Error trying to initialize device
+#define SDR_DEVICE_ENOTAVAIL   -8   // Function not available for this device
+#define SDR_DEVICE_ERANGE      -9   // Parameter out of range
 /* clang-format on */
 
 typedef struct {
