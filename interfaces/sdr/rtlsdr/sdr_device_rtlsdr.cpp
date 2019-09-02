@@ -54,7 +54,6 @@ SdrDeviceRtlsdr::SdrDeviceRtlsdr(QObject *parent) : SdrDevice(parent),
     device(nullptr),
     rx_ctl(nullptr),
     reader_thread(nullptr),
-    reader_running(false),
     has_set_bw(false)
 {
     clearStatus(status);

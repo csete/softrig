@@ -61,7 +61,6 @@ private:
     ring_buffer_t  *reader_buffer;      // raw sample buffer
     std::mutex      reader_lock;
     std::thread    *reader_thread;
-    bool            reader_running;
 
     sdr_device_status_t     status;
     sdr_device_stats_t      stats;
