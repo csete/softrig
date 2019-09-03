@@ -12,7 +12,7 @@
 
 #include "nanosdr/common/ring_buffer.h"
 #include "interfaces/sdr/sdr_device.h"
-#include "sdr_device_airspy_api.h"
+#include "sdr_device_airspy_api_defs.h"
 #include "sdr_device_airspy_rxctl.h"
 
 class SdrDeviceAirspyBase : public SdrDevice

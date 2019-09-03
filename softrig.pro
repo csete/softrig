@@ -62,6 +62,7 @@ HEADERS += \
     interfaces/sdr/sdr_device.h \
     interfaces/sdr/airspy/sdr_device_airspy.h \
     interfaces/sdr/airspy/sdr_device_airspy_api.h \
+    interfaces/sdr/airspy/sdr_device_airspy_api_defs.h \
     interfaces/sdr/airspy/sdr_device_airspy_fir.h \
     interfaces/sdr/airspy/sdr_device_airspy_rxctl.h \
     interfaces/sdr/rtlsdr/sdr_device_rtlsdr.h \
