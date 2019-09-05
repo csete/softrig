@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Frequency controller
     fctl = new FreqCtrl(this);
     fctl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    fctl->setup(10, 0, 2e9, 1, FCTL_UNIT_NONE);
+    fctl->setup(10, 0, 9e9, 1, FCTL_UNIT_NONE);
     connect(fctl, SIGNAL(newFrequency(qint64)), this,
             SLOT(newFrequency(qint64)));
 
