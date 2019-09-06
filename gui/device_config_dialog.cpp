@@ -54,6 +54,7 @@ DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     ui->sdrTypeCombo->addItem(tr("LimeSDR"), "limesdr");
 //    ui->sdrTypeCombo->addItem(tr("RFSpace SDR-IQ"), "sdriq");
     ui->sdrTypeCombo->addItem(tr("RTL-SDR"), "rtlsdr");
+    ui->sdrTypeCombo->addItem(tr("SDRplay"), "sdrplay");
 }
 
 DeviceConfigDialog::~DeviceConfigDialog()
@@ -132,6 +133,13 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("158730");
         ui->inputRateCombo->addItem("196078");
         ui->inputRateCombo->setCurrentIndex(3);
+    }
+    else if (sdr_type == "sdrplay")
+    {
+        ui->inputRateCombo->addItem("2000000");
+        ui->inputRateCombo->addItem("4000000");
+        ui->inputRateCombo->addItem("6000000");
+        ui->inputRateCombo->addItem("10000000");
     }
 }
 
