@@ -466,7 +466,7 @@ void MainWindow::newFrequency(qint64 freq)
 
 void MainWindow::newPlotterCenterFreq(qint64 freq)
 {
-    fctl->setFrequency(freq);
+    fctl->setFrequency(freq + fft_plot->getFilterOffset());
 }
 
 void MainWindow::newPlotterDemodFreq(qint64 freq, qint64 delta)
