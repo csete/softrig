@@ -45,8 +45,8 @@
 AudioOutput::AudioOutput(QObject *parent) : QObject(parent)
 {
     initialized = false;
-    audio_out = 0;
-    audio_buffer = 0;
+    audio_out = nullptr;
+    audio_buffer = nullptr;
 }
 
 AudioOutput::~AudioOutput()

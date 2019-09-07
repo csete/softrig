@@ -18,7 +18,7 @@ class AudioOutput : public QObject
     Q_OBJECT
 
 public:
-    explicit AudioOutput(QObject *parent = 0);
+    explicit AudioOutput(QObject *parent = nullptr);
     virtual ~AudioOutput();
 
     int     init(void);
