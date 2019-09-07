@@ -36,6 +36,7 @@ private slots:
     void    newPlotterDemodFreq(qint64, qint64);
     void    setDemod(sdr_demod_t);
     void    setFilter(real_t, real_t);
+    void    setFilterInt(int, int);
     void    setCwOffset(real_t);
     void    fftTimeout(void);
 

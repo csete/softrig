@@ -112,6 +112,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(newPlotterDemodFreq(qint64, qint64)));
     connect(fft_plot, SIGNAL(pandapterRangeChanged(float,float)),
             fft_plot, SLOT(setWaterfallRange(float,float)));
+    connect(fft_plot, SIGNAL(newFilterFreq(int,int)),
+            this, SLOT(setFilterInt(int,int)));
 
     // top layout with frequency controller, meter and buttons
     top_layout = new QHBoxLayout();
@@ -483,7 +485,12 @@ void MainWindow::setDemod(sdr_demod_t demod)
 void MainWindow::setFilter(real_t low_cut, real_t high_cut)
 {
     sdr->setRxFilter(low_cut, high_cut);
-    fft_plot->setHiLowCutFrequencies(low_cut, high_cut);
+    fft_plot->setHiLowCutFrequencies(int(low_cut), int(high_cut));
+}
+
+void MainWindow::setFilterInt(int low_cut, int high_cut)
+{
+    setFilter(low_cut, high_cut);
 }
 
 void MainWindow::setCwOffset(real_t offset)
