@@ -75,6 +75,8 @@ private:
     real_t        *output_samples;  // sample buffer for audio output
     qint16        *aout_buffer;     // audio output buffer
 
+    bool            have_audio_out;
+
     struct {
         uint64_t    tstart;
         uint64_t    tstop;

@@ -55,7 +55,7 @@ SdrThread::SdrThread(QObject *parent) : QObject(parent)
     aout_buffer = nullptr;
     resetStats();
 
-    audio_out.init();
+    have_audio_out = audio_out.init() == AUDIO_OUT_OK;
 
     fft = new FftThread();
     fft->init(FFT_SIZE, 25);
@@ -123,7 +123,9 @@ int SdrThread::start(const app_config_t *conf, SdrDevice * dev)
     setRxTuningOffset(input_cfg.nco);
 
     resetStats();
-    audio_out.start();
+    if (audio_out.start() != AUDIO_OUT_OK)
+        have_audio_out = false;
+
     fft->start();
 //    sdr_dev->startRx();
     thread->start();
@@ -210,7 +212,8 @@ void SdrThread::process(void)
             for (i = 0; i < samples_out; i++)
                 aout_buffer[i] = (qint16)(32767.0f * output_samples[i]);
 
-            audio_out.write((const char *) aout_buffer, samples_out * 2);
+            if (have_audio_out)
+                audio_out.write((const char *) aout_buffer, samples_out * 2);
             stats.samples_out += samples_out;
         }
     }
