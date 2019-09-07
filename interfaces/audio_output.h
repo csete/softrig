@@ -26,6 +26,8 @@ public:
     int     stop(void);
     int     write(const char * data, qint64 len);
 
+    const char *errorStr(int error_code) const;
+
 private slots:
     void    aoutStateChanged(QAudio::State);
 

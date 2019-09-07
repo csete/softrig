@@ -157,3 +157,22 @@ void AudioOutput::aoutStateChanged(QAudio::State new_state)
         break;
     }
 }
+
+#define ERROR_CODE_MAX  4
+static const char *error_strings[] = {
+    "No error",
+    "Unknown error",
+    "Audio format not supported",
+    "Audio output not initialized",
+    "Error writing to output buffer"
+};
+
+const char *AudioOutput::errorStr(int error_code) const
+{
+    int code = abs(error_code);
+
+    if (code > ERROR_CODE_MAX)
+        return "Unknown error code";
+
+    return error_strings[code];
+}
