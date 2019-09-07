@@ -51,10 +51,10 @@ DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     // The item data is the string that can be passed to the backend
     ui->sdrTypeCombo->addItem(tr("Airspy Mini"), "airspymini");
     ui->sdrTypeCombo->addItem(tr("Airspy R2"), "airspy");
-    ui->sdrTypeCombo->addItem(tr("LimeSDR"), "limesdr");
+    ui->sdrTypeCombo->addItem(tr("LimeSDR Mini"), "limesdr");
 //    ui->sdrTypeCombo->addItem(tr("RFSpace SDR-IQ"), "sdriq");
     ui->sdrTypeCombo->addItem(tr("RTL-SDR"), "rtlsdr");
-    ui->sdrTypeCombo->addItem(tr("SDRplay"), "sdrplay");
+    ui->sdrTypeCombo->addItem(tr("SDRplay RSPduo"), "sdrplay");
 }
 
 DeviceConfigDialog::~DeviceConfigDialog()
