@@ -847,9 +847,11 @@ void CPlotter::wheelEvent(QWheelEvent * event)
     else
     {
         qint64      delta = numSteps * m_ClickResolution;
+        qint64      plot_center = m_CenterFreq + m_FftCenter;
+
         // tuning
-        if (m_DemodCenterFreq + delta > m_CenterFreq - m_Span / 2.3 &&
-            m_DemodCenterFreq + delta < m_CenterFreq + m_Span / 2.3)
+        if (m_DemodCenterFreq + delta + m_DemodLowCutFreq > plot_center - m_Span / 2.3 &&
+            m_DemodCenterFreq + delta + m_DemodHiCutFreq < plot_center + m_Span / 2.3)
         {
             // increment / decrement demod frequency
             m_DemodCenterFreq += delta;
