@@ -51,6 +51,7 @@ DeviceConfigDialog::DeviceConfigDialog(QWidget *parent) :
     // The item data is the string that can be passed to the backend
     ui->sdrTypeCombo->addItem(tr("Airspy Mini"), "airspymini");
     ui->sdrTypeCombo->addItem(tr("Airspy R2"), "airspy");
+    ui->sdrTypeCombo->addItem("Nuand BladeRF 2.0", "bladerf");
     ui->sdrTypeCombo->addItem(tr("LimeSDR Mini"), "limesdr");
 //    ui->sdrTypeCombo->addItem(tr("RFSpace SDR-IQ"), "sdriq");
     ui->sdrTypeCombo->addItem(tr("RTL-SDR"), "rtlsdr");
@@ -100,7 +101,7 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("10000000");
         ui->inputRateCombo->setCurrentIndex(1);
     }
-    else if (sdr_type == "limesdr")
+    else if (sdr_type == "bladerf" || sdr_type == "limesdr")
     {
         ui->inputRateCombo->addItem("240000");
         ui->inputRateCombo->addItem("480000");
@@ -111,6 +112,7 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("15360000");
         ui->inputRateCombo->addItem("30720000");
         ui->inputRateCombo->addItem("61440000");
+        ui->inputRateCombo->setCurrentIndex(2);
     }
     else if (sdr_type == "rtlsdr")
     {
@@ -140,6 +142,7 @@ void DeviceConfigDialog::sdrTypeChanged(int index)
         ui->inputRateCombo->addItem("4000000");
         ui->inputRateCombo->addItem("6000000");
         ui->inputRateCombo->addItem("10000000");
+        ui->inputRateCombo->setCurrentIndex(0);
     }
 }
 
