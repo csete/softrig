@@ -38,7 +38,7 @@ SdrDeviceSdrplayRxctl::SdrDeviceSdrplayRxctl(QWidget *parent) :
     ui(new Ui::SdrDeviceSdrplayRxctl)
 {
     ui->setupUi(this);
-    setProperty("desc", QString("SDRplay"));
+    setProperty("desc", QString("SDRplay RSPduo"));
 }
 
 SdrDeviceSdrplayRxctl::~SdrDeviceSdrplayRxctl()

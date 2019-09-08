@@ -514,7 +514,7 @@ void SdrDeviceSdrplay::streamCallback(short *xi, short *xq, unsigned int first_s
                                       unsigned int hw_removed, void *ctx)
 {
 #define WORK_BUF_SIZE 8192
-#define SAMPLE_SCALE  1.0f / 32767.5f
+#define SAMPLE_SCALE  1.0f / 32768.f
 
     Q_UNUSED(first_sample_num);
     Q_UNUSED(gr_changed);
@@ -538,8 +538,8 @@ void SdrDeviceSdrplay::streamCallback(short *xi, short *xq, unsigned int first_s
 
     for (i = 0; i < num_samples; i++)
     {
-        work_buf[i].re = (float(xi[i]) - 0.5f) * SAMPLE_SCALE;
-        work_buf[i].im = (float(xq[i]) - 0.5f) * SAMPLE_SCALE;
+        work_buf[i].re = float(xi[i]) * SAMPLE_SCALE;
+        work_buf[i].im = float(xq[i]) * SAMPLE_SCALE;
     }
 
     if (num_samples > ring_buffer_cplx_size(this_radio->sample_buffer))
